@@ -38,6 +38,17 @@
         "symfony/yaml": "^6.3",
         "twig/twig": "^3.8.0"
     },
+    "autoload": {
+        "psr-4": {
+            "DR\\SymfonyRequestId\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "DR\\SymfonyRequestId\\Tests\\Unit\\": "tests/Unit/",
+            "DR\\SymfonyRequestId\\Tests\\": "tests/"
+        }
+    },
     "scripts": {
         "check": ["@check:phpstan", "@check:phpmd", "@check:phpcs"],
         "check:phpstan": "phpstan analyse",
