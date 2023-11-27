@@ -1,6 +1,7 @@
 MIT License
 
-Copyright (c) 2020 123inkt / DigitalRevolution
+Copyright (c) 2015 Christopher Davis <http://christopherdavis.me>
+Copyright (c) 2023 123inkt / DigitalRevolution
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
