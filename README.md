@@ -5,9 +5,12 @@
 *Based on [chrisguitarguy/RequestIdBundle](https://github.com/chrisguitarguy/RequestIdBundle)*
 
 This adds request ID's to your Symfony application. Why? It's a great way to add
-some additional information to logs and to present to users. For example, if an
-exception is thrown you'll be able to show the user the request ID which they
-can pass on to you to locate their specific issue.
+some additional information to logs and to present to users. The request id will 
+be available in:
+- Monolog log messages
+- Request -> Response
+- Console command
+- Twig as extension
 
 ## Installation
 
