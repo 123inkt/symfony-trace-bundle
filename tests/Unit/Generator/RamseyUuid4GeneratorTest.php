@@ -11,6 +11,11 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(RamseyUuid4Generator::class)]
 class RamseyUuid4GeneratorTest extends TestCase
 {
+    public function testIsSupported(): void
+    {
+        static::assertTrue(RamseyUuid4Generator::isSupported());
+    }
+
     public function testGenerate(): void
     {
         // we're not going to mock anything here, I'm more
@@ -18,9 +23,6 @@ class RamseyUuid4GeneratorTest extends TestCase
         // correctly than worry about mocking method calls.
         $generator = new RamseyUuid4Generator();
 
-        $id = $generator->generate();
-
-        static::assertNotEmpty($id);
-        static::assertIsString($id);
+        static::assertNotEmpty($generator->generate());
     }
 }

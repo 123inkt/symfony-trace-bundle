@@ -73,9 +73,9 @@ return static function (SymfonyRequestIdConfig $config): void {
     // Whether to add the monolog process, defaults to true
     $config->enableMonolog(true);
     
-    // Whether to generate a request ID for console commands, defaults to true
+    // Whether to add the request id to console commands, defaults to true
     $config->enableConsole(true);
-
+    
     // Whether to add the twig extension, defaults to true
     $config->enableTwig(true);
 };

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\EventListener;
+namespace DR\SymfonyRequestId\EventSubscriber;
 
 use DR\SymfonyRequestId\RequestIdGenerator;
 use DR\SymfonyRequestId\RequestIdStorage;
@@ -15,7 +15,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  * Listens for requests and responses and sets up the request ID on each.
  * @internal
  */
-final class RequestIdListener implements EventSubscriberInterface
+final class RequestIdSubscriber implements EventSubscriberInterface
 {
     /**
      * @param string             $requestHeader  The header to inspect for the incoming request ID.

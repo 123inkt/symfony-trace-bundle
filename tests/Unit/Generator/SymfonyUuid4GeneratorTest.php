@@ -1,14 +1,6 @@
 <?php
-/*
- * This file is part of chrisguitarguy/request-id-bundle
 
- * Copyright (c) Christopher Davis <http://christopherdavis.me>
- *
- * For full copyright information see the LICENSE file distributed
- * with this source code.
- *
- * @license     http://opensource.org/licenses/MIT MIT
- */
+declare(strict_types=1);
 
 namespace DR\SymfonyRequestId\Tests\Unit\Generator;
 
@@ -19,6 +11,11 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(SymfonyUuid4Generator::class)]
 class SymfonyUuid4GeneratorTest extends TestCase
 {
+    public function testIsSupported(): void
+    {
+        static::assertTrue(SymfonyUuid4Generator::isSupported());
+    }
+
     public function testGenerate(): void
     {
         // we're not going to mock anything here, I'm more
@@ -26,9 +23,6 @@ class SymfonyUuid4GeneratorTest extends TestCase
         // correctly than worry about mocking method calls.
         $generator = new SymfonyUuid4Generator();
 
-        $id = $generator->generate();
-
-        static::assertNotEmpty($id);
-        static::assertIsString($id);
+        static::assertNotEmpty($generator->generate());
     }
 }

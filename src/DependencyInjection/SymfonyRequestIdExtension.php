@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace DR\SymfonyRequestId\DependencyInjection;
 
-use DR\SymfonyRequestId\EventListener\RequestIdListener;
+use DR\SymfonyRequestId\EventSubscriber\CommandSubscriber;
+use DR\SymfonyRequestId\EventSubscriber\RequestIdSubscriber;
 use DR\SymfonyRequestId\Generator\RamseyUuid4Generator;
 use DR\SymfonyRequestId\Generator\SymfonyUuid4Generator;
 use DR\SymfonyRequestId\Monolog\RequestIdProcessor;
@@ -18,7 +19,7 @@ use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 
 /**
- * Registers some container configuration with the application.
+ * @codeCoverageIgnore - This is a configuration class, tested by the acceptance test
  * @internal
  */
 final class SymfonyRequestIdExtension extends ConfigurableExtension
@@ -42,32 +43,32 @@ final class SymfonyRequestIdExtension extends ConfigurableExtension
 
         // configure generator service
         if (isset($mergedConfig['generator_service'])) {
-            $genId = $mergedConfig['generator_service'];
+            $generatorId = $mergedConfig['generator_service'];
         } elseif (RamseyUuid4Generator::isSupported()) {
-            $genId = RamseyUuid4Generator::class;
+            $generatorId = RamseyUuid4Generator::class;
         } elseif (SymfonyUuid4Generator::isSupported()) {
-            $genId = SymfonyUuid4Generator::class;
+            $generatorId = SymfonyUuid4Generator::class;
         } else {
             throw new RuntimeException('No generator service found. Please install symfony/uid or ramsey/uuid');
         }
 
-        if ($genId === RamseyUuid4Generator::class) {
+        if ($generatorId === RamseyUuid4Generator::class) {
             $container->register(RamseyUuid4Generator::class)->setPublic(false);
-        } elseif ($genId === SymfonyUuid4Generator::class) {
+        } elseif ($generatorId === SymfonyUuid4Generator::class) {
             $container->register(SymfonyUuid4Generator::class)->setPublic(false);
         }
 
         $container->setAlias(RequestIdStorage::class, $storeId)->setPublic(true);
-        $container->setAlias(RequestIdGenerator::class, $genId)->setPublic(true);
+        $container->setAlias(RequestIdGenerator::class, $generatorId)->setPublic(true);
 
-        $container->register(RequestIdListener::class)
+        $container->register(RequestIdSubscriber::class)
             ->setArguments(
                 [
                     $mergedConfig['request_header'],
                     $mergedConfig['response_header'],
                     $mergedConfig['trust_request_header'],
                     new Reference($storeId),
-                    new Reference($genId),
+                    new Reference($generatorId),
                 ]
             )
             ->setPublic(false)
@@ -78,6 +79,13 @@ final class SymfonyRequestIdExtension extends ConfigurableExtension
                 ->addArgument(new Reference($storeId))
                 ->setPublic(false)
                 ->addTag('monolog.processor');
+        }
+
+        if (class_exists('Symfony\Component\Console\Application') && $mergedConfig['enable_console']) {
+            $container->register(CommandSubscriber::class)
+                ->setArguments([new Reference($storeId), new Reference($generatorId)])
+                ->setPublic(false)
+                ->addTag('kernel.event_subscriber');
         }
 
         if (class_exists('Twig\Extension\AbstractExtension') && $mergedConfig['enable_twig']) {

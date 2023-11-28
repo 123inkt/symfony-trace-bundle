@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace DR\SymfonyRequestId\DependencyInjection;
 
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 /**
+ * @codeCoverageIgnore - This is a configuration class, tested by the acceptance test
  * @internal
  */
 class Configuration implements ConfigurationInterface
@@ -15,8 +17,9 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $tree = new TreeBuilder('symfony_request_id');
-
-        $tree->getRootNode()
+        /** @var ArrayNodeDefinition $node */
+        $node = $tree->getRootNode();
+        $node
             ->children()
             ->scalarNode('request_header')
                 ->cannotBeEmpty()
@@ -43,7 +46,7 @@ class Configuration implements ConfigurationInterface
                 ->defaultTrue()
             ->end()
             ->booleanNode('enable_console')
-                ->info('Whether or not to turn on the request ID processor for monolog')
+                ->info('Whether to add the request id to console commands, defaults to true')
                 ->defaultTrue()
             ->end()
             ->booleanNode('enable_twig')

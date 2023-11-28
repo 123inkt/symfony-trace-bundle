@@ -1,0 +1,40 @@
+parameters:
+    secret: dev
+    locale: en
+
+framework:
+    test: ~
+    secret: "%secret%"
+    router:
+        resource: "%kernel.project_dir%/app/config/routing.yml"
+        strict_requirements: "%kernel.debug%"
+        utf8: true
+    http_method_override: false
+    default_locale:  "%locale%"
+
+symfony_request_id:
+  request_header: Request-Id
+  response_header: Request-Id
+  trust_request_header: true
+
+twig:
+  strict_variables: "%kernel.debug%"
+  paths:
+    "%kernel.project_dir%/app/templates": requestid
+
+services:
+    log.formatter:
+        class: Monolog\Formatter\LineFormatter
+        arguments:
+            - "[%%level_name%% - %%extra.request_id%%] %%message%%"
+    log.memory_handler:
+        public: true
+        class: DR\SymfonyRequestId\Tests\Acceptance\MemoryHandler
+        calls:
+            - [setFormatter, ["@log.formatter"]]
+
+monolog:
+    handlers:
+        main:
+            type: service
+            id: log.memory_handler
