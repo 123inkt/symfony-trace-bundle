@@ -6,11 +6,13 @@ namespace DR\SymfonyRequestId\DependencyInjection;
 
 use DR\SymfonyRequestId\EventListener\RequestIdListener;
 use DR\SymfonyRequestId\Generator\RamseyUuid4Generator;
+use DR\SymfonyRequestId\Generator\SymfonyUuid4Generator;
 use DR\SymfonyRequestId\Monolog\RequestIdProcessor;
 use DR\SymfonyRequestId\RequestIdGenerator;
 use DR\SymfonyRequestId\RequestIdStorage;
 use DR\SymfonyRequestId\SimpleIdStorage;
 use DR\SymfonyRequestId\Twig\RequestIdExtension;
+use RuntimeException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
@@ -36,10 +38,24 @@ final class SymfonyRequestIdExtension extends ConfigurableExtension
     protected function loadInternal(array $mergedConfig, ContainerBuilder $container): void
     {
         $container->register(SimpleIdStorage::class)->setPublic(false);
-        $container->register(RamseyUuid4Generator::class)->setPublic(false);
-
         $storeId = $mergedConfig['storage_service'] ?? SimpleIdStorage::class;
-        $genId   = $mergedConfig['generator_service'] ?? RamseyUuid4Generator::class;
+
+        // configure generator service
+        if (isset($mergedConfig['generator_service'])) {
+            $genId = $mergedConfig['generator_service'];
+        } elseif (RamseyUuid4Generator::isSupported()) {
+            $genId = RamseyUuid4Generator::class;
+        } elseif (SymfonyUuid4Generator::isSupported()) {
+            $genId = SymfonyUuid4Generator::class;
+        } else {
+            throw new RuntimeException('No generator service found. Please install symfony/uid or ramsey/uuid');
+        }
+
+        if ($genId === RamseyUuid4Generator::class) {
+            $container->register(RamseyUuid4Generator::class)->setPublic(false);
+        } elseif ($genId === SymfonyUuid4Generator::class) {
+            $container->register(SymfonyUuid4Generator::class)->setPublic(false);
+        }
 
         $container->setAlias(RequestIdStorage::class, $storeId)->setPublic(true);
         $container->setAlias(RequestIdGenerator::class, $genId)->setPublic(true);

@@ -17,6 +17,11 @@ final class RamseyUuid4Generator implements RequestIdGenerator
     {
     }
 
+    public static function isSupported(): bool
+    {
+        return class_exists(UuidFactory::class);
+    }
+
     public function generate(): string
     {
         return (string)$this->factory->uuid4();
