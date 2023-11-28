@@ -18,11 +18,20 @@ final class RequestIdProcessor implements ProcessorInterface
     {
     }
 
-    public function __invoke(LogRecord $record): LogRecord
+    /**
+     * @inheritDoc
+     */
+    public function __invoke(array|LogRecord $record): array|LogRecord
     {
         $id = $this->storage->getRequestId();
         if ($id !== null) {
-            $record->extra['request_id'] = $id;
+            // @codeCoverageIgnoreStart
+            if (is_array($record)) {
+                $record['extra']['request_id'] = $id;
+                // @codeCoverageIgnoreEnd
+            } else {
+                $record->extra['request_id'] = $id;
+            }
         }
 
         return $record;
