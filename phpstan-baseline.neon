@@ -24,8 +24,3 @@ parameters:
 			message: "#^Return type \\(array\\|Monolog\\\\LogRecord\\) of method DR\\\\SymfonyRequestId\\\\Monolog\\\\RequestIdProcessor\\:\\:__invoke\\(\\) should be covariant with return type \\(Monolog\\\\LogRecord\\) of method Monolog\\\\Processor\\\\ProcessorInterface\\:\\:__invoke\\(\\)$#"
 			count: 1
 			path: src/Monolog/RequestIdProcessor.php
-
-		-
-			message: "#^Cannot access property \\$extra on array\\|Monolog\\\\LogRecord\\.$#"
-			count: 3
-			path: tests/Unit/Monolog/RequestIdProcessorTest.php
