@@ -29,7 +29,7 @@ class RequestIdProcessorTest extends TestCase
         $this->idStorage->expects(static::once())->method('getRequestId')->willReturn(null);
 
         $record = ($this->processor)(new LogRecord(new DateTimeImmutable('now'), 'channel', Level::Info, 'foo'));
-
+        static::assertInstanceOf(LogRecord::class, $record);
         static::assertArrayNotHasKey('request_id', $record->extra);
     }
 
@@ -38,8 +38,18 @@ class RequestIdProcessorTest extends TestCase
         $this->idStorage->expects(static::once())->method('getRequestId')->willReturn('abc123');
 
         $record = ($this->processor)(new LogRecord(new DateTimeImmutable('now'), 'channel', Level::Info, 'foo'));
-
+        static::assertInstanceOf(LogRecord::class, $record);
         static::assertArrayHasKey('request_id', $record->extra);
         static::assertSame('abc123', $record->extra['request_id']);
+    }
+
+    public function testProcessorAddsRequestIdWhenIdIsPresentArrayFormat(): void
+    {
+        $this->idStorage->expects(static::once())->method('getRequestId')->willReturn('abc123');
+
+        $record = ($this->processor)([]);
+        static::assertIsArray($record);
+        static::assertArrayHasKey('request_id', $record['extra']);
+        static::assertSame('abc123', $record['extra']['request_id']);
     }
 }
