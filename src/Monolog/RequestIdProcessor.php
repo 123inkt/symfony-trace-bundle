@@ -25,8 +25,10 @@ final class RequestIdProcessor implements ProcessorInterface
     {
         $id = $this->storage->getRequestId();
         if ($id !== null) {
+            // @codeCoverageIgnoreStart
             if (is_array($record)) {
                 $record['extra']['request_id'] = $id;
+                // @codeCoverageIgnoreEnd
             } else {
                 $record->extra['request_id'] = $id;
             }
