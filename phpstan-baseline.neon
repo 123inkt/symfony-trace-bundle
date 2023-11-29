@@ -11,6 +11,16 @@ parameters:
 			path: src/DependencyInjection/SymfonyRequestIdExtension.php
 
 		-
+			message: "#^Method DR\\\\SymfonyRequestId\\\\Http\\\\RequestIdAwareHttpClient\\:\\:request\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Http/RequestIdAwareHttpClient.php
+
+		-
+			message: "#^Method DR\\\\SymfonyRequestId\\\\Http\\\\RequestIdAwareHttpClient\\:\\:withOptions\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Http/RequestIdAwareHttpClient.php
+
+		-
 			message: "#^Method DR\\\\SymfonyRequestId\\\\Monolog\\\\RequestIdProcessor\\:\\:__invoke\\(\\) has parameter \\$record with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Monolog/RequestIdProcessor.php
