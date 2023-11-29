@@ -9,7 +9,7 @@
          cacheDirectory=".phpunit.cache"
          requireCoverageMetadata="true">
     <php>
-        <env name="KERNEL_CLASS" value="DR\SymfonyRequestId\Tests\Acceptance\TestKernel"/>
+        <env name="KERNEL_CLASS" value="DR\SymfonyRequestId\Tests\Acceptance\App\TestKernel"/>
         <env name="SYMFONY_DEPRECATIONS_HELPER" value="max[self]=0"/>
     </php>
     <testsuites>

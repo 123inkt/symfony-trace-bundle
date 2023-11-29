@@ -6,6 +6,7 @@ namespace DR\SymfonyRequestId\Tests\Acceptance;
 
 use DR\SymfonyRequestId\RequestIdGenerator;
 use DR\SymfonyRequestId\RequestIdStorage;
+use DR\SymfonyRequestId\Tests\Acceptance\App\Monolog\MemoryHandler;
 use Exception;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\TestWith;
