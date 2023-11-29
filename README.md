@@ -79,6 +79,9 @@ return static function (SymfonyRequestIdConfig $config): void {
     // Whether to add the request id to console commands, defaults to true
     $config->enableConsole(true);
     
+    // Whether to add the request id to message bus events, defaults to true
+    $config->enableMessenger(true);
+    
     // Whether to add the twig extension, defaults to true
     $config->enableTwig(true);
 };
@@ -123,6 +126,12 @@ $monolog->handler('main')
         ->formatter('request_id_formatter')        
         ->channels()->elements(["!event"]);
 ```
+
+## Messenger Integration
+
+When enabled, the messenger middleware will add a stamp with the `request_id` of the dispatcher to the message. On the consumer
+side the middleware will add the `request_id` to the running consumer process. The `request_id` will be reset once the specific
+message has been consumed.
 
 ## Twig Integration
 
