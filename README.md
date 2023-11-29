@@ -79,8 +79,8 @@ return static function (SymfonyRequestIdConfig $config): void {
     // Whether to add the request id to console commands, defaults to true
     $config->enableConsole(true);
     
-    // Whether to add the request id to message bus events, defaults to true
-    $config->enableMessenger(true);
+    // Whether to add the request id to message bus events, defaults to false
+    $config->enableMessenger(false);
     
     // Whether to add the twig extension, defaults to true
     $config->enableTwig(true);

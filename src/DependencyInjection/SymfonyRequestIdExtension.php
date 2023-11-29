@@ -8,6 +8,7 @@ use DR\SymfonyRequestId\EventSubscriber\CommandSubscriber;
 use DR\SymfonyRequestId\EventSubscriber\RequestIdSubscriber;
 use DR\SymfonyRequestId\Generator\RamseyUuid4Generator;
 use DR\SymfonyRequestId\Generator\SymfonyUuid4Generator;
+use DR\SymfonyRequestId\Messenger\RequestIdMiddleware;
 use DR\SymfonyRequestId\Monolog\RequestIdProcessor;
 use DR\SymfonyRequestId\RequestIdGenerator;
 use DR\SymfonyRequestId\RequestIdStorage;
@@ -15,8 +16,10 @@ use DR\SymfonyRequestId\SimpleIdStorage;
 use DR\SymfonyRequestId\Twig\RequestIdExtension;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Exception\LogicException;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * @codeCoverageIgnore - This is a configuration class, tested by the acceptance test
@@ -31,6 +34,10 @@ final class SymfonyRequestIdExtension extends ConfigurableExtension
      *     response_header: string,
      *     storage_service: ?string,
      *     generator_service: ?string,
+     *     messenger: array{
+     *       enabled: bool,
+     *       buses: string[]
+     *     },
      *     enable_monolog: bool,
      *     enable_console: bool,
      *     enable_twig: bool,
@@ -86,6 +93,18 @@ final class SymfonyRequestIdExtension extends ConfigurableExtension
                 ->setArguments([new Reference($storeId), new Reference($generatorId)])
                 ->setPublic(false)
                 ->addTag('kernel.event_subscriber');
+        }
+
+        if ($mergedConfig['messenger']['enabled']) {
+            if (interface_exists(MessageBusInterface::class) === false) {
+                throw new LogicException(
+                    'Messenger support cannot be enabled as the Messenger component is not installed. ' .
+                    'Try running "composer require symfony/messenger".'
+                );
+            }
+            $container->register(RequestIdMiddleware::class);
+            $container->setParameter('digital-revolution.symfony-request-id.messenger.enabled', true);
+            $container->setParameter('digital-revolution.symfony-request-id.messenger.buses', $mergedConfig['messenger']['buses']);
         }
 
         if (class_exists('Twig\Extension\AbstractExtension') && $mergedConfig['enable_twig']) {

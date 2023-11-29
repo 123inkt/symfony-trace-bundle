@@ -24,6 +24,11 @@ symfony_request_id:
   request_header: Request-Id
   response_header: Request-Id
   trust_request_header: true
+  messenger:
+    enabled: true
+    buses:
+      - foo
+      - bar
 
 twig:
   strict_variables: "%kernel.debug%"

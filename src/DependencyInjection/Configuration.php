@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DR\SymfonyRequestId\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -49,9 +50,18 @@ class Configuration implements ConfigurationInterface
                 ->info('Whether to add the request id to console commands, defaults to true')
                 ->defaultTrue()
             ->end()
-            ->booleanNode('enable_messenger')
-                ->info('Whether to add the request id to message bus events, defaults to true')
-                ->defaultTrue()
+            ->arrayNode('messenger')
+                ->children()
+                    ->booleanNode('enabled')
+                        ->info('Whether to add the request id to message bus events, defaults to false')
+                        ->defaultFalse()
+                    ->end()
+                    ->arrayNode('buses')
+                        ->info('The buses to add the request id to, defaults to `messenger.bus.default`')
+                        ->defaultValue(['messenger.bus.default'])
+                        ->scalarPrototype()->end()
+                    ->end()
+                ->end()
             ->end()
             ->booleanNode('enable_twig')
                 ->info('Whether or not to enable the twig `request_id()` function. Only works if TwigBundle is present.')

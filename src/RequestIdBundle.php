@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace DR\SymfonyRequestId;
 
+use DR\SymfonyRequestId\DependencyInjection\CompilerPass\MessengerCompilerPass;
 use DR\SymfonyRequestId\DependencyInjection\SymfonyRequestIdExtension;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -14,6 +16,13 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 final class RequestIdBundle extends Bundle
 {
+    public function build(ContainerBuilder $container): void
+    {
+        parent::build($container);
+
+        $container->addCompilerPass(new MessengerCompilerPass(), priority: 999);
+    }
+
     /**
      * @inheritdoc
      */
