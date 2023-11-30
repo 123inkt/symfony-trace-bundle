@@ -23,7 +23,7 @@ class RequestIdAwareHttpClientTest extends TestCase
     {
         $this->client                   = $this->createMock(ScopingHttpClient::class);
         $this->storage                  = $this->createMock(RequestIdStorage::class);
-        $this->requestIdAwareHttpClient = new RequestIdAwareHttpClient($this->client, $this->storage);
+        $this->requestIdAwareHttpClient = new RequestIdAwareHttpClient($this->client, $this->storage, 'X-Request-Id');
     }
 
     public function testRequest(): void
