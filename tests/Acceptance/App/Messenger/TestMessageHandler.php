@@ -7,5 +7,6 @@ class TestMessageHandler
 {
     public function __invoke(TestMessage $message): void
     {
+        $test = true;
     }
 }

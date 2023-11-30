@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace DR\SymfonyRequestId\DependencyInjection;
 
 use DR\SymfonyRequestId\EventSubscriber\CommandSubscriber;
+use DR\SymfonyRequestId\EventSubscriber\MessageBusSubscriber;
 use DR\SymfonyRequestId\EventSubscriber\RequestIdSubscriber;
 use DR\SymfonyRequestId\Generator\RamseyUuid4Generator;
 use DR\SymfonyRequestId\Generator\SymfonyUuid4Generator;
-use DR\SymfonyRequestId\Messenger\RequestIdMiddleware;
+use DR\SymfonyRequestId\Messenger\AppendRequestIdMiddleware;
+use DR\SymfonyRequestId\Messenger\ApplyRequestIdMiddleware;
 use DR\SymfonyRequestId\Monolog\RequestIdProcessor;
 use DR\SymfonyRequestId\RequestIdGenerator;
 use DR\SymfonyRequestId\RequestIdStorage;
@@ -34,12 +36,9 @@ final class SymfonyRequestIdExtension extends ConfigurableExtension
      *     response_header: string,
      *     storage_service: ?string,
      *     generator_service: ?string,
-     *     messenger: array{
-     *       enabled: bool,
-     *       buses: string[]
-     *     },
      *     enable_monolog: bool,
      *     enable_console: bool,
+     *     enable_messenger: bool,
      *     enable_twig: bool,
      * } $mergedConfig
      */
@@ -95,16 +94,17 @@ final class SymfonyRequestIdExtension extends ConfigurableExtension
                 ->addTag('kernel.event_subscriber');
         }
 
-        if ($mergedConfig['messenger']['enabled']) {
+        if ($mergedConfig['enable_messenger']) {
             if (interface_exists(MessageBusInterface::class) === false) {
                 throw new LogicException(
                     'Messenger support cannot be enabled as the Messenger component is not installed. ' .
                     'Try running "composer require symfony/messenger".'
                 );
             }
-            $container->register(RequestIdMiddleware::class);
-            $container->setParameter('digital-revolution.symfony-request-id.messenger.enabled', true);
-            $container->setParameter('digital-revolution.symfony-request-id.messenger.buses', $mergedConfig['messenger']['buses']);
+            $container->register(MessageBusSubscriber::class)
+                ->setArguments([new Reference($storeId)])
+                ->setPublic(false)
+                ->addTag('kernel.event_subscriber');
         }
 
         if (class_exists('Twig\Extension\AbstractExtension') && $mergedConfig['enable_twig']) {
