@@ -105,7 +105,7 @@ final class SymfonyRequestIdExtension extends ConfigurableExtension
 
         $container->setParameter(self::PARAMETER_KEY . '.http_client.enabled', false);
 
-        if (class_exists(HttpClientInterface::class) && $mergedConfig['http_client']['enabled']) {
+        if (interface_exists(HttpClientInterface::class) && $mergedConfig['http_client']['enabled']) {
             $container->setParameter(self::PARAMETER_KEY . '.http_client.enabled', $mergedConfig['http_client']['enabled']);
             $container->setParameter(self::PARAMETER_KEY . '.http_client.tag_default_client', $mergedConfig['http_client']['tag_default_client']);
             $container->setParameter(self::PARAMETER_KEY . '.http_client.header', $mergedConfig['http_client']['header']);

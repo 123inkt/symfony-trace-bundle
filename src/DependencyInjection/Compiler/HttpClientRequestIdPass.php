@@ -41,7 +41,7 @@ class HttpClientRequestIdPass implements CompilerPassInterface
                     new Reference(RequestIdStorage::class),
                     new Parameter('digital_revolution.symfony_request_id.http_client.header')
                 ])
-                ->setDecoratedService($id, null, 10);
+                ->setDecoratedService($id, null, 1);
         }
     }
 }
