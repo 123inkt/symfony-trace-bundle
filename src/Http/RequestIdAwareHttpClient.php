@@ -7,13 +7,11 @@ namespace DR\SymfonyRequestId\Http;
 use DR\SymfonyRequestId\RequestIdStorage;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\Attribute\AsDecorator;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 use Symfony\Contracts\HttpClient\ResponseStreamInterface;
 use Symfony\Contracts\Service\ResetInterface;
 
-#[AsDecorator('http_client')]
 class RequestIdAwareHttpClient implements HttpClientInterface, ResetInterface, LoggerAwareInterface
 {
     public function __construct(
