@@ -21,7 +21,7 @@ class MessageBusSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Invoked just before message is send over the message bus.
+     * Invoked just before message is send to the message bus.
      */
     public function onSend(SendMessageToTransportsEvent $event): void
     {
@@ -32,7 +32,7 @@ class MessageBusSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Invoked when message is received by the worker. Also invoked when message is retried.
+     * Invoked when a message is received by the worker. Also invoked when message is retried.
      */
     public function onReceived(WorkerMessageReceivedEvent $event): void
     {
@@ -44,7 +44,7 @@ class MessageBusSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Invoked when message is handled, retried, or failed by the worker.
+     * Invoked when a message is handled, retried, or failed by the worker.
      */
     public function onHandled(): void
     {

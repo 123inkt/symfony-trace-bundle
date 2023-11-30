@@ -50,7 +50,7 @@ class Configuration implements ConfigurationInterface
                 ->info('Whether to add the request id to console commands, defaults to true')
                 ->defaultTrue()
             ->end()
-            ->booleanNode('enable_console')
+            ->booleanNode('enable_messenger')
                 ->info('Whether to add the request id to message bus events, defaults to false')
                 ->defaultFalse()
             ->end()
