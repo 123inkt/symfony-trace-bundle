@@ -17,7 +17,7 @@ use Symfony\Component\DependencyInjection\Reference;
 class HttpClientRequestIdPass implements CompilerPassInterface
 {
     /**
-     * @SuppressWarnings (PHPMD.UnusedLocalVariable)
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
     public function process(ContainerBuilder $container)
     {
