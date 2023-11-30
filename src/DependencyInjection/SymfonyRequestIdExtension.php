@@ -17,6 +17,7 @@ use RuntimeException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
  * @codeCoverageIgnore - This is a configuration class, tested by the acceptance test
@@ -34,6 +35,11 @@ final class SymfonyRequestIdExtension extends ConfigurableExtension
      *     enable_monolog: bool,
      *     enable_console: bool,
      *     enable_twig: bool,
+     *     http_client: array{
+     *         enabled: bool,
+     *         tag_default_client: bool,
+     *         header: string
+     *     }
      * } $mergedConfig
      */
     protected function loadInternal(array $mergedConfig, ContainerBuilder $container): void
@@ -93,6 +99,12 @@ final class SymfonyRequestIdExtension extends ConfigurableExtension
                 ->addArgument(new Reference($storeId))
                 ->setPublic(false)
                 ->addTag('twig.extension');
+        }
+
+        if (class_exists(HttpClientInterface::class) && $mergedConfig['http_client']['enabled']) {
+            $container->setParameter('digital_revolution.symfony_request_id.http_client.enabled', $mergedConfig['http_client']['enabled']);
+            $container->setParameter('digital_revolution.symfony_request_id.http_client.tag_default_client', $mergedConfig['http_client']['tag_default_client']);
+            $container->setParameter('digital_revolution.symfony_request_id.http_client.header', $mergedConfig['http_client']['header']);
         }
     }
 }
