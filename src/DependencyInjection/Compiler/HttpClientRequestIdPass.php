@@ -16,6 +16,9 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 class HttpClientRequestIdPass implements CompilerPassInterface
 {
+    /**
+     * @SuppressWarnings (PHPMD.UnusedLocalVariable)
+     */
     public function process(ContainerBuilder $container)
     {
         if ($container->getParameter('digital_revolution.symfony_request_id.http_client.enabled') === false) {
