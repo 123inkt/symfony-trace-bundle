@@ -103,6 +103,8 @@ final class SymfonyRequestIdExtension extends ConfigurableExtension
                 ->addTag('twig.extension');
         }
 
+        $container->setParameter(self::PARAMETER_KEY . '.http_client.enabled', false);
+
         if (class_exists(HttpClientInterface::class) && $mergedConfig['http_client']['enabled']) {
             $container->setParameter(self::PARAMETER_KEY . '.http_client.enabled', $mergedConfig['http_client']['enabled']);
             $container->setParameter(self::PARAMETER_KEY . '.http_client.tag_default_client', $mergedConfig['http_client']['tag_default_client']);
