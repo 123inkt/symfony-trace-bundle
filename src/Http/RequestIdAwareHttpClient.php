@@ -16,8 +16,11 @@ use Symfony\Contracts\Service\ResetInterface;
 #[AsDecorator('http_client')]
 class RequestIdAwareHttpClient implements HttpClientInterface, ResetInterface, LoggerAwareInterface
 {
-    public function __construct(private HttpClientInterface $client, private readonly RequestIdStorage $storage, private readonly string $requestIdHeader)
-    {
+    public function __construct(
+        private HttpClientInterface $client,
+        private readonly RequestIdStorage $storage,
+        private readonly string $requestIdHeader
+    ) {
     }
 
     public function request(string $method, string $url, array $options = []): ResponseInterface

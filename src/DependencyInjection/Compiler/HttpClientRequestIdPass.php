@@ -25,8 +25,7 @@ class HttpClientRequestIdPass implements CompilerPassInterface
             return;
         }
 
-        if (
-            $container->getParameter('digital_revolution.symfony_request_id.http_client.tag_default_client') === true &&
+        if ($container->getParameter('digital_revolution.symfony_request_id.http_client.tag_default_client') === true &&
             $container->hasDefinition('http_client')
         ) {
             $container->getDefinition('http_client')

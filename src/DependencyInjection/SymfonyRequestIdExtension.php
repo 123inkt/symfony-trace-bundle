@@ -25,6 +25,8 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  */
 final class SymfonyRequestIdExtension extends ConfigurableExtension
 {
+    public const PARAMETER_KEY = 'digital_revolution.symfony_request_id';
+
     /**
      * @param array{
      *     request_header: string,
@@ -102,9 +104,9 @@ final class SymfonyRequestIdExtension extends ConfigurableExtension
         }
 
         if (class_exists(HttpClientInterface::class) && $mergedConfig['http_client']['enabled']) {
-            $container->setParameter('digital_revolution.symfony_request_id.http_client.enabled', $mergedConfig['http_client']['enabled']);
-            $container->setParameter('digital_revolution.symfony_request_id.http_client.tag_default_client', $mergedConfig['http_client']['tag_default_client']);
-            $container->setParameter('digital_revolution.symfony_request_id.http_client.header', $mergedConfig['http_client']['header']);
+            $container->setParameter(self::PARAMETER_KEY . '.http_client.enabled', $mergedConfig['http_client']['enabled']);
+            $container->setParameter(self::PARAMETER_KEY . '.http_client.tag_default_client', $mergedConfig['http_client']['tag_default_client']);
+            $container->setParameter(self::PARAMETER_KEY . '.http_client.header', $mergedConfig['http_client']['header']);
         }
     }
 }
