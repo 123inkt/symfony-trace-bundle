@@ -9,8 +9,6 @@ use DR\SymfonyRequestId\EventSubscriber\MessageBusSubscriber;
 use DR\SymfonyRequestId\EventSubscriber\RequestIdSubscriber;
 use DR\SymfonyRequestId\Generator\RamseyUuid4Generator;
 use DR\SymfonyRequestId\Generator\SymfonyUuid4Generator;
-use DR\SymfonyRequestId\Messenger\AppendRequestIdMiddleware;
-use DR\SymfonyRequestId\Messenger\ApplyRequestIdMiddleware;
 use DR\SymfonyRequestId\Monolog\RequestIdProcessor;
 use DR\SymfonyRequestId\RequestIdGenerator;
 use DR\SymfonyRequestId\RequestIdStorage;
