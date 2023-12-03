@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace DR\SymfonyRequestId\Tests\Acceptance;
 
 use DR\SymfonyRequestId\RequestIdStorageInterface;
-use DR\SymfonyRequestId\SimpleIdStorage;
 use Exception;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
@@ -23,8 +22,9 @@ class ApplicationTest extends KernelTestCase
     public function testCommandShouldSetRequestId(): void
     {
         $application = new Application(static::bootKernel(['environment' => 'test', 'debug' => false]));
-        /** @var RequestIdStorageInterface $storage */
-        $storage = self::getContainer()->get(SimpleIdStorage::class);
+
+        $storage = self::getContainer()->get('request.id.storage');
+        static::assertInstanceOf(RequestIdStorageInterface::class, $storage);
 
         $input  = new ArrayInput(['help']);
         $output = new NullOutput();
