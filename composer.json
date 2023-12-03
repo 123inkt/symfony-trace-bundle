@@ -21,6 +21,7 @@
         "symfony/framework-bundle": "^6.3"
     },
     "require-dev": {
+        "digitalrevolution/phpunit-extensions": "^1.2",
         "digitalrevolution/phpunit-file-coverage-inspection": "^v2.0.0",
         "digitalrevolution/utils": "^1.9",
         "phpmd/phpmd": "^2.14",
