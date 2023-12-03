@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace DR\SymfonyRequestId\EventSubscriber;
 
-use DR\SymfonyRequestId\RequestIdGenerator;
-use DR\SymfonyRequestId\RequestIdStorage;
+use DR\SymfonyRequestId\RequestIdGeneratorInterface;
+use DR\SymfonyRequestId\RequestIdStorageInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
@@ -18,18 +18,18 @@ use Symfony\Component\HttpKernel\KernelEvents;
 final class RequestIdSubscriber implements EventSubscriberInterface
 {
     /**
-     * @param string             $requestHeader  The header to inspect for the incoming request ID.
-     * @param string             $responseHeader The header that will contain the request ID in the response.
-     * @param bool               $trustRequest   Trust the value from the request? Or generate?
-     * @param RequestIdStorage   $idStorage      The request ID storage, used to store the ID from the request or a newly generated ID.
-     * @param RequestIdGenerator $idGenerator    Used to generate a request ID if one isn't present.
+     * @param string                      $requestHeader  The header to inspect for the incoming request ID.
+     * @param string                      $responseHeader The header that will contain the request ID in the response.
+     * @param bool                        $trustRequest   Trust the value from the request? Or generate?
+     * @param RequestIdStorageInterface   $idStorage      The request ID storage, used to store the ID from the request or a newly generated ID.
+     * @param RequestIdGeneratorInterface $idGenerator    Used to generate a request ID if one isn't present.
      */
     public function __construct(
         private readonly string $requestHeader,
         private readonly string $responseHeader,
         private readonly bool $trustRequest,
-        private readonly RequestIdStorage $idStorage,
-        private readonly RequestIdGenerator $idGenerator
+        private readonly RequestIdStorageInterface $idStorage,
+        private readonly RequestIdGeneratorInterface $idGenerator
     ) {
     }
 

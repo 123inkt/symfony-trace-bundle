@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace DR\SymfonyRequestId\EventSubscriber;
 
-use DR\SymfonyRequestId\RequestIdGenerator;
-use DR\SymfonyRequestId\RequestIdStorage;
+use DR\SymfonyRequestId\RequestIdGeneratorInterface;
+use DR\SymfonyRequestId\RequestIdStorageInterface;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -14,7 +14,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 final class CommandSubscriber implements EventSubscriberInterface
 {
-    public function __construct(private readonly RequestIdStorage $requestIdStorage, private readonly RequestIdGenerator $generator)
+    public function __construct(private readonly RequestIdStorageInterface $requestIdStorage, private readonly RequestIdGeneratorInterface $generator)
     {
     }
 

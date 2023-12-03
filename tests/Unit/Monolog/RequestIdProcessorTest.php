@@ -5,7 +5,7 @@ namespace DR\SymfonyRequestId\Tests\Unit\Monolog;
 
 use DateTimeImmutable;
 use DR\SymfonyRequestId\Monolog\RequestIdProcessor;
-use DR\SymfonyRequestId\RequestIdStorage;
+use DR\SymfonyRequestId\RequestIdStorageInterface;
 use Monolog\Level;
 use Monolog\Logger;
 use Monolog\LogRecord;
@@ -16,12 +16,12 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(RequestIdProcessor::class)]
 class RequestIdProcessorTest extends TestCase
 {
-    private RequestIdStorage&MockObject $idStorage;
+    private RequestIdStorageInterface&MockObject $idStorage;
     private RequestIdProcessor $processor;
 
     protected function setUp(): void
     {
-        $this->idStorage = $this->createMock(RequestIdStorage::class);
+        $this->idStorage = $this->createMock(RequestIdStorageInterface::class);
         $this->processor = new RequestIdProcessor($this->idStorage);
     }
 

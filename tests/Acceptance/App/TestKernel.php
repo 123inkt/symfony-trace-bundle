@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Tests\Acceptance;
+namespace DR\SymfonyRequestId\Tests\Acceptance\App;
 
 use DR\SymfonyRequestId\RequestIdBundle;
 use Exception;
@@ -32,17 +32,17 @@ final class TestKernel extends Kernel
      */
     public function registerContainerConfiguration(LoaderInterface $loader): void
     {
-        $loader->load($this->getProjectDir() . "/app/config/config.yml");
+        $loader->load($this->getProjectDir() . "/config/config.yml");
     }
 
     public function getLogDir(): string
     {
-        return dirname(__DIR__, 2) . '/tmp';
+        return dirname(__DIR__, 3) . '/tmp';
     }
 
     public function getCacheDir(): string
     {
-        return dirname(__DIR__, 2) . '/tmp';
+        return dirname(__DIR__, 3) . '/tmp';
     }
 
     public function getProjectDir(): string

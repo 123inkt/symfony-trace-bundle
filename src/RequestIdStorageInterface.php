@@ -7,7 +7,7 @@ namespace DR\SymfonyRequestId;
 /**
  * Stores the identifiers for the request.
  */
-interface RequestIdStorage
+interface RequestIdStorageInterface
 {
     /**
      * @return string|null Null if the request does not have an identifier

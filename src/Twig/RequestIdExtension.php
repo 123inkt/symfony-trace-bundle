@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DR\SymfonyRequestId\Twig;
 
-use DR\SymfonyRequestId\RequestIdStorage;
+use DR\SymfonyRequestId\RequestIdStorageInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -14,7 +14,7 @@ use Twig\TwigFunction;
  */
 final class RequestIdExtension extends AbstractExtension
 {
-    public function __construct(private readonly RequestIdStorage $storage)
+    public function __construct(private readonly RequestIdStorageInterface $storage)
     {
     }
 
