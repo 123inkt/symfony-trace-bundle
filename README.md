@@ -129,9 +129,9 @@ $monolog->handler('main')
 
 ## Messenger Integration
 
-When enabled, the messenger middleware will add a stamp with the `request_id` of the dispatcher to the message. On the consumer
-side the middleware will add the `request_id` to the running consumer process. The `request_id` will be reset once the specific
-message has been consumed.
+When enabled, the `request_id` of the dispatcher process, will be added to the `Envelope` of the message. On the consumer
+side the `request_id` will be applied to the running consumer process. Once the `Envelope` has been handled, the `request_id` 
+will be reset to the original `request_id` of the consumer process (if any).
 
 ## Twig Integration
 
