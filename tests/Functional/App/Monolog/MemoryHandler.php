@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Tests\Acceptance\App\Monolog;
+namespace DR\SymfonyRequestId\Tests\Functional\App\Monolog;
 
 use Countable;
 use DR\Utils\Assert;

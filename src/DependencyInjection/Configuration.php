@@ -9,7 +9,7 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 /**
- * @codeCoverageIgnore - This is a configuration class, tested by the acceptance test
+ * @codeCoverageIgnore - This is a configuration class, tested by the functional test
  * @internal
  */
 class Configuration implements ConfigurationInterface

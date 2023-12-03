@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Tests\Acceptance\App\EventSubscriber;
+namespace DR\SymfonyRequestId\Tests\Functional\App\EventSubscriber;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\Event\WorkerRunningEvent;

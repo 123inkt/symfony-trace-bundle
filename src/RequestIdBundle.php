@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
- * @codeCoverageIgnore - This is a bundle class, tested by the acceptance test
+ * @codeCoverageIgnore - This is a bundle class, tested by the functional test
  */
 final class RequestIdBundle extends Bundle
 {

@@ -26,6 +26,6 @@ parameters:
 			path: src/Monolog/RequestIdProcessor.php
 
 		-
-			message: "#^Method DR\\\\SymfonyRequestId\\\\Tests\\\\Acceptance\\\\App\\\\Monolog\\\\MemoryHandler\\:\\:write\\(\\) has parameter \\$record with no value type specified in iterable type array\\.$#"
+			message: "#^Method DR\\\\SymfonyRequestId\\\\Tests\\\\Functional\\\\App\\\\Monolog\\\\MemoryHandler\\:\\:write\\(\\) has parameter \\$record with no value type specified in iterable type array\\.$#"
 			count: 1
-			path: tests/Acceptance/App/Monolog/MemoryHandler.php
+			path: tests/Functional/App/Monolog/MemoryHandler.php

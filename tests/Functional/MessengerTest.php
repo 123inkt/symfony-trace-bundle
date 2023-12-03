@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Tests\Acceptance;
+namespace DR\SymfonyRequestId\Tests\Functional;
 
 use DR\SymfonyRequestId\Messenger\RequestIdStamp;
 use DR\SymfonyRequestId\RequestIdStorageInterface;
-use DR\SymfonyRequestId\Tests\Acceptance\App\Messenger\TestMessage;
-use DR\SymfonyRequestId\Tests\Acceptance\App\Service\TestRequestIdStorage;
+use DR\SymfonyRequestId\Tests\Functional\App\Messenger\TestMessage;
+use DR\SymfonyRequestId\Tests\Functional\App\Service\TestRequestIdStorage;
 use DR\Utils\Assert;
 use Exception;
 use PHPUnit\Framework\Attributes\CoversNothing;

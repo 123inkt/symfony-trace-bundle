@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Tests\Acceptance;
+namespace DR\SymfonyRequestId\Tests\Functional;
 
 use DR\SymfonyRequestId\RequestIdGeneratorInterface;
 use DR\SymfonyRequestId\RequestIdStorageInterface;
-use DR\SymfonyRequestId\Tests\Acceptance\App\Monolog\MemoryHandler;
+use DR\SymfonyRequestId\Tests\Functional\App\Monolog\MemoryHandler;
 use Exception;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\TestWith;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 #[CoversNothing]
-class AcceptanceTest extends WebTestCase
+class RequestHandleTest extends WebTestCase
 {
     /**
      * @throws Exception
