@@ -6,7 +6,7 @@ parameters:
 			path: src/DependencyInjection/Configuration.php
 
 		-
-			message: "#^Parameter \\#1 \\$mergedConfig \\(array\\{request_header\\: string, trust_request_header\\: bool, response_header\\: string, storage_service\\: string\\|null, generator_service\\: string\\|null, enable_monolog\\: bool, enable_console\\: bool, enable_twig\\: bool\\}\\) of method DR\\\\SymfonyRequestId\\\\DependencyInjection\\\\SymfonyRequestIdExtension\\:\\:loadInternal\\(\\) should be contravariant with parameter \\$mergedConfig \\(array\\) of method Symfony\\\\Component\\\\HttpKernel\\\\DependencyInjection\\\\ConfigurableExtension\\:\\:loadInternal\\(\\)$#"
+			message: "#^Parameter \\#1 \\$mergedConfig \\(array\\{request_header\\: string, trust_request_header\\: bool, response_header\\: string, storage_service\\: string\\|null, generator_service\\: string\\|null, enable_monolog\\: bool, enable_console\\: bool, enable_messenger\\: bool, \\.\\.\\.\\}\\) of method DR\\\\SymfonyRequestId\\\\DependencyInjection\\\\SymfonyRequestIdExtension\\:\\:loadInternal\\(\\) should be contravariant with parameter \\$mergedConfig \\(array\\) of method Symfony\\\\Component\\\\HttpKernel\\\\DependencyInjection\\\\ConfigurableExtension\\:\\:loadInternal\\(\\)$#"
 			count: 1
 			path: src/DependencyInjection/SymfonyRequestIdExtension.php
 
