@@ -8,6 +8,9 @@ use Symfony\Component\Messenger\Stamp\StampInterface;
 
 class RequestIdStamp implements StampInterface
 {
+    /**
+     * @codeCoverageIgnore - Simple DTO
+     */
     public function __construct(public readonly string $requestId)
     {
     }
