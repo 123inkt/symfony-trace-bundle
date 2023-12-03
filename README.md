@@ -47,7 +47,7 @@ return [
 declare(strict_types=1);
 
 use DR\SymfonyRequestId\Generator\RamseyUuid4Generator;
-use DR\SymfonyRequestId\RequestId\SimpleIdStorageInterface;
+use DR\SymfonyRequestId\RequestId\SimpleIdStorage;
 use Symfony\Config\SymfonyRequestIdConfig;
 
 return static function (SymfonyRequestIdConfig $config): void {
@@ -66,7 +66,7 @@ return static function (SymfonyRequestIdConfig $config): void {
 
     // The service key of an object that implements
     // DR\SymfonyRequestId\RequestIdStorageInterface
-    $config->storageService(SimpleIdStorageInterface::class);
+    $config->storageService(SimpleIdStorage::class);
 
     // The service key of an object that implements
     // DR\SymfonyRequestId\RequestIdGeneratorInterface
