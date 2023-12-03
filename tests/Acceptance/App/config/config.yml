@@ -42,10 +42,6 @@ services:
     class: DR\SymfonyRequestId\Tests\Acceptance\App\Monolog\MemoryHandler
     calls:
       - [ setFormatter, [ "@log.formatter" ] ]
-  message.handler:
-    class: DR\SymfonyRequestId\Tests\Acceptance\App\Messenger\TestMessageHandler
-    tags:
-      - { name: messenger.message_handler, from_transport: test_transport, method: __invoke }
   request.id.storage:
     class: DR\SymfonyRequestId\Tests\Acceptance\App\Service\TestRequestIdStorage
   stop.worker.event-subscriber:

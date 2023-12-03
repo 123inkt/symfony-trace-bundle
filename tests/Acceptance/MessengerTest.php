@@ -7,7 +7,7 @@ namespace DR\SymfonyRequestId\Tests\Acceptance;
 use DR\SymfonyRequestId\Messenger\RequestIdStamp;
 use DR\SymfonyRequestId\RequestIdStorageInterface;
 use DR\SymfonyRequestId\Tests\Acceptance\App\Messenger\TestMessage;
-use DR\SymfonyRequestId\Tests\Acceptance\App\Service\TestRequestIdStorageInterface;
+use DR\SymfonyRequestId\Tests\Acceptance\App\Service\TestRequestIdStorage;
 use DR\Utils\Assert;
 use Exception;
 use PHPUnit\Framework\Attributes\CoversNothing;
@@ -23,7 +23,7 @@ use Symfony\Component\Messenger\Worker;
 #[CoversNothing]
 class MessengerTest extends KernelTestCase
 {
-    private TestRequestIdStorageInterface $storage;
+    private TestRequestIdStorage $storage;
     private MessageBusInterface $bus;
     private EventDispatcherInterface $dispatcher;
     private InMemoryTransport $transport;
@@ -32,7 +32,7 @@ class MessengerTest extends KernelTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->storage    = Assert::isInstanceOf(self::getContainer()->get(RequestIdStorageInterface::class), TestRequestIdStorageInterface::class);
+        $this->storage    = Assert::isInstanceOf(self::getContainer()->get(RequestIdStorageInterface::class), TestRequestIdStorage::class);
         $this->bus        = Assert::isInstanceOf(self::getContainer()->get(MessageBusInterface::class), MessageBusInterface::class);
         $this->dispatcher = Assert::isInstanceOf(self::getContainer()->get('event_dispatcher'), EventDispatcherInterface::class);
         $this->transport  = Assert::isInstanceOf(self::getContainer()->get('messenger.transport.test_transport'), InMemoryTransport::class);
@@ -67,7 +67,7 @@ class MessengerTest extends KernelTestCase
         static::assertSame('foobar', $stamp->requestId);
     }
 
-    private static function assertStorageHasRequestId(TestRequestIdStorageInterface $storage): void
+    private static function assertStorageHasRequestId(TestRequestIdStorage $storage): void
     {
         // expect 5: 1x dispatch, 1x receive, 1x handled, 1x dispatch, 1x receive
         static::assertSame(5, $storage->getRequestIdCount);

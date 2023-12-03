@@ -5,7 +5,7 @@ namespace DR\SymfonyRequestId\Tests\Acceptance\App\Service;
 
 use DR\SymfonyRequestId\RequestIdStorageInterface;
 
-class TestRequestIdStorageInterface implements RequestIdStorageInterface
+class TestRequestIdStorage implements RequestIdStorageInterface
 {
     public int $setRequestIdCount = 0;
     public int $getRequestIdCount = 0;
