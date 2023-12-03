@@ -11,7 +11,7 @@ framework:
     utf8: true
   messenger:
     transports:
-      test_transport: 'sync://'
+      test_transport: 'in-memory://'
     routing:
       DR\SymfonyRequestId\Tests\Acceptance\App\Messenger\TestMessage: test_transport
   http_method_override: false
@@ -24,6 +24,7 @@ symfony_request_id:
   request_header: Request-Id
   response_header: Request-Id
   trust_request_header: true
+  storage_service: request.id.storage
   enable_messenger: true
 
 twig:
@@ -45,6 +46,12 @@ services:
     class: DR\SymfonyRequestId\Tests\Acceptance\App\Messenger\TestMessageHandler
     tags:
       - { name: messenger.message_handler, from_transport: test_transport, method: __invoke }
+  request.id.storage:
+    class: DR\SymfonyRequestId\Tests\Acceptance\App\Service\TestRequestIdStorage
+  stop.worker.event-subscriber:
+    class: DR\SymfonyRequestId\Tests\Acceptance\App\EventSubscriber\StopWorkerEventSubscriber
+    tags:
+      - { name: kernel.event_subscriber }
 
 monolog:
   handlers:
