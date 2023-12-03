@@ -22,7 +22,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
- * @codeCoverageIgnore - This is a configuration class, tested by the acceptance test
+ * @codeCoverageIgnore - This is a configuration class, tested by the functional test
  * @internal
  */
 final class SymfonyRequestIdExtension extends ConfigurableExtension

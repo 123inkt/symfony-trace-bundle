@@ -13,7 +13,7 @@ framework:
     transports:
       test_transport: 'in-memory://'
     routing:
-      DR\SymfonyRequestId\Tests\Acceptance\App\Messenger\TestMessage: test_transport
+      DR\SymfonyRequestId\Tests\Functional\App\Messenger\TestMessage: test_transport
   http_method_override: false
   php_errors:
     log: true
@@ -39,13 +39,13 @@ services:
       - "[%%level_name%% - %%extra.request_id%%] %%message%%"
   log.memory_handler:
     public: true
-    class: DR\SymfonyRequestId\Tests\Acceptance\App\Monolog\MemoryHandler
+    class: DR\SymfonyRequestId\Tests\Functional\App\Monolog\MemoryHandler
     calls:
       - [ setFormatter, [ "@log.formatter" ] ]
   request.id.storage:
-    class: DR\SymfonyRequestId\Tests\Acceptance\App\Service\TestRequestIdStorage
+    class: DR\SymfonyRequestId\Tests\Functional\App\Service\TestRequestIdStorage
   stop.worker.event-subscriber:
-    class: DR\SymfonyRequestId\Tests\Acceptance\App\EventSubscriber\StopWorkerEventSubscriber
+    class: DR\SymfonyRequestId\Tests\Functional\App\EventSubscriber\StopWorkerEventSubscriber
     tags:
       - { name: kernel.event_subscriber }
 

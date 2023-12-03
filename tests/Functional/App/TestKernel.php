@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Tests\Acceptance\App;
+namespace DR\SymfonyRequestId\Tests\Functional\App;
 
 use DR\SymfonyRequestId\RequestIdBundle;
 use Exception;

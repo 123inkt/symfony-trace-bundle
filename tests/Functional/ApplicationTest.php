@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Tests\Acceptance;
+namespace DR\SymfonyRequestId\Tests\Functional;
 
 use DR\SymfonyRequestId\RequestIdStorageInterface;
 use Exception;
