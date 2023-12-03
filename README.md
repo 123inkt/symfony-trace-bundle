@@ -1,4 +1,6 @@
 [![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%208.1-8892BF)](https://php.net/)
+[![Minimum Symfony Version](https://img.shields.io/badge/symfony-%3E%3D%206.3-brightgreen)](https://symfony.com/doc/current/validation.html)
+![Run tests](https://github.com/123inkt/symfony-request-id/actions/workflows/test.yml/badge.svg)
 
 # Symfony Request Id
 
