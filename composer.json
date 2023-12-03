@@ -69,6 +69,7 @@
     },
     "suggest": {
         "ramsey/uuid": "Ramsey's UUID generator",
+        "symfony/messenger": "Symfony's messenger",
         "symfony/uid": "Symfony's UUID generator"
     }
 }
