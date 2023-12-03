@@ -7,8 +7,8 @@ namespace DR\SymfonyRequestId\DependencyInjection;
 use DR\SymfonyRequestId\EventSubscriber\CommandSubscriber;
 use DR\SymfonyRequestId\EventSubscriber\MessageBusSubscriber;
 use DR\SymfonyRequestId\EventSubscriber\RequestIdSubscriber;
-use DR\SymfonyRequestId\Generator\RamseyUuid4GeneratorInterface;
-use DR\SymfonyRequestId\Generator\SymfonyUuid4GeneratorInterface;
+use DR\SymfonyRequestId\Generator\RamseyUuid4Generator;
+use DR\SymfonyRequestId\Generator\SymfonyUuid4Generator;
 use DR\SymfonyRequestId\Monolog\RequestIdProcessor;
 use DR\SymfonyRequestId\RequestIdGeneratorInterface;
 use DR\SymfonyRequestId\RequestIdStorageInterface;
@@ -48,18 +48,18 @@ final class SymfonyRequestIdExtension extends ConfigurableExtension
         // configure generator service
         if (isset($mergedConfig['generator_service'])) {
             $generatorId = $mergedConfig['generator_service'];
-        } elseif (RamseyUuid4GeneratorInterface::isSupported()) {
-            $generatorId = RamseyUuid4GeneratorInterface::class;
-        } elseif (SymfonyUuid4GeneratorInterface::isSupported()) {
-            $generatorId = SymfonyUuid4GeneratorInterface::class;
+        } elseif (RamseyUuid4Generator::isSupported()) {
+            $generatorId = RamseyUuid4Generator::class;
+        } elseif (SymfonyUuid4Generator::isSupported()) {
+            $generatorId = SymfonyUuid4Generator::class;
         } else {
             throw new RuntimeException('No generator service found. Please install symfony/uid or ramsey/uuid');
         }
 
-        if ($generatorId === RamseyUuid4GeneratorInterface::class) {
-            $container->register(RamseyUuid4GeneratorInterface::class)->setPublic(false);
-        } elseif ($generatorId === SymfonyUuid4GeneratorInterface::class) {
-            $container->register(SymfonyUuid4GeneratorInterface::class)->setPublic(false);
+        if ($generatorId === RamseyUuid4Generator::class) {
+            $container->register(RamseyUuid4Generator::class)->setPublic(false);
+        } elseif ($generatorId === SymfonyUuid4Generator::class) {
+            $container->register(SymfonyUuid4Generator::class)->setPublic(false);
         }
 
         $container->setAlias(RequestIdStorageInterface::class, $storeId)->setPublic(true);

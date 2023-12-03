@@ -46,7 +46,7 @@ return [
 <?php
 declare(strict_types=1);
 
-use DR\SymfonyRequestId\Generator\RamseyUuid4GeneratorInterface;
+use DR\SymfonyRequestId\Generator\RamseyUuid4Generator;
 use DR\SymfonyRequestId\RequestId\SimpleIdStorageInterface;
 use Symfony\Config\SymfonyRequestIdConfig;
 
@@ -71,7 +71,7 @@ return static function (SymfonyRequestIdConfig $config): void {
     // The service key of an object that implements
     // DR\SymfonyRequestId\RequestIdGeneratorInterface
     // Optional, will default to Symfony's Uuid or Ramsey's Uuid.
-    $config->generatorService(RamseyUuid4GeneratorInterface::class);
+    $config->generatorService(RamseyUuid4Generator::class);
 
     // Whether to add the monolog process, defaults to true
     $config->enableMonolog(true);

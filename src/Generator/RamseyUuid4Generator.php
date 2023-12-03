@@ -11,7 +11,7 @@ use Ramsey\Uuid\UuidFactoryInterface;
 /**
  * Uses `ramsey/uuid` to generator v4 UUIDs for request ids.
  */
-final class RamseyUuid4GeneratorInterface implements RequestIdGeneratorInterface
+final class RamseyUuid4Generator implements RequestIdGeneratorInterface
 {
     public function __construct(private readonly UuidFactoryInterface $factory = new UuidFactory())
     {

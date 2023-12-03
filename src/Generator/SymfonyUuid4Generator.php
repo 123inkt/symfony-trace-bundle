@@ -11,7 +11,7 @@ use Symfony\Component\Uid\UuidV4;
 /**
  * Uses symfony/uid to generate a UUIDv4 request ID.
  */
-final class SymfonyUuid4GeneratorInterface implements RequestIdGeneratorInterface
+final class SymfonyUuid4Generator implements RequestIdGeneratorInterface
 {
     public function __construct(private readonly UuidFactory $factory = new UuidFactory(UuidV4::class, UuidV4::class, UuidV4::class, UuidV4::class))
     {
