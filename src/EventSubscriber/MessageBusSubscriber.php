@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace DR\SymfonyRequestId\EventSubscriber;
 
 use DR\SymfonyRequestId\Messenger\RequestIdStamp;
-use DR\SymfonyRequestId\RequestIdStorage;
+use DR\SymfonyRequestId\RequestIdStorageInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\Event\SendMessageToTransportsEvent;
 use Symfony\Component\Messenger\Event\WorkerMessageFailedEvent;
@@ -12,11 +12,16 @@ use Symfony\Component\Messenger\Event\WorkerMessageHandledEvent;
 use Symfony\Component\Messenger\Event\WorkerMessageReceivedEvent;
 use Symfony\Component\Messenger\Event\WorkerMessageRetriedEvent;
 
+/**
+ * Listen for messages being sent and received by the message bus. Adding a stamp on send
+ * and applying (and restoring) the request ID from the stamp on receive.
+ * @internal
+ */
 class MessageBusSubscriber implements EventSubscriberInterface
 {
     private string|false|null $originalRequestId = false;
 
-    public function __construct(private readonly RequestIdStorage $storage)
+    public function __construct(private readonly RequestIdStorageInterface $storage)
     {
     }
 

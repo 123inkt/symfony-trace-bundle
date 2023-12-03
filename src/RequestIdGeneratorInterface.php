@@ -8,7 +8,7 @@ namespace DR\SymfonyRequestId;
  * Generates new (hopefully) unique request ID's for incoming requests if they
  * lack an ID.
  */
-interface RequestIdGenerator
+interface RequestIdGeneratorInterface
 {
     /**
      * Create a new request ID.

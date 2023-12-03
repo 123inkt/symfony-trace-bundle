@@ -6,7 +6,7 @@ namespace DR\SymfonyRequestId\Messenger;
 
 use Symfony\Component\Messenger\Stamp\StampInterface;
 
-class RequestIdStamp implements StampInterface
+final class RequestIdStamp implements StampInterface
 {
     /**
      * @codeCoverageIgnore - Simple DTO

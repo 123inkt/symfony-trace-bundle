@@ -10,7 +10,6 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
  * @codeCoverageIgnore - This is a bundle class, tested by the acceptance test
- * @internal
  */
 final class RequestIdBundle extends Bundle
 {
