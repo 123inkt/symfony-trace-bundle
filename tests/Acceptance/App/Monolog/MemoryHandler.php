@@ -9,15 +9,20 @@ use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\LogRecord;
 
 use function count;
+use function is_array;
 
 final class MemoryHandler extends AbstractProcessingHandler implements Countable
 {
     /** @var string[] */
     private array $logs = [];
 
-    protected function write(LogRecord $record): void
+    protected function write(array|LogRecord $record): void
     {
-        $this->logs[] = Assert::string($record->formatted);
+        if (is_array($record)) {
+            $this->logs[] = Assert::string($record['formatted']);
+        } else {
+            $this->logs[] = Assert::string($record->formatted);
+        }
     }
 
     public function count(): int
