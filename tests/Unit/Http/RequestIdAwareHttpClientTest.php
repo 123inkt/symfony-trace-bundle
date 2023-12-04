@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace DR\SymfonyRequestId\Tests\Unit\Http;
 
 use DR\SymfonyRequestId\Http\RequestIdAwareHttpClient;
-use DR\SymfonyRequestId\RequestIdStorage;
+use DR\SymfonyRequestId\RequestIdStorageInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -16,13 +16,13 @@ use Symfony\Component\HttpClient\ScopingHttpClient;
 class RequestIdAwareHttpClientTest extends TestCase
 {
     private ScopingHttpClient&MockObject $client;
-    private RequestIdStorage&MockObject $storage;
+    private RequestIdStorageInterface&MockObject $storage;
     private RequestIdAwareHttpClient $requestIdAwareHttpClient;
 
     protected function setUp(): void
     {
         $this->client                   = $this->createMock(ScopingHttpClient::class);
-        $this->storage                  = $this->createMock(RequestIdStorage::class);
+        $this->storage                  = $this->createMock(RequestIdStorageInterface::class);
         $this->requestIdAwareHttpClient = new RequestIdAwareHttpClient($this->client, $this->storage, 'X-Request-Id');
     }
 
