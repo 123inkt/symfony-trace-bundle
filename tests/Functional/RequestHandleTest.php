@@ -2,17 +2,18 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Tests\Acceptance;
+namespace DR\SymfonyRequestId\Tests\Functional;
 
-use DR\SymfonyRequestId\RequestIdGenerator;
-use DR\SymfonyRequestId\RequestIdStorage;
+use DR\SymfonyRequestId\RequestIdGeneratorInterface;
+use DR\SymfonyRequestId\RequestIdStorageInterface;
+use DR\SymfonyRequestId\Tests\Functional\App\Monolog\MemoryHandler;
 use Exception;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\TestWith;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 #[CoversNothing]
-class AcceptanceTest extends WebTestCase
+class RequestHandleTest extends WebTestCase
 {
     /**
      * @throws Exception
@@ -26,7 +27,7 @@ class AcceptanceTest extends WebTestCase
 
         $response = $client->getResponse();
         static::assertSame('testId', $response->headers->get('Request-Id'));
-        static::assertSame('testId', self::getService(RequestIdStorage::class)->getRequestId());
+        static::assertSame('testId', self::getService(RequestIdStorageInterface::class)->getRequestId());
         self::assertLogsHaveRequestId('testId');
         static::assertGreaterThan(
             0,
@@ -41,7 +42,7 @@ class AcceptanceTest extends WebTestCase
     public function testAlreadySetRequestIdUsesValueFromStorage(): void
     {
         $client = self::createClient();
-        self::getService(RequestIdStorage::class)->setRequestId('abc123');
+        self::getService(RequestIdStorageInterface::class)->setRequestId('abc123');
 
         $crawler = $client->request('GET', '/');
         static::assertResponseIsSuccessful();
@@ -65,7 +66,7 @@ class AcceptanceTest extends WebTestCase
         $crawler = $client->request('GET', '/');
         static::assertResponseIsSuccessful();
 
-        $id = self::getService(RequestIdStorage::class)->getRequestId();
+        $id = self::getService(RequestIdStorageInterface::class)->getRequestId();
         static::assertNotEmpty($id);
         static::assertSame($id, $client->getResponse()->headers->get('Request-Id'));
         static::assertSame($id, $client->getRequest()->headers->get('Request-Id'));
@@ -82,8 +83,8 @@ class AcceptanceTest extends WebTestCase
      *
      * @throws Exception
      */
-    #[TestWith([RequestIdStorage::class])]
-    #[TestWith([RequestIdGenerator::class])]
+    #[TestWith([RequestIdStorageInterface::class])]
+    #[TestWith([RequestIdGeneratorInterface::class])]
     public function testExpectedServicesArePubliclyAvailableFromTheContainer(string $class): void
     {
         /** @var object $service */

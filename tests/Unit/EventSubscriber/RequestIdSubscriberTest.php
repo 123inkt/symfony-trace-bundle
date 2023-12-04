@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace DR\SymfonyRequestId\Tests\Unit\EventSubscriber;
 
 use DR\SymfonyRequestId\EventSubscriber\RequestIdSubscriber;
-use DR\SymfonyRequestId\RequestIdGenerator;
-use DR\SymfonyRequestId\RequestIdStorage;
+use DR\SymfonyRequestId\RequestIdGeneratorInterface;
+use DR\SymfonyRequestId\RequestIdStorageInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -24,8 +24,8 @@ class RequestIdSubscriberTest extends TestCase
     private const REQUEST_HEADER  = 'Request-Id';
     private const RESPONSE_HEADER = 'Response-Id';
 
-    private RequestIdStorage&MockOBject $idStorage;
-    private RequestIdGenerator&MockObject $idGen;
+    private RequestIdStorageInterface&MockOBject $idStorage;
+    private RequestIdGeneratorInterface&MockObject $idGen;
     private RequestIdSubscriber $listener;
     private EventDispatcher $dispatcher;
     private Request $request;
@@ -34,8 +34,8 @@ class RequestIdSubscriberTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->idStorage  = $this->createMock(RequestIdStorage::class);
-        $this->idGen      = $this->createMock(RequestIdGenerator::class);
+        $this->idStorage  = $this->createMock(RequestIdStorageInterface::class);
+        $this->idGen      = $this->createMock(RequestIdGeneratorInterface::class);
         $this->listener   = new RequestIdSubscriber(
             self::REQUEST_HEADER,
             self::RESPONSE_HEADER,

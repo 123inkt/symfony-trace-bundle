@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DR\SymfonyRequestId\Monolog;
 
-use DR\SymfonyRequestId\RequestIdStorage;
+use DR\SymfonyRequestId\RequestIdStorageInterface;
 use Monolog\LogRecord;
 use Monolog\Processor\ProcessorInterface;
 
@@ -14,7 +14,7 @@ use Monolog\Processor\ProcessorInterface;
  */
 final class RequestIdProcessor implements ProcessorInterface
 {
-    public function __construct(private readonly RequestIdStorage $storage)
+    public function __construct(private readonly RequestIdStorageInterface $storage)
     {
     }
 

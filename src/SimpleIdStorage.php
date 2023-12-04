@@ -6,7 +6,7 @@ namespace DR\SymfonyRequestId;
 /**
  * And ID storage backed by a property, simple.
  */
-final class SimpleIdStorage implements RequestIdStorage
+final class SimpleIdStorage implements RequestIdStorageInterface
 {
     private ?string $requestId = null;
 

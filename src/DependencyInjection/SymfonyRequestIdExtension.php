@@ -5,22 +5,25 @@ declare(strict_types=1);
 namespace DR\SymfonyRequestId\DependencyInjection;
 
 use DR\SymfonyRequestId\EventSubscriber\CommandSubscriber;
+use DR\SymfonyRequestId\EventSubscriber\MessageBusSubscriber;
 use DR\SymfonyRequestId\EventSubscriber\RequestIdSubscriber;
 use DR\SymfonyRequestId\Generator\RamseyUuid4Generator;
 use DR\SymfonyRequestId\Generator\SymfonyUuid4Generator;
 use DR\SymfonyRequestId\Monolog\RequestIdProcessor;
-use DR\SymfonyRequestId\RequestIdGenerator;
-use DR\SymfonyRequestId\RequestIdStorage;
+use DR\SymfonyRequestId\RequestIdGeneratorInterface;
+use DR\SymfonyRequestId\RequestIdStorageInterface;
 use DR\SymfonyRequestId\SimpleIdStorage;
 use DR\SymfonyRequestId\Twig\RequestIdExtension;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Exception\LogicException;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
- * @codeCoverageIgnore - This is a configuration class, tested by the acceptance test
+ * @codeCoverageIgnore - This is a configuration class, tested by the functional test
  * @internal
  */
 final class SymfonyRequestIdExtension extends ConfigurableExtension
@@ -36,6 +39,7 @@ final class SymfonyRequestIdExtension extends ConfigurableExtension
      *     generator_service: ?string,
      *     enable_monolog: bool,
      *     enable_console: bool,
+     *     enable_messenger: bool,
      *     enable_twig: bool,
      *     http_client: array{
      *         enabled: bool,
@@ -66,8 +70,8 @@ final class SymfonyRequestIdExtension extends ConfigurableExtension
             $container->register(SymfonyUuid4Generator::class)->setPublic(false);
         }
 
-        $container->setAlias(RequestIdStorage::class, $storeId)->setPublic(true);
-        $container->setAlias(RequestIdGenerator::class, $generatorId)->setPublic(true);
+        $container->setAlias(RequestIdStorageInterface::class, $storeId)->setPublic(true);
+        $container->setAlias(RequestIdGeneratorInterface::class, $generatorId)->setPublic(true);
 
         $container->register(RequestIdSubscriber::class)
             ->setArguments(
@@ -92,6 +96,19 @@ final class SymfonyRequestIdExtension extends ConfigurableExtension
         if (class_exists('Symfony\Component\Console\Application') && $mergedConfig['enable_console']) {
             $container->register(CommandSubscriber::class)
                 ->setArguments([new Reference($storeId), new Reference($generatorId)])
+                ->setPublic(false)
+                ->addTag('kernel.event_subscriber');
+        }
+
+        if ($mergedConfig['enable_messenger']) {
+            if (interface_exists(MessageBusInterface::class) === false) {
+                throw new LogicException(
+                    'Messenger support cannot be enabled as the Messenger component is not installed. ' .
+                    'Try running "composer require symfony/messenger".'
+                );
+            }
+            $container->register(MessageBusSubscriber::class)
+                ->setArguments([new Reference($storeId)])
                 ->setPublic(false)
                 ->addTag('kernel.event_subscriber');
         }

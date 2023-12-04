@@ -9,7 +9,7 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 /**
- * @codeCoverageIgnore - This is a configuration class, tested by the acceptance test
+ * @codeCoverageIgnore - This is a configuration class, tested by the functional test
  * @internal
  */
 class Configuration implements ConfigurationInterface
@@ -48,6 +48,10 @@ class Configuration implements ConfigurationInterface
             ->booleanNode('enable_console')
                 ->info('Whether to add the request id to console commands, defaults to true')
                 ->defaultTrue()
+            ->end()
+            ->booleanNode('enable_messenger')
+                ->info('Whether to add the request id to message bus events, defaults to false')
+                ->defaultFalse()
             ->end()
             ->booleanNode('enable_twig')
                 ->info('Whether or not to enable the twig `request_id()` function. Only works if TwigBundle is present.')

@@ -14,13 +14,14 @@
     },
     "require": {
         "php": ">=8.1",
-        "symfony/config": " ^6.3",
-        "symfony/dependency-injection": " ^6.3",
-        "symfony/http-foundation": " ^6.3",
-        "symfony/http-kernel": " ^6.3",
-        "symfony/framework-bundle": "^6.3"
+        "symfony/config": " ^6.3||^7.0",
+        "symfony/dependency-injection": " ^6.3||^7.0",
+        "symfony/http-foundation": " ^6.3||^7.0",
+        "symfony/http-kernel": " ^6.3||^7.0",
+        "symfony/framework-bundle": "^6.3||^7.0"
     },
     "require-dev": {
+        "digitalrevolution/phpunit-extensions": "^1.2",
         "digitalrevolution/phpunit-file-coverage-inspection": "^v2.0.0",
         "digitalrevolution/utils": "^1.9",
         "phpmd/phpmd": "^2.14",
@@ -32,16 +33,17 @@
         "ramsey/uuid": "^4.7",
         "roave/security-advisories": "dev-latest",
         "squizlabs/php_codesniffer": "^3.7",
-        "symfony/browser-kit": "^6.3",
-        "symfony/css-selector": "^6.3",
-        "symfony/http-client": "^6.3",
-        "symfony/monolog-bridge": "^6.3",
+        "symfony/browser-kit": "^6.3||^7.0",
+        "symfony/css-selector": "^6.3||^7.0",
+        "symfony/messenger": "^6.3||^7.0",
+        "symfony/http-client": "^6.3||^7.0",
+        "symfony/monolog-bridge": "^6.3||^7.0",
         "symfony/monolog-bundle": "^3.10",
-        "symfony/phpunit-bridge": "^6.3",
-        "symfony/templating": "^6.3",
-        "symfony/twig-bundle": "^6.3",
-        "symfony/uid": "^6.3",
-        "symfony/yaml": "^6.3",
+        "symfony/phpunit-bridge": "^6.3||^7.0",
+        "symfony/templating": "^6.3||^7.0",
+        "symfony/twig-bundle": "^6.3||^7.0",
+        "symfony/uid": "^6.3||^7.0",
+        "symfony/yaml": "^6.3||^7.0",
         "twig/twig": "^3.8.0"
     },
     "autoload": {
@@ -68,6 +70,7 @@
     },
     "suggest": {
         "ramsey/uuid": "Ramsey's UUID generator",
+        "symfony/messenger": "Symfony's messenger",
         "symfony/uid": "Symfony's UUID generator",
         "symfony/http-client": "Symfony's HTTP client"
     }
