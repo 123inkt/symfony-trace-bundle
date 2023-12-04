@@ -26,6 +26,9 @@ symfony_request_id:
   trust_request_header: true
   storage_service: request.id.storage
   enable_messenger: true
+  http_client:
+    enabled: true
+    header: Request-Id
 
 twig:
   strict_variables: "%kernel.debug%"
@@ -48,7 +51,14 @@ services:
     class: DR\SymfonyRequestId\Tests\Functional\App\EventSubscriber\StopWorkerEventSubscriber
     tags:
       - { name: kernel.event_subscriber }
-
+  DR\SymfonyRequestId\Tests\Functional\App\Service\MockClientCallbackHelper:
+  test.http_client:
+    class: Symfony\Component\HttpClient\MockHttpClient
+    public: true
+    arguments:
+      - '@DR\SymfonyRequestId\Tests\Functional\App\Service\MockClientCallbackHelper'
+    tags:
+      - { name: 'http_client.request_id' }
 monolog:
   handlers:
     main:

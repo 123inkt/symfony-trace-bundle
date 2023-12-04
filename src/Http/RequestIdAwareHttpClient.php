@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DR\SymfonyRequestId\Http;
 
-use DR\SymfonyRequestId\RequestIdStorage;
+use DR\SymfonyRequestId\RequestIdStorageInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -16,7 +16,7 @@ class RequestIdAwareHttpClient implements HttpClientInterface, ResetInterface, L
 {
     public function __construct(
         private HttpClientInterface $client,
-        private readonly RequestIdStorage $storage,
+        private readonly RequestIdStorageInterface $storage,
         private readonly string $requestIdHeader
     ) {
     }
