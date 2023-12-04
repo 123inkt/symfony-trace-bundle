@@ -122,7 +122,14 @@ final class SymfonyRequestIdExtension extends ConfigurableExtension
 
         $container->setParameter(self::PARAMETER_KEY . '.http_client.enabled', false);
 
-        if (interface_exists(HttpClientInterface::class) && $mergedConfig['http_client']['enabled']) {
+        if ($mergedConfig['http_client']['enabled']) {
+            if (interface_exists(HttpClientInterface::class) === false) {
+                throw new LogicException(
+                    'HttpClient support cannot be enabled as the HttpClient component is not installed. ' .
+                    'Try running "composer require symfony/http-client".'
+                );
+            }
+
             $container->setParameter(self::PARAMETER_KEY . '.http_client.enabled', $mergedConfig['http_client']['enabled']);
             $container->setParameter(self::PARAMETER_KEY . '.http_client.tag_default_client', $mergedConfig['http_client']['tag_default_client']);
             $container->setParameter(self::PARAMETER_KEY . '.http_client.header', $mergedConfig['http_client']['header']);

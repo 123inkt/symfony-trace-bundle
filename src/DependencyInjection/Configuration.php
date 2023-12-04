@@ -65,7 +65,7 @@ class Configuration implements ConfigurationInterface
                     ->end()
                     ->booleanNode('tag_default_client')
                         ->info('Whether or not to tag the default http client')
-                        ->defaultTrue()
+                        ->defaultFalse()
                     ->end()
                     ->scalarNode('header')
                         ->info('The header the bundle set in the request in the http client')
