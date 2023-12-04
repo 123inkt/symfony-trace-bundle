@@ -28,7 +28,7 @@ class HttpClientRequestIdPass implements CompilerPassInterface
             return;
         }
 
-        if ($container->getParameter('digital_revolution.symfony_request_id.http_client.tag_default_client') === true &&
+        if ($container->getParameter(SymfonyRequestIdExtension::PARAMETER_KEY . '.http_client.tag_default_client') === true &&
             $container->hasDefinition('http_client')
         ) {
             $container->getDefinition('http_client')
@@ -42,7 +42,7 @@ class HttpClientRequestIdPass implements CompilerPassInterface
                 ->setArguments([
                     new Reference($id . '.request_id' . '.inner'),
                     new Reference(RequestIdStorageInterface::class),
-                    new Parameter('digital_revolution.symfony_request_id.http_client.header')
+                    new Parameter(SymfonyRequestIdExtension::PARAMETER_KEY . '.http_client.header')
                 ])
                 ->setDecoratedService($id, null, 1);
         }
