@@ -86,6 +86,11 @@ return static function (SymfonyRequestIdConfig $config): void {
     
     // Whether to add the twig extension, defaults to true
     $config->enableTwig(true);
+    
+    $config->httpClient()
+        ->enabled(true)
+        ->tagDefaultClient(false)
+        ->header('X-Request-Id');
 };
 ```
 
@@ -154,6 +159,13 @@ Here's an example of a template.
     </body>
 </html>
 ```
+
+## HttpClient integration
+
+By default this bundle will check for services tagged with the `http_client.request_id` tag and decorate them with the RequestIdAwareHttpClient.
+When `tagDefaultClient` is enabled the default symfony http client will also be tagged and thus decorated.
+This will add the `X-Request-Id` header to all outgoing requests for the tagged clients.
+The header name can be changed with the `header` configuration option.
 
 ## About us
 
