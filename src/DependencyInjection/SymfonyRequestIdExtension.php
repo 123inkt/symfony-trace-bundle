@@ -20,6 +20,7 @@ use Symfony\Component\DependencyInjection\Exception\LogicException;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
  * @codeCoverageIgnore - This is a configuration class, tested by the functional test
@@ -27,6 +28,8 @@ use Symfony\Component\Messenger\MessageBusInterface;
  */
 final class SymfonyRequestIdExtension extends ConfigurableExtension
 {
+    public const PARAMETER_KEY = 'digital_revolution.symfony_request_id';
+
     /**
      * @param array{
      *     request_header: string,
@@ -38,6 +41,11 @@ final class SymfonyRequestIdExtension extends ConfigurableExtension
      *     enable_console: bool,
      *     enable_messenger: bool,
      *     enable_twig: bool,
+     *     http_client: array{
+     *         enabled: bool,
+     *         tag_default_client: bool,
+     *         header: string
+     *     }
      * } $mergedConfig
      */
     protected function loadInternal(array $mergedConfig, ContainerBuilder $container): void
@@ -110,6 +118,21 @@ final class SymfonyRequestIdExtension extends ConfigurableExtension
                 ->addArgument(new Reference($storeId))
                 ->setPublic(false)
                 ->addTag('twig.extension');
+        }
+
+        $container->setParameter(self::PARAMETER_KEY . '.http_client.enabled', false);
+
+        if ($mergedConfig['http_client']['enabled']) {
+            if (interface_exists(HttpClientInterface::class) === false) {
+                throw new LogicException(
+                    'HttpClient support cannot be enabled as the HttpClient component is not installed. ' .
+                    'Try running "composer require symfony/http-client".'
+                );
+            }
+
+            $container->setParameter(self::PARAMETER_KEY . '.http_client.enabled', $mergedConfig['http_client']['enabled']);
+            $container->setParameter(self::PARAMETER_KEY . '.http_client.tag_default_client', $mergedConfig['http_client']['tag_default_client']);
+            $container->setParameter(self::PARAMETER_KEY . '.http_client.header', $mergedConfig['http_client']['header']);
         }
     }
 }

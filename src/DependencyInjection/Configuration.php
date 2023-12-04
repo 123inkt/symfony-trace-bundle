@@ -56,6 +56,22 @@ class Configuration implements ConfigurationInterface
             ->booleanNode('enable_twig')
                 ->info('Whether or not to enable the twig `request_id()` function. Only works if TwigBundle is present.')
                 ->defaultTrue()
+            ->end()
+            ->arrayNode('http_client')
+                ->children()
+                    ->booleanNode('enabled')
+                        ->info('Whether or not to enable the request id aware http client')
+                        ->defaultTrue()
+                    ->end()
+                    ->booleanNode('tag_default_client')
+                        ->info('Whether or not to tag the default http client')
+                        ->defaultFalse()
+                    ->end()
+                    ->scalarNode('header')
+                        ->info('The header the bundle set in the request in the http client')
+                        ->defaultValue('X-Request-Id')
+                    ->end()
+                ->end()
             ->end();
 
         return $tree;

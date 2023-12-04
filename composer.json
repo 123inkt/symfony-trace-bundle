@@ -36,6 +36,7 @@
         "symfony/browser-kit": "^6.3||^7.0",
         "symfony/css-selector": "^6.3||^7.0",
         "symfony/messenger": "^6.3||^7.0",
+        "symfony/http-client": "^6.3||^7.0",
         "symfony/monolog-bridge": "^6.3||^7.0",
         "symfony/monolog-bundle": "^3.10",
         "symfony/phpunit-bridge": "^6.3||^7.0",
@@ -70,6 +71,7 @@
     "suggest": {
         "ramsey/uuid": "Ramsey's UUID generator",
         "symfony/messenger": "Symfony's messenger",
-        "symfony/uid": "Symfony's UUID generator"
+        "symfony/uid": "Symfony's UUID generator",
+        "symfony/http-client": "Symfony's HTTP client"
     }
 }
