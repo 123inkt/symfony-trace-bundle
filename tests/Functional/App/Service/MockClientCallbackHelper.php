@@ -13,6 +13,7 @@ class MockClientCallbackHelper
      * @param array{
      *     headers: string[]
      * } $options
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function __invoke(string $method, string $url, array $options): ResponseInterface
     {
