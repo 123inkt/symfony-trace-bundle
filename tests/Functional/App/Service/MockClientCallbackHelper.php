@@ -9,7 +9,12 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 
 class MockClientCallbackHelper
 {
-    public function __invoke(string $method, string $url, array $options = []): ResponseInterface
+    /**
+     * @param array{
+     *     headers: string[]
+     * } $options
+     */
+    public function __invoke(string $method, string $url, array $options): ResponseInterface
     {
         $headers = [];
 

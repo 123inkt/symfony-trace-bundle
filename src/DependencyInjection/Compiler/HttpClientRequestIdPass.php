@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DR\SymfonyRequestId\DependencyInjection\Compiler;
 
+use DR\SymfonyRequestId\DependencyInjection\SymfonyRequestIdExtension;
 use DR\SymfonyRequestId\Http\RequestIdAwareHttpClient;
 use DR\SymfonyRequestId\RequestIdStorageInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -21,7 +22,8 @@ class HttpClientRequestIdPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if ($container->getParameter('digital_revolution.symfony_request_id.http_client.enabled') === false) {
+        if ($container->hasParameter(SymfonyRequestIdExtension::PARAMETER_KEY . '.http_client.enabled') === false ||
+            $container->getParameter(SymfonyRequestIdExtension::PARAMETER_KEY . '.http_client.enabled') === false) {
             return;
         }
 
