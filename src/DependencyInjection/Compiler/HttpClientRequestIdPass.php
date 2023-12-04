@@ -23,7 +23,8 @@ class HttpClientRequestIdPass implements CompilerPassInterface
     public function process(ContainerBuilder $container)
     {
         if ($container->hasParameter(SymfonyRequestIdExtension::PARAMETER_KEY . '.http_client.enabled') === false ||
-            $container->getParameter(SymfonyRequestIdExtension::PARAMETER_KEY . '.http_client.enabled') === false) {
+            $container->getParameter(SymfonyRequestIdExtension::PARAMETER_KEY . '.http_client.enabled') === false
+        ) {
             return;
         }
 
