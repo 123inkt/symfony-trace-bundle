@@ -111,17 +111,17 @@ The headers are configurable. See the [configuration](#configuration) above.
 
 ## Monolog Integration
 
-There's a monolog *Processor* that adds the request ID to `extra` array on the
-record. This can be turned off by setting `enable_monolog` to `false` in the
-configuration.
+There's a monolog *Processor* that adds the trace ID and transaction ID to `extra` array on the record.
+This can be turned off by setting `enable_monolog` to `false` in the configuration.
 
-To use the request ID in your logs, include `%extra.request_id%` in your
-formatter. Here's a configuration example from this bundle's tests.
+To use the trace ID in your logs, include `%extra.trace_id%` in your formatter.
+To use the transaction ID in your logs, include `%extra.transaction_id%` in your formatter.
+Here's a configuration example from this bundle's tests.
 
 ```php
 # /config/services.php
-$services->set('request_id_formatter', LineFormatter::class)
-    ->arg('$format', "[%%datetime%%][%%extra.request_id%%] %%channel%%.%%level_name%%: %%message%% %%extra%%\n")
+$services->set('trace_id_formatter', LineFormatter::class)
+    ->arg('$format', "[%%datetime%%][%%extra.trace_id%%][%%extra.transaction_id%%] %%channel%%.%%level_name%%: %%message%% %%extra%%\n")
     ->arg('$dateFormat', "Y-m-d\TH:i:s");
 ```
 ```php
@@ -130,19 +130,19 @@ $monolog->handler('main')
         ->type('stream')
         ->path('%kernel.logs_dir%/error.%kernel.environment%.log')
         ->level('debug')
-        ->formatter('request_id_formatter')        
+        ->formatter('trace_id_formatter')        
         ->channels()->elements(["!event"]);
 ```
 
 ## Messenger Integration
 
-When enabled, the `request_id` of the dispatcher process, will be added to the `Envelope` of the message. On the consumer
-side the `request_id` will be applied to the running consumer process. Once the `Envelope` has been handled, the `request_id` 
-will be reset to the original `request_id` of the consumer process (if any).
+When enabled, the `trace_id` of the dispatcher process, will be added to the `Envelope` of the message. On the consumer
+side the `trace_id` will be applied to the running consumer process. Once the `Envelope` has been handled, the `trace_id` 
+will be reset to the original `trace_id` of the consumer process (if any).
 
 ## Twig Integration
 
-By default this bundle will add a global `request_id` function to your twig
+By default this bundle will add a global `trace_id` function to your twig
 environment. To disable this set `enable_twig` to `false` in the bundle
 configuration.
 
@@ -155,14 +155,15 @@ Here's an example of a template.
         <title>Hello, World</title>
     </head>
     <body>
-        <h1>{{ request_id() }}</h1>
+        <h1>{{ trace_id() }}</h1>
+        <h2>{{ transaction_id() }}</h2>
     </body>
 </html>
 ```
 
 ## HttpClient integration
 
-By default this bundle will check for services tagged with the `http_client.request_id` tag and decorate them with the RequestIdAwareHttpClient.
+By default this bundle will check for services tagged with the `http_client.trace_id` tag and decorate them with the RequestIdAwareHttpClient.
 When `tagDefaultClient` is enabled the default symfony http client will also be tagged and thus decorated.
 This will add the `X-Request-Id` header to all outgoing requests for the tagged clients.
 The header name can be changed with the `header` configuration option.

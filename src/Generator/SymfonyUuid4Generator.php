@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace DR\SymfonyRequestId\Generator;
 
-use DR\SymfonyRequestId\RequestIdGeneratorInterface;
+use DR\SymfonyRequestId\IdGeneratorInterface;
 use Symfony\Component\Uid\Factory\UuidFactory;
 use Symfony\Component\Uid\UuidV4;
 
 /**
  * Uses symfony/uid to generate a UUIDv4 request ID.
  */
-final class SymfonyUuid4Generator implements RequestIdGeneratorInterface
+final class SymfonyUuid4Generator implements IdGeneratorInterface
 {
     public function __construct(private readonly UuidFactory $factory = new UuidFactory(UuidV4::class, UuidV4::class, UuidV4::class, UuidV4::class))
     {

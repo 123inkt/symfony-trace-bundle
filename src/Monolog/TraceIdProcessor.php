@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DR\SymfonyRequestId\Monolog;
 
-use DR\SymfonyRequestId\RequestIdStorageInterface;
+use DR\SymfonyRequestId\IdStorageInterface;
 use Monolog\LogRecord;
 use Monolog\Processor\ProcessorInterface;
 
@@ -12,9 +12,9 @@ use Monolog\Processor\ProcessorInterface;
  * Adds the request ID to the Monolog record's `extra` key, so it can be used in formatters, etc.
  * @internal
  */
-final class RequestIdProcessor implements ProcessorInterface
+final class TraceIdProcessor implements ProcessorInterface
 {
-    public function __construct(private readonly RequestIdStorageInterface $storage)
+    public function __construct(private readonly IdStorageInterface $storage)
     {
     }
 
@@ -23,14 +23,14 @@ final class RequestIdProcessor implements ProcessorInterface
      */
     public function __invoke(array|LogRecord $record): array|LogRecord
     {
-        $id = $this->storage->getRequestId();
+        $id = $this->storage->getTraceId();
         if ($id !== null) {
             // @codeCoverageIgnoreStart
             if (is_array($record)) {
-                $record['extra']['request_id'] = $id;
+                $record['extra']['trace_id'] = $id;
                 // @codeCoverageIgnoreEnd
             } else {
-                $record->extra['request_id'] = $id;
+                $record->extra['trace_id'] = $id;
             }
         }
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DR\SymfonyRequestId;
 
-use DR\SymfonyRequestId\DependencyInjection\Compiler\HttpClientRequestIdPass;
+use DR\SymfonyRequestId\DependencyInjection\Compiler\HttpClientTraceIdPass;
 use DR\SymfonyRequestId\DependencyInjection\SymfonyRequestIdExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
@@ -19,7 +19,7 @@ final class RequestIdBundle extends Bundle
     {
         parent::build($container);
 
-        $container->addCompilerPass(new HttpClientRequestIdPass());
+        $container->addCompilerPass(new HttpClientTraceIdPass());
     }
 
     /**

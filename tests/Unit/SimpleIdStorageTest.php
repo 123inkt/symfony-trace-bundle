@@ -11,22 +11,41 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(SimpleIdStorage::class)]
 class SimpleIdStorageTest extends TestCase
 {
-    public function testGetRequestIdReturnsTheSameValueThatWasSet(): void
+    public function testGetTraceIdReturnsTheSameValueThatWasSet(): void
     {
         $storage = new SimpleIdStorage();
 
-        static::assertNull($storage->getRequestId());
-        $storage->setRequestId('test');
-        static::assertSame('test', $storage->getRequestId());
+        static::assertNull($storage->getTraceId());
+        $storage->setTraceId('test');
+        static::assertSame('test', $storage->getTraceId());
     }
 
-    public function testNullCanBePassedToSetRequestIdToClearIt(): void
+    public function testNullCanBePassedToSetTraceIdToClearIt(): void
     {
         $storage = new SimpleIdStorage();
-        $storage->setRequestId('test');
+        $storage->setTraceId('test');
 
-        $storage->setRequestId(null);
+        $storage->setTraceId(null);
 
-        static::assertNull($storage->getRequestId());
+        static::assertNull($storage->getTraceId());
+    }
+
+    public function testGetTransactionIdReturnsTheSameValueThatWasSet(): void
+    {
+        $storage = new SimpleIdStorage();
+
+        static::assertNull($storage->getTransactionId());
+        $storage->setTransactionId('test');
+        static::assertSame('test', $storage->getTransactionId());
+    }
+
+    public function testNullCanBePassedToSetTransactionIdToClearIt(): void
+    {
+        $storage = new SimpleIdStorage();
+        $storage->setTransactionId('test');
+
+        $storage->setTransactionId(null);
+
+        static::assertNull($storage->getTransactionId());
     }
 }

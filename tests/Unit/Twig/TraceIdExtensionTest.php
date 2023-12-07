@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace DR\SymfonyRequestId\Tests\Unit\Twig;
 
 use DR\SymfonyRequestId\SimpleIdStorage;
-use DR\SymfonyRequestId\Twig\RequestIdExtension;
+use DR\SymfonyRequestId\Twig\TraceIdExtension;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Throwable;
 use Twig\Environment;
 use Twig\Loader\ArrayLoader;
 
-#[CoversClass(RequestIdExtension::class)]
-class RequestIdExtensionTest extends TestCase
+#[CoversClass(TraceIdExtension::class)]
+class TraceIdExtensionTest extends TestCase
 {
-    private const TEMPLATE = '{{ request_id() }}';
+    private const TEMPLATE = 'Trace: {{ trace_id() }}. Transaction: {{ transaction_id() }}.';
 
     private Environment $environment;
     private SimpleIdStorage $storage;
@@ -24,18 +24,18 @@ class RequestIdExtensionTest extends TestCase
     {
         $this->storage = new SimpleIdStorage();
         $this->environment = new Environment(new ArrayLoader(['test' => self::TEMPLATE]));
-        $this->environment->addExtension(new RequestIdExtension($this->storage));
+        $this->environment->addExtension(new TraceIdExtension($this->storage));
     }
 
     /**
      * @throws Throwable
      */
-    public function testTwigRequestIdFunction(): void
+    public function testTwigTraceIdFunction(): void
     {
-        $this->storage->setRequestId('abc123');
+        $this->storage->setTraceId('abc123');
+        $this->storage->setTransactionId('123');
 
         $result = $this->environment->render('test');
-
-        static::assertSame($result, 'abc123');
+        static::assertSame($result, 'Trace: abc123. Transaction: 123.');
     }
 }

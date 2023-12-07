@@ -33,7 +33,7 @@ symfony_request_id:
 twig:
   strict_variables: "%kernel.debug%"
   paths:
-    "%kernel.project_dir%/templates": requestid
+    "%kernel.project_dir%/templates": traceid
 
 services:
   log.formatter:
@@ -46,7 +46,7 @@ services:
     calls:
       - [ setFormatter, [ "@log.formatter" ] ]
   request.id.storage:
-    class: DR\SymfonyRequestId\Tests\Functional\App\Service\TestRequestIdStorage
+    class: DR\SymfonyRequestId\Tests\Functional\App\Service\TestIdStorage
   stop.worker.event-subscriber:
     class: DR\SymfonyRequestId\Tests\Functional\App\EventSubscriber\StopWorkerEventSubscriber
     tags:
@@ -58,7 +58,7 @@ services:
     arguments:
       - '@DR\SymfonyRequestId\Tests\Functional\App\Service\MockClientCallbackHelper'
     tags:
-      - { name: 'http_client.request_id' }
+      - { name: 'http_client.trace_id' }
 monolog:
   handlers:
     main:

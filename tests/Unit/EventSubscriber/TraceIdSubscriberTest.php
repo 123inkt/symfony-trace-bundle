@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace DR\SymfonyRequestId\Tests\Unit\EventSubscriber;
 
-use DR\SymfonyRequestId\EventSubscriber\RequestIdSubscriber;
-use DR\SymfonyRequestId\RequestIdGeneratorInterface;
-use DR\SymfonyRequestId\RequestIdStorageInterface;
+use DR\SymfonyRequestId\EventSubscriber\TraceIdSubscriber;
+use DR\SymfonyRequestId\IdGeneratorInterface;
+use DR\SymfonyRequestId\IdStorageInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -18,15 +18,15 @@ use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-#[CoversClass(RequestIdSubscriber::class)]
-class RequestIdSubscriberTest extends TestCase
+#[CoversClass(TraceIdSubscriber::class)]
+class TraceIdSubscriberTest extends TestCase
 {
     private const REQUEST_HEADER  = 'Request-Id';
     private const RESPONSE_HEADER = 'Response-Id';
 
-    private RequestIdStorageInterface&MockOBject $idStorage;
-    private RequestIdGeneratorInterface&MockObject $idGen;
-    private RequestIdSubscriber $listener;
+    private IdStorageInterface&MockOBject $idStorage;
+    private IdGeneratorInterface&MockObject $idGen;
+    private TraceIdSubscriber $listener;
     private EventDispatcher $dispatcher;
     private Request $request;
     private Response $response;
@@ -34,9 +34,9 @@ class RequestIdSubscriberTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->idStorage  = $this->createMock(RequestIdStorageInterface::class);
-        $this->idGen      = $this->createMock(RequestIdGeneratorInterface::class);
-        $this->listener   = new RequestIdSubscriber(
+        $this->idStorage  = $this->createMock(IdStorageInterface::class);
+        $this->idGen      = $this->createMock(IdGeneratorInterface::class);
+        $this->listener   = new TraceIdSubscriber(
             self::REQUEST_HEADER,
             self::RESPONSE_HEADER,
             true,
@@ -58,19 +58,19 @@ class RequestIdSubscriberTest extends TestCase
             HttpKernelInterface::SUB_REQUEST
         );
         $this->idStorage->expects(self::never())
-            ->method('getRequestId');
+            ->method('getTraceId');
 
         $this->dispatcher->dispatch($event, KernelEvents::REQUEST);
     }
 
-    public function testListenerSetsTheRequestIdToStorageWhenFoundInRequestHeaders(): void
+    public function testListenerSetsTheTraceIdToStorageWhenFoundInRequestHeaders(): void
     {
         $this->request->headers->set(self::REQUEST_HEADER, 'testId');
         $this->willNotGenerate();
         $this->idStorage->expects(self::never())
-            ->method('getRequestId');
+            ->method('getTraceId');
         $this->idStorage->expects(self::once())
-            ->method('setRequestId')
+            ->method('setTraceId')
             ->with('testId');
         $event = new RequestEvent(
             $this->kernel,
@@ -85,10 +85,10 @@ class RequestIdSubscriberTest extends TestCase
     {
         $this->willNotGenerate();
         $this->idStorage->expects(self::exactly(2))
-            ->method('getRequestId')
+            ->method('getTraceId')
             ->willReturn('abc123');
         $this->idStorage->expects(self::never())
-            ->method('setRequestId');
+            ->method('setTraceId');
         $event = new RequestEvent(
             $this->kernel,
             $this->request,
@@ -106,10 +106,10 @@ class RequestIdSubscriberTest extends TestCase
             ->method('generate')
             ->willReturn('def234');
         $this->idStorage->expects(self::once())
-            ->method('getRequestId')
+            ->method('getTraceId')
             ->willReturn(null);
         $this->idStorage->expects(self::once())
-            ->method('setRequestId')
+            ->method('setTraceId')
             ->with('def234');
         $event = new RequestEvent(
             $this->kernel,
@@ -126,7 +126,7 @@ class RequestIdSubscriberTest extends TestCase
     {
         $this->dispatcher->removeSubscriber($this->listener);
         $this->dispatcher->addSubscriber(
-            new RequestIdSubscriber(
+            new TraceIdSubscriber(
                 self::REQUEST_HEADER,
                 self::REQUEST_HEADER,
                 false,
@@ -138,10 +138,10 @@ class RequestIdSubscriberTest extends TestCase
             ->method('generate')
             ->willReturn('def234');
         $this->idStorage->expects(self::once())
-            ->method('getRequestId')
+            ->method('getTraceId')
             ->willReturn(null);
         $this->idStorage->expects(self::once())
-            ->method('setRequestId')
+            ->method('setTraceId')
             ->with('def234');
         $this->request->headers->set(self::REQUEST_HEADER, 'abc123');
         $event = new RequestEvent(
@@ -158,7 +158,7 @@ class RequestIdSubscriberTest extends TestCase
     public function testListenerDoesNothingToResponseWithoutMasterRequest(): void
     {
         $this->idStorage->expects(self::never())
-            ->method('getRequestId');
+            ->method('getTraceId');
 
         $this->dispatcher->dispatch(
             new ResponseEvent(
@@ -176,7 +176,7 @@ class RequestIdSubscriberTest extends TestCase
     public function testRequestWithoutIdInStorageDoesNotSetHeaderOnResponse(): void
     {
         $this->idStorage->expects(self::once())
-            ->method('getRequestId')
+            ->method('getTraceId')
             ->willReturn(null);
 
         $this->dispatcher->dispatch(
@@ -195,7 +195,7 @@ class RequestIdSubscriberTest extends TestCase
     public function testRequestWithIdInStorageSetsIdOnResponse(): void
     {
         $this->idStorage->expects(self::exactly(2))
-            ->method('getRequestId')
+            ->method('getTraceId')
             ->willReturn('ghi345');
 
         $this->dispatcher->dispatch(
