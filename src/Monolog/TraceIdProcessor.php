@@ -9,7 +9,7 @@ use Monolog\LogRecord;
 use Monolog\Processor\ProcessorInterface;
 
 /**
- * Adds the request ID to the Monolog record's `extra` key, so it can be used in formatters, etc.
+ * Adds the trace + transaction IDs to the Monolog record's `extra` key, so it can be used in formatters, etc.
  * @internal
  */
 final class TraceIdProcessor implements ProcessorInterface
