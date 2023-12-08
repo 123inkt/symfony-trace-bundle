@@ -29,6 +29,10 @@ final class TraceIdProcessor implements ProcessorInterface
         return $record;
     }
 
+    /**
+     * @param array<string, mixed[]>|LogRecord $record
+     * @return array<string, mixed[]>|LogRecord
+     */
     private function setExtraValue(?string $id, string $key, array|LogRecord $record): array|LogRecord
     {
         if ($id !== null) {
