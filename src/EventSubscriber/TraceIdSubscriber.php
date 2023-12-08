@@ -18,11 +18,11 @@ use Symfony\Component\HttpKernel\KernelEvents;
 final class TraceIdSubscriber implements EventSubscriberInterface
 {
     /**
-     * @param string               $requestHeader  The header to inspect for the incoming request ID.
-     * @param string               $responseHeader The header that will contain the request ID in the response.
+     * @param string               $requestHeader  The header to inspect for the incoming trace ID.
+     * @param string               $responseHeader The header that will contain the trace ID in the response.
      * @param bool                 $trustRequest   Trust the value from the request? Or generate?
-     * @param IdStorageInterface   $idStorage      The request ID storage, used to store the ID from the request or a newly generated ID.
-     * @param IdGeneratorInterface $idGenerator    Used to generate a request ID if one isn't present.
+     * @param IdStorageInterface   $idStorage      The trace ID storage, used to store the ID from the request or a newly generated ID.
+     * @param IdGeneratorInterface $idGenerator    Used to generate a trace ID if one isn't present.
      */
     public function __construct(
         private readonly string               $requestHeader,
