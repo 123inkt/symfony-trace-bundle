@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\EventSubscriber;
+namespace DR\SymfonyTraceBundle\EventSubscriber;
 
-use DR\SymfonyRequestId\IdGeneratorInterface;
-use DR\SymfonyRequestId\Messenger\TraceIdStamp;
-use DR\SymfonyRequestId\IdStorageInterface;
+use DR\SymfonyTraceBundle\IdGeneratorInterface;
+use DR\SymfonyTraceBundle\Messenger\TraceIdStamp;
+use DR\SymfonyTraceBundle\IdStorageInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\Event\SendMessageToTransportsEvent;
 use Symfony\Component\Messenger\Event\WorkerMessageFailedEvent;
@@ -15,7 +15,7 @@ use Symfony\Component\Messenger\Event\WorkerMessageRetriedEvent;
 
 /**
  * Listen for messages being sent and received by the message bus. Adding a stamp on send
- * and applying (and restoring) the request ID from the stamp on receive.
+ * and applying (and restoring) the trace ID from the stamp on receive.
  * @internal
  */
 final class MessageBusSubscriber implements EventSubscriberInterface

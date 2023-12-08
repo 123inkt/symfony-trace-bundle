@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Generator;
+namespace DR\SymfonyTraceBundle\Generator;
 
-use DR\SymfonyRequestId\IdGeneratorInterface;
+use DR\SymfonyTraceBundle\IdGeneratorInterface;
 use Ramsey\Uuid\UuidFactory;
 use Ramsey\Uuid\UuidFactoryInterface;
 

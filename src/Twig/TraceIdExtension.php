@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Twig;
+namespace DR\SymfonyTraceBundle\Twig;
 
-use DR\SymfonyRequestId\IdStorageInterface;
+use DR\SymfonyTraceBundle\IdStorageInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 

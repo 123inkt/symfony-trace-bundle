@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId;
+namespace DR\SymfonyTraceBundle;
 
 /**
  * And ID storage backed by a property, simple.

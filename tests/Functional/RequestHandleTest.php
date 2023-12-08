@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Tests\Functional;
+namespace DR\SymfonyTraceBundle\Tests\Functional;
 
-use DR\SymfonyRequestId\IdGeneratorInterface;
-use DR\SymfonyRequestId\IdStorageInterface;
-use DR\SymfonyRequestId\Tests\Functional\App\Monolog\MemoryHandler;
+use DR\SymfonyTraceBundle\IdGeneratorInterface;
+use DR\SymfonyTraceBundle\IdStorageInterface;
+use DR\SymfonyTraceBundle\Tests\Functional\App\Monolog\MemoryHandler;
 use Exception;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\TestWith;

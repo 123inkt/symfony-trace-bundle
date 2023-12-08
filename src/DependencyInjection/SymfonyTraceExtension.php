@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\DependencyInjection;
+namespace DR\SymfonyTraceBundle\DependencyInjection;
 
-use DR\SymfonyRequestId\EventSubscriber\CommandSubscriber;
-use DR\SymfonyRequestId\EventSubscriber\MessageBusSubscriber;
-use DR\SymfonyRequestId\EventSubscriber\TraceIdSubscriber;
-use DR\SymfonyRequestId\Generator\RamseyUuid4Generator;
-use DR\SymfonyRequestId\Generator\SymfonyUuid4Generator;
-use DR\SymfonyRequestId\Monolog\TraceIdProcessor;
-use DR\SymfonyRequestId\IdGeneratorInterface;
-use DR\SymfonyRequestId\IdStorageInterface;
-use DR\SymfonyRequestId\SimpleIdStorage;
-use DR\SymfonyRequestId\Twig\TraceIdExtension;
+use DR\SymfonyTraceBundle\EventSubscriber\CommandSubscriber;
+use DR\SymfonyTraceBundle\EventSubscriber\MessageBusSubscriber;
+use DR\SymfonyTraceBundle\EventSubscriber\TraceIdSubscriber;
+use DR\SymfonyTraceBundle\Generator\RamseyUuid4Generator;
+use DR\SymfonyTraceBundle\Generator\SymfonyUuid4Generator;
+use DR\SymfonyTraceBundle\Monolog\TraceIdProcessor;
+use DR\SymfonyTraceBundle\IdGeneratorInterface;
+use DR\SymfonyTraceBundle\IdStorageInterface;
+use DR\SymfonyTraceBundle\SimpleIdStorage;
+use DR\SymfonyTraceBundle\Twig\TraceIdExtension;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\LogicException;
@@ -26,9 +26,9 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  * @codeCoverageIgnore - This is a configuration class, tested by the functional test
  * @internal
  */
-final class SymfonyRequestIdExtension extends ConfigurableExtension
+final class SymfonyTraceExtension extends ConfigurableExtension
 {
-    public const PARAMETER_KEY = 'digital_revolution.symfony_request_id';
+    public const PARAMETER_KEY = 'digital_revolution.symfony_trace';
 
     /**
      * @param array{

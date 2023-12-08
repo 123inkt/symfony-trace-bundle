@@ -1,6 +1,6 @@
 {
-    "name": "digitalrevolution/symfony-request-id",
-    "description": "Add request ID's to your Symfony application. ",
+    "name": "digitalrevolution/symfony-trace-bundle",
+    "description": "Add tracing to your Symfony application. ",
     "type": "symfony-bundle",
     "license": "MIT",
     "minimum-stability": "stable",
@@ -10,7 +10,8 @@
             "symfony/flex": true,
             "symfony/runtime": true,
             "phpstan/extension-installer": true
-        }
+        },
+        "lock": false
     },
     "require": {
         "php": ">=8.1",
@@ -48,13 +49,13 @@
     },
     "autoload": {
         "psr-4": {
-            "DR\\SymfonyRequestId\\": "src/"
+            "DR\\SymfonyTraceBundle\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "DR\\SymfonyRequestId\\Tests\\Unit\\": "tests/Unit/",
-            "DR\\SymfonyRequestId\\Tests\\": "tests/"
+            "DR\\SymfonyTraceBundle\\Tests\\Unit\\": "tests/Unit/",
+            "DR\\SymfonyTraceBundle\\Tests\\": "tests/"
         }
     },
     "scripts": {

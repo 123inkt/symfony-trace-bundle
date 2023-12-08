@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId;
+namespace DR\SymfonyTraceBundle;
 
-use DR\SymfonyRequestId\DependencyInjection\Compiler\HttpClientTraceIdPass;
-use DR\SymfonyRequestId\DependencyInjection\SymfonyRequestIdExtension;
+use DR\SymfonyTraceBundle\DependencyInjection\Compiler\HttpClientTraceIdPass;
+use DR\SymfonyTraceBundle\DependencyInjection\SymfonyTraceExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -13,7 +13,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 /**
  * @codeCoverageIgnore - This is a bundle class, tested by the functional test
  */
-final class RequestIdBundle extends Bundle
+final class TraceBundle extends Bundle
 {
     public function build(ContainerBuilder $container): void
     {
@@ -27,6 +27,6 @@ final class RequestIdBundle extends Bundle
      */
     public function getContainerExtension(): ExtensionInterface
     {
-        return new SymfonyRequestIdExtension();
+        return new SymfonyTraceExtension();
     }
 }

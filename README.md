@@ -1,8 +1,8 @@
 [![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%208.1-8892BF)](https://php.net/)
 [![Minimum Symfony Version](https://img.shields.io/badge/symfony-%3E%3D%206.3-brightgreen)](https://symfony.com/doc/current/validation.html)
-![Run tests](https://github.com/123inkt/symfony-request-id/actions/workflows/test.yml/badge.svg)
+![Run tests](https://github.com/123inkt/symfony-trace-bundle/actions/workflows/test.yml/badge.svg)
 
-# Symfony Request Id
+# Symfony Trace Bundle
 
 *Based on [chrisguitarguy/RequestIdBundle](https://github.com/chrisguitarguy/RequestIdBundle)*
 
@@ -18,7 +18,7 @@ be available in:
 
 Use [Composer](https://getcomposer.org/).
 ```
-composer require digitalrevolution/symfony-request-id
+composer require digitalrevolution/symfony-trace-bundle
 ```
 
 And one of the UUID generator libraries:
@@ -29,28 +29,29 @@ composer require symfony/uid
 ```
 
 Then enable the bundle in your `/config/bundles.php`:
+
 ```php
 # /config/bundles.php
 <?php
 
 return [
     ...
-    DR\SymfonyRequestId\RequestIdBundle::class => ['all' => true],
+    DR\SymfonyTraceBundle\TraceBundle::class => ['all' => true],
 ];
 ```
 
 ## Configuration
 
 ```php
-# /config/packages/symfony-request-id.php
+# /config/packages/symfony-trace-bundle.php
 <?php
 declare(strict_types=1);
 
-use DR\SymfonyRequestId\Generator\RamseyUuid4Generator;
-use DR\SymfonyRequestId\SimpleIdStorage;
-use Symfony\Config\SymfonyRequestIdConfig;
+use DR\SymfonyTraceBundle\Generator\RamseyUuid4Generator;
+use DR\SymfonyTraceBundle\SimpleIdStorage;
+use Symfony\Config\SymfonyTraceConfig;
 
-return static function (SymfonyRequestIdConfig $config): void {
+return static function (SymfonyTraceConfig $config): void {
     // The header which the bundle inspects for the incoming trace ID
     // if this is not set an ID will be generated and set at this header
     $config->requestHeader('X-Trace-Id');
@@ -65,11 +66,11 @@ return static function (SymfonyRequestIdConfig $config): void {
     $config->responseHeader('X-Trace-Id');
 
     // The service key of an object that implements
-    // DR\SymfonyRequestId\IdStorageInterface
+    // DR\SymfonyTraceBundle\IdStorageInterface
     $config->storageService(SimpleIdStorage::class);
 
     // The service key of an object that implements
-    // DR\SymfonyRequestId\IdGeneratorInterface
+    // DR\SymfonyTraceBundle\Generator\IdGeneratorInterface
     // Optional, will default to Symfony's Uuid or Ramsey's Uuid.
     $config->generatorService(RamseyUuid4Generator::class);
 

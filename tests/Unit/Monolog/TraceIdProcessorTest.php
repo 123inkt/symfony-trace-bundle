@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Tests\Unit\Monolog;
+namespace DR\SymfonyTraceBundle\Tests\Unit\Monolog;
 
 use DateTimeImmutable;
-use DR\SymfonyRequestId\Monolog\TraceIdProcessor;
-use DR\SymfonyRequestId\IdStorageInterface;
+use DR\SymfonyTraceBundle\Monolog\TraceIdProcessor;
+use DR\SymfonyTraceBundle\IdStorageInterface;
 use Monolog\Level;
 use Monolog\Logger;
 use Monolog\LogRecord;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Messenger;
+namespace DR\SymfonyTraceBundle\Messenger;
 
 use Symfony\Component\Messenger\Stamp\StampInterface;
 
