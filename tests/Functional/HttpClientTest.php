@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Functional;
 
-use DR\SymfonyRequestId\Tests\Functional\App\Service\TestIdStorage;
+use DR\SymfonyTraceBundle\Tests\Functional\App\Service\TestIdStorage;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
