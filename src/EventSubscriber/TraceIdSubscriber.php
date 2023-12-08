@@ -63,7 +63,7 @@ final class TraceIdSubscriber implements EventSubscriberInterface
             return;
         }
 
-        // similarly, if the request ID storage already has an ID set we
+        // similarly, if the trace ID storage already has an ID set we
         // don't need to do anything other than put it into the request headers
         if ($this->idStorage->getTraceId() !== null) {
             $req->headers->set($this->requestHeader, $this->idStorage->getTraceId());
