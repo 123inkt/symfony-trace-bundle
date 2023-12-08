@@ -21,7 +21,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 #[CoversClass(TraceIdSubscriber::class)]
 class TraceIdSubscriberTest extends TestCase
 {
-    private const REQUEST_HEADER  = 'Request-Id';
+    private const REQUEST_HEADER  = 'Trace-Id';
     private const RESPONSE_HEADER = 'Response-Id';
 
     private IdStorageInterface&MockOBject $idStorage;
@@ -63,15 +63,23 @@ class TraceIdSubscriberTest extends TestCase
         $this->dispatcher->dispatch($event, KernelEvents::REQUEST);
     }
 
+    /**
+     * When a request is received with the traceId in the header, this same value is used as the current traceId.
+     * A new transactionId is always generated.
+     */
     public function testListenerSetsTheTraceIdToStorageWhenFoundInRequestHeaders(): void
     {
         $this->request->headers->set(self::REQUEST_HEADER, 'testId');
-        $this->willNotGenerate();
+        $this->idGen->expects(self::once())->method('generate')->willReturn('transactionId');
         $this->idStorage->expects(self::never())
             ->method('getTraceId');
         $this->idStorage->expects(self::once())
             ->method('setTraceId')
             ->with('testId');
+        $this->idStorage->expects(self::once())
+            ->method('setTransactionId')
+            ->with('transactionId');
+
         $event = new RequestEvent(
             $this->kernel,
             $this->request,
@@ -81,14 +89,22 @@ class TraceIdSubscriberTest extends TestCase
         $this->dispatcher->dispatch($event, KernelEvents::REQUEST);
     }
 
+    /**
+     * When a request is received without the traceId in the header, but is found in the IdStorage this value is used.
+     * A new transactionId is always generated.
+     */
     public function testListenerSetsTheIdOnRequestWhenItsFoundInStorage(): void
     {
-        $this->willNotGenerate();
+        $this->idGen->expects(self::once())->method('generate')->willReturn('transactionId');
         $this->idStorage->expects(self::exactly(2))
             ->method('getTraceId')
             ->willReturn('abc123');
         $this->idStorage->expects(self::never())
             ->method('setTraceId');
+        $this->idStorage->expects(self::once())
+            ->method('setTransactionId')
+            ->with('transactionId');
+
         $event = new RequestEvent(
             $this->kernel,
             $this->request,
@@ -100,17 +116,25 @@ class TraceIdSubscriberTest extends TestCase
         static::assertEquals('abc123', $this->request->headers->get(self::REQUEST_HEADER));
     }
 
+    /**
+     * When a request is received without the traceId in the header, and is not found in the IdStorage a new value is generated.
+     * This value is used as the traceId and a new transactionId is generated.
+     */
     public function testListenerGenerateNewIdAndSetsItOnRequestAndStorageWhenNoIdIsFound(): void
     {
-        $this->idGen->expects(self::once())
+        $this->idGen->expects(self::exactly(2))
             ->method('generate')
-            ->willReturn('def234');
+            ->willReturn('transactionId', 'def234');
         $this->idStorage->expects(self::once())
             ->method('getTraceId')
             ->willReturn(null);
         $this->idStorage->expects(self::once())
             ->method('setTraceId')
             ->with('def234');
+        $this->idStorage->expects(self::once())
+            ->method('setTransactionId')
+            ->with('transactionId');
+
         $event = new RequestEvent(
             $this->kernel,
             $this->request,
@@ -122,6 +146,10 @@ class TraceIdSubscriberTest extends TestCase
         static::assertEquals('def234', $this->request->headers->get(self::REQUEST_HEADER));
     }
 
+    /**
+     * When a request is received with the traceId in the header. But trustHeader config is false, so we don't use this.
+     * A new traceId and a new transactionId is generated.
+     */
     public function testListenerIgnoresIncomingRequestHeadersWhenTrustRequestIsFalse(): void
     {
         $this->dispatcher->removeSubscriber($this->listener);
@@ -134,15 +162,19 @@ class TraceIdSubscriberTest extends TestCase
                 $this->idGen
             )
         );
-        $this->idGen->expects(self::once())
+        $this->idGen->expects(self::exactly(2))
             ->method('generate')
-            ->willReturn('def234');
+            ->willReturn('transaction-id', 'def234');
         $this->idStorage->expects(self::once())
             ->method('getTraceId')
             ->willReturn(null);
         $this->idStorage->expects(self::once())
+            ->method('setTransactionId')
+            ->with('transaction-id');
+        $this->idStorage->expects(self::once())
             ->method('setTraceId')
             ->with('def234');
+
         $this->request->headers->set(self::REQUEST_HEADER, 'abc123');
         $event = new RequestEvent(
             $this->kernel,
@@ -209,10 +241,5 @@ class TraceIdSubscriberTest extends TestCase
         );
 
         static::assertEquals('ghi345', $this->response->headers->get(self::RESPONSE_HEADER));
-    }
-
-    private function willNotGenerate(): void
-    {
-        $this->idGen->expects(self::never())->method('generate');
     }
 }

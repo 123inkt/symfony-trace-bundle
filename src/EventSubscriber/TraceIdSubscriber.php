@@ -18,9 +18,9 @@ use Symfony\Component\HttpKernel\KernelEvents;
 final class TraceIdSubscriber implements EventSubscriberInterface
 {
     /**
-     * @param string                      $requestHeader  The header to inspect for the incoming request ID.
-     * @param string                      $responseHeader The header that will contain the request ID in the response.
-     * @param bool                        $trustRequest   Trust the value from the request? Or generate?
+     * @param string               $requestHeader  The header to inspect for the incoming request ID.
+     * @param string               $responseHeader The header that will contain the request ID in the response.
+     * @param bool                 $trustRequest   Trust the value from the request? Or generate?
      * @param IdStorageInterface   $idStorage      The request ID storage, used to store the ID from the request or a newly generated ID.
      * @param IdGeneratorInterface $idGenerator    Used to generate a request ID if one isn't present.
      */
@@ -51,6 +51,9 @@ final class TraceIdSubscriber implements EventSubscriberInterface
         }
 
         $req = $event->getRequest();
+
+        // Generate a new transactionId for each request
+        $this->idStorage->setTransactionId($this->idGenerator->generate());
 
         // always give the incoming request priority. If it has the ID in
         // its headers already put that into our ID storage.

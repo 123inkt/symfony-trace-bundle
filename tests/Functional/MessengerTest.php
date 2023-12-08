@@ -31,7 +31,6 @@ class MessengerTest extends KernelTestCase
 
     protected function setUp(): void
     {
-        parent::setUp();
         $this->storage    = Assert::isInstanceOf(self::getContainer()->get(IdStorageInterface::class), TestIdStorage::class);
         $this->bus        = Assert::isInstanceOf(self::getContainer()->get(MessageBusInterface::class), MessageBusInterface::class);
         $this->dispatcher = Assert::isInstanceOf(self::getContainer()->get('event_dispatcher'), EventDispatcherInterface::class);

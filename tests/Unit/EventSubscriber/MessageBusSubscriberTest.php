@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace DR\SymfonyRequestId\Tests\Unit\EventSubscriber;
 
 use DR\SymfonyRequestId\EventSubscriber\MessageBusSubscriber;
+use DR\SymfonyRequestId\IdGeneratorInterface;
 use DR\SymfonyRequestId\Messenger\TraceIdStamp;
 use DR\SymfonyRequestId\IdStorageInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -23,27 +24,34 @@ use function DR\PHPUnitExtensions\Mock\consecutive;
 class MessageBusSubscriberTest extends TestCase
 {
     private IdStorageInterface&MockObject $storage;
+    private IdGeneratorInterface&MockObject $generator;
     private MessageBusSubscriber $subscriber;
     private Envelope $envelope;
 
     protected function setUp(): void
     {
-        parent::setUp();
         $this->envelope   = new Envelope(new stdClass());
         $this->storage    = $this->createMock(IdStorageInterface::class);
-        $this->subscriber = new MessageBusSubscriber($this->storage);
+        $this->generator  = $this->createMock(IdGeneratorInterface::class);
+        $this->subscriber = new MessageBusSubscriber($this->storage, $this->generator);
     }
 
+    /**
+     * When sending an event and the process has a traceId, this id is passed along.
+     */
     public function testOnSendWithTraceId(): void
     {
         $event = new SendMessageToTransportsEvent($this->envelope, []);
 
-        $this->storage->expects(self::once())->method('getTraceId')->willReturn('request-id');
+        $this->storage->expects(self::once())->method('getTraceId')->willReturn('trace-id');
 
         $this->subscriber->onSend($event);
-        self::assertSame('request-id', $event->getEnvelope()->last(TraceIdStamp::class)?->traceId);
+        self::assertSame('trace-id', $event->getEnvelope()->last(TraceIdStamp::class)?->traceId);
     }
 
+    /**
+     * When sending an event and the process has no traceId, no traceId is passed along.
+     */
     public function testOnSendWithoutTraceId(): void
     {
         $event = new SendMessageToTransportsEvent($this->envelope, []);
@@ -54,24 +62,36 @@ class MessageBusSubscriberTest extends TestCase
         self::assertNull($event->getEnvelope()->last(TraceIdStamp::class));
     }
 
+    /**
+     * An event is received with traceIdStamp.
+     * A new transactionId is generated, but the stamp's traceId is set into the storage.
+     * On handled, the original (null) values are set back into the storage
+     */
     public function testOnReceivedAndHandledWithTraceId(): void
     {
-        $envelope = $this->envelope->with(new TraceIdStamp('request-id'));
+        $envelope = $this->envelope->with(new TraceIdStamp('trace-id'));
         $event    = new WorkerMessageReceivedEvent($envelope, 'receiver');
 
         $this->storage->expects(self::exactly(2))
             ->method('setTraceId')
-            ->with(...consecutive(['request-id'], [null]));
+            ->with(...consecutive(['trace-id'], [null]));
 
         $this->subscriber->onReceived($event);
         $this->subscriber->onHandled();
     }
 
+    /**
+     * An event is received without traceIdStamp.
+     * New transactionId and traceId values are generated,
+     * on handled the original (null) values are set back into the storage
+     */
     public function testOnReceivedAndHandledWithoutTraceId(): void
     {
         $event = new WorkerMessageReceivedEvent($this->envelope, 'receiver');
 
-        $this->storage->expects(self::never())->method('setTraceId');
+        $this->generator->expects(self::exactly(2))->method('generate')->willReturn('ABC123', '123ABC');
+        $this->storage->expects(self::exactly(2))->method('setTransactionId')->with(...consecutive(['ABC123'], [null]));
+        $this->storage->expects(self::exactly(2))->method('setTraceId')->with(...consecutive(['123ABC'], [null]));
 
         $this->subscriber->onReceived($event);
         $this->subscriber->onHandled();

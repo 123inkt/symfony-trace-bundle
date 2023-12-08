@@ -23,7 +23,7 @@ class HttpClientTest extends KernelTestCase
 
         $response = $client->request('GET', 'https://example.com');
 
-        self::assertArrayHasKey('request-id', $response->getHeaders());
-        self::assertSame('123', $response->getHeaders()['request-id'][0]);
+        self::assertArrayHasKey('trace-id', $response->getHeaders());
+        self::assertSame('123', $response->getHeaders()['trace-id'][0]);
     }
 }

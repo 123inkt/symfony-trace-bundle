@@ -9,7 +9,7 @@ use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Set up request id for command.
+ * Set up tracing ids for command.
  * @internal
  */
 final class CommandSubscriber implements EventSubscriberInterface
@@ -29,5 +29,6 @@ final class CommandSubscriber implements EventSubscriberInterface
     public function onCommand(): void
     {
         $this->idStorage->setTraceId($this->generator->generate());
+        $this->idStorage->setTransactionId($this->generator->generate());
     }
 }

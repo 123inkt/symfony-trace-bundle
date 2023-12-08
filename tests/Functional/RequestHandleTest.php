@@ -22,11 +22,11 @@ class RequestHandleTest extends WebTestCase
     {
         $client = self::createClient();
 
-        $crawler = $client->request('GET', '/', [], [], ['HTTP_REQUEST_ID' => 'testId']);
+        $crawler = $client->request('GET', '/', [], [], ['HTTP_TRACE_ID' => 'testId']);
         static::assertResponseIsSuccessful();
 
         $response = $client->getResponse();
-        static::assertSame('testId', $response->headers->get('Request-Id'));
+        static::assertSame('testId', $response->headers->get('Trace-Id'));
         static::assertSame('testId', self::getService(IdStorageInterface::class)->getTraceId());
         self::assertLogsHaveTraceId('testId');
         static::assertGreaterThan(
@@ -46,8 +46,8 @@ class RequestHandleTest extends WebTestCase
 
         $crawler = $client->request('GET', '/');
         static::assertResponseIsSuccessful();
-        static::assertSame('abc123', $client->getResponse()->headers->get('Request-Id'));
-        static::assertSame('abc123', $client->getRequest()->headers->get('Request-Id'));
+        static::assertSame('abc123', $client->getResponse()->headers->get('Trace-Id'));
+        static::assertSame('abc123', $client->getRequest()->headers->get('Trace-Id'));
         self::assertLogsHaveTraceId('abc123');
         static::assertGreaterThan(
             0,
@@ -68,8 +68,8 @@ class RequestHandleTest extends WebTestCase
 
         $id = self::getService(IdStorageInterface::class)->getTraceId();
         static::assertNotEmpty($id);
-        static::assertSame($id, $client->getResponse()->headers->get('Request-Id'));
-        static::assertSame($id, $client->getRequest()->headers->get('Request-Id'));
+        static::assertSame($id, $client->getResponse()->headers->get('Trace-Id'));
+        static::assertSame($id, $client->getRequest()->headers->get('Trace-Id'));
         self::assertLogsHaveTraceId($id);
         static::assertGreaterThan(
             0,

@@ -23,14 +23,21 @@ final class TraceIdProcessor implements ProcessorInterface
      */
     public function __invoke(array|LogRecord $record): array|LogRecord
     {
-        $id = $this->storage->getTraceId();
+        $record = $this->setExtraValue($this->storage->getTraceId(), 'trace_id', $record);
+        $record = $this->setExtraValue($this->storage->getTransactionId(), 'transaction_id', $record);
+
+        return $record;
+    }
+
+    private function setExtraValue(?string $id, string $key, array|LogRecord $record): array|LogRecord
+    {
         if ($id !== null) {
             // @codeCoverageIgnoreStart
             if (is_array($record)) {
-                $record['extra']['trace_id'] = $id;
+                $record['extra'][$key] = $id;
                 // @codeCoverageIgnoreEnd
             } else {
-                $record->extra['trace_id'] = $id;
+                $record->extra[$key] = $id;
             }
         }
 

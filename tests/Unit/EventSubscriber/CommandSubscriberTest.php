@@ -20,7 +20,6 @@ class CommandSubscriberTest extends TestCase
 
     protected function setUp(): void
     {
-        parent::setUp();
         $this->idStorage = $this->createMock(IdStorageInterface::class);
         $this->generator = $this->createMock(IdGeneratorInterface::class);
         $this->subscriber = new CommandSubscriber($this->idStorage, $this->generator);
@@ -28,8 +27,9 @@ class CommandSubscriberTest extends TestCase
 
     public function testOnCommand(): void
     {
-        $this->generator->expects(self::once())->method('generate')->willReturn('request-id');
-        $this->idStorage->expects(self::once())->method('setTraceId')->with('request-id');
+        $this->generator->expects(self::exactly(2))->method('generate')->willReturn('trace-id', 'transaction-id');
+        $this->idStorage->expects(self::once())->method('setTraceId')->with('trace-id');
+        $this->idStorage->expects(self::once())->method('setTransactionId')->with('transaction-id');
 
         $this->subscriber->onCommand();
     }

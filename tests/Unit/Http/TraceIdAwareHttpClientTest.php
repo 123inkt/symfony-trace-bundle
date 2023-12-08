@@ -23,16 +23,14 @@ class TraceIdAwareHttpClientTest extends TestCase
     {
         $this->client                 = $this->createMock(ScopingHttpClient::class);
         $this->storage                = $this->createMock(IdStorageInterface::class);
-        $this->traceIdAwareHttpClient = new TraceIdAwareHttpClient($this->client, $this->storage, 'X-Request-Id');
+        $this->traceIdAwareHttpClient = new TraceIdAwareHttpClient($this->client, $this->storage, 'X-Trace-Id');
     }
 
     public function testRequest(): void
     {
         $this->storage->expects(self::once())->method('getTraceId')->willReturn('12345');
         $this->client->expects(self::once())->method('request')->with('GET', 'http://localhost', [
-            'headers' => [
-                'X-Request-Id' => '12345',
-            ],
+            'headers' => ['X-Trace-Id' => '12345'],
         ]);
 
         $this->traceIdAwareHttpClient->request('GET', 'http://localhost');

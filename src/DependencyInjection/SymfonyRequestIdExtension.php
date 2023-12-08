@@ -108,7 +108,7 @@ final class SymfonyRequestIdExtension extends ConfigurableExtension
                 );
             }
             $container->register(MessageBusSubscriber::class)
-                ->setArguments([new Reference($storeId)])
+                ->setArguments([new Reference($storeId), new Reference($generatorId)])
                 ->setPublic(false)
                 ->addTag('kernel.event_subscriber');
         }
