@@ -6,36 +6,36 @@ parameters:
 			path: src/DependencyInjection/Configuration.php
 
 		-
-			message: "#^Parameter \\#1 \\$mergedConfig \\(array\\{request_header\\: string, trust_request_header\\: bool, response_header\\: string, storage_service\\: string\\|null, generator_service\\: string\\|null, enable_monolog\\: bool, enable_console\\: bool, enable_messenger\\: bool, \\.\\.\\.\\}\\) of method DR\\\\SymfonyRequestId\\\\DependencyInjection\\\\SymfonyRequestIdExtension\\:\\:loadInternal\\(\\) should be contravariant with parameter \\$mergedConfig \\(array\\) of method Symfony\\\\Component\\\\HttpKernel\\\\DependencyInjection\\\\ConfigurableExtension\\:\\:loadInternal\\(\\)$#"
+			message: "#^Parameter \\#1 \\$mergedConfig \\(array\\{request_header\\: string, trust_request_header\\: bool, response_header\\: string, storage_service\\: string\\|null, generator_service\\: string\\|null, enable_monolog\\: bool, enable_console\\: bool, enable_messenger\\: bool, \\.\\.\\.\\}\\) of method DR\\\\SymfonyTraceBundle\\\\DependencyInjection\\\\SymfonyTraceExtension\\:\\:loadInternal\\(\\) should be contravariant with parameter \\$mergedConfig \\(array\\) of method Symfony\\\\Component\\\\HttpKernel\\\\DependencyInjection\\\\ConfigurableExtension\\:\\:loadInternal\\(\\)$#"
 			count: 1
-			path: src/DependencyInjection/SymfonyRequestIdExtension.php
+			path: src/DependencyInjection/SymfonyTraceExtension.php
 
 		-
-			message: "#^Method DR\\\\SymfonyRequestId\\\\Http\\\\RequestIdAwareHttpClient\\:\\:request\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#"
+			message: "#^Method DR\\\\SymfonyTraceBundle\\\\Http\\\\TraceIdAwareHttpClient\\:\\:request\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#"
 			count: 1
-			path: src/Http/RequestIdAwareHttpClient.php
+			path: src/Http/TraceIdAwareHttpClient.php
 
 		-
-			message: "#^Method DR\\\\SymfonyRequestId\\\\Http\\\\RequestIdAwareHttpClient\\:\\:withOptions\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#"
+			message: "#^Method DR\\\\SymfonyTraceBundle\\\\Http\\\\TraceIdAwareHttpClient\\:\\:withOptions\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#"
 			count: 1
-			path: src/Http/RequestIdAwareHttpClient.php
+			path: src/Http/TraceIdAwareHttpClient.php
 
 		-
-			message: "#^Method DR\\\\SymfonyRequestId\\\\Monolog\\\\RequestIdProcessor\\:\\:__invoke\\(\\) has parameter \\$record with no value type specified in iterable type array\\.$#"
+			message: "#^Method DR\\\\SymfonyTraceBundle\\\\Monolog\\\\TraceIdProcessor\\:\\:__invoke\\(\\) has parameter \\$record with no value type specified in iterable type array\\.$#"
 			count: 1
-			path: src/Monolog/RequestIdProcessor.php
+			path: src/Monolog/TraceIdProcessor.php
 
 		-
-			message: "#^Method DR\\\\SymfonyRequestId\\\\Monolog\\\\RequestIdProcessor\\:\\:__invoke\\(\\) return type has no value type specified in iterable type array\\.$#"
+			message: "#^Method DR\\\\SymfonyTraceBundle\\\\Monolog\\\\TraceIdProcessor\\:\\:__invoke\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
-			path: src/Monolog/RequestIdProcessor.php
+			path: src/Monolog/TraceIdProcessor.php
 
 		-
-			message: "#^Return type \\(array\\|Monolog\\\\LogRecord\\) of method DR\\\\SymfonyRequestId\\\\Monolog\\\\RequestIdProcessor\\:\\:__invoke\\(\\) should be covariant with return type \\(Monolog\\\\LogRecord\\) of method Monolog\\\\Processor\\\\ProcessorInterface\\:\\:__invoke\\(\\)$#"
+			message: "#^Return type \\(array\\|Monolog\\\\LogRecord\\) of method DR\\\\SymfonyTraceBundle\\\\Monolog\\\\TraceIdProcessor\\:\\:__invoke\\(\\) should be covariant with return type \\(Monolog\\\\LogRecord\\) of method Monolog\\\\Processor\\\\ProcessorInterface\\:\\:__invoke\\(\\)$#"
 			count: 1
-			path: src/Monolog/RequestIdProcessor.php
+			path: src/Monolog/TraceIdProcessor.php
 
 		-
-			message: "#^Method DR\\\\SymfonyRequestId\\\\Tests\\\\Functional\\\\App\\\\Monolog\\\\MemoryHandler\\:\\:write\\(\\) has parameter \\$record with no value type specified in iterable type array\\.$#"
+			message: "#^Method DR\\\\SymfonyTraceBundle\\\\Tests\\\\Functional\\\\App\\\\Monolog\\\\MemoryHandler\\:\\:write\\(\\) has parameter \\$record with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: tests/Functional/App/Monolog/MemoryHandler.php

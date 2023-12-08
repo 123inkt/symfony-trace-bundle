@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\DependencyInjection;
+namespace DR\SymfonyTraceBundle\DependencyInjection;
 
-use DR\SymfonyRequestId\EventSubscriber\CommandSubscriber;
-use DR\SymfonyRequestId\EventSubscriber\MessageBusSubscriber;
-use DR\SymfonyRequestId\EventSubscriber\RequestIdSubscriber;
-use DR\SymfonyRequestId\Generator\RamseyUuid4Generator;
-use DR\SymfonyRequestId\Generator\SymfonyUuid4Generator;
-use DR\SymfonyRequestId\Monolog\RequestIdProcessor;
-use DR\SymfonyRequestId\RequestIdGeneratorInterface;
-use DR\SymfonyRequestId\RequestIdStorageInterface;
-use DR\SymfonyRequestId\SimpleIdStorage;
-use DR\SymfonyRequestId\Twig\RequestIdExtension;
+use DR\SymfonyTraceBundle\EventSubscriber\CommandSubscriber;
+use DR\SymfonyTraceBundle\EventSubscriber\MessageBusSubscriber;
+use DR\SymfonyTraceBundle\EventSubscriber\TraceIdSubscriber;
+use DR\SymfonyTraceBundle\Generator\RamseyUuid4Generator;
+use DR\SymfonyTraceBundle\Generator\SymfonyUuid4Generator;
+use DR\SymfonyTraceBundle\Monolog\TraceIdProcessor;
+use DR\SymfonyTraceBundle\IdGeneratorInterface;
+use DR\SymfonyTraceBundle\IdStorageInterface;
+use DR\SymfonyTraceBundle\SimpleIdStorage;
+use DR\SymfonyTraceBundle\Twig\TraceIdExtension;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\LogicException;
@@ -26,9 +26,9 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  * @codeCoverageIgnore - This is a configuration class, tested by the functional test
  * @internal
  */
-final class SymfonyRequestIdExtension extends ConfigurableExtension
+final class SymfonyTraceExtension extends ConfigurableExtension
 {
-    public const PARAMETER_KEY = 'digital_revolution.symfony_request_id';
+    public const PARAMETER_KEY = 'digital_revolution.symfony_trace';
 
     /**
      * @param array{
@@ -70,10 +70,10 @@ final class SymfonyRequestIdExtension extends ConfigurableExtension
             $container->register(SymfonyUuid4Generator::class)->setPublic(false);
         }
 
-        $container->setAlias(RequestIdStorageInterface::class, $storeId)->setPublic(true);
-        $container->setAlias(RequestIdGeneratorInterface::class, $generatorId)->setPublic(true);
+        $container->setAlias(IdStorageInterface::class, $storeId)->setPublic(true);
+        $container->setAlias(IdGeneratorInterface::class, $generatorId)->setPublic(true);
 
-        $container->register(RequestIdSubscriber::class)
+        $container->register(TraceIdSubscriber::class)
             ->setArguments(
                 [
                     $mergedConfig['request_header'],
@@ -87,7 +87,7 @@ final class SymfonyRequestIdExtension extends ConfigurableExtension
             ->addTag('kernel.event_subscriber');
 
         if ($mergedConfig['enable_monolog']) {
-            $container->register(RequestIdProcessor::class)
+            $container->register(TraceIdProcessor::class)
                 ->addArgument(new Reference($storeId))
                 ->setPublic(false)
                 ->addTag('monolog.processor');
@@ -108,13 +108,13 @@ final class SymfonyRequestIdExtension extends ConfigurableExtension
                 );
             }
             $container->register(MessageBusSubscriber::class)
-                ->setArguments([new Reference($storeId)])
+                ->setArguments([new Reference($storeId), new Reference($generatorId)])
                 ->setPublic(false)
                 ->addTag('kernel.event_subscriber');
         }
 
         if (class_exists('Twig\Extension\AbstractExtension') && $mergedConfig['enable_twig']) {
-            $container->register(RequestIdExtension::class)
+            $container->register(TraceIdExtension::class)
                 ->addArgument(new Reference($storeId))
                 ->setPublic(false)
                 ->addTag('twig.extension');

@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Messenger;
+namespace DR\SymfonyTraceBundle\Messenger;
 
 use Symfony\Component\Messenger\Stamp\StampInterface;
 
-final class RequestIdStamp implements StampInterface
+final class TraceIdStamp implements StampInterface
 {
     /**
      * @codeCoverageIgnore - Simple DTO
      */
-    public function __construct(public readonly string $requestId)
+    public function __construct(public readonly string $traceId)
     {
     }
 }

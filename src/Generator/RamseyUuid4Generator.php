@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Generator;
+namespace DR\SymfonyTraceBundle\Generator;
 
-use DR\SymfonyRequestId\RequestIdGeneratorInterface;
+use DR\SymfonyTraceBundle\IdGeneratorInterface;
 use Ramsey\Uuid\UuidFactory;
 use Ramsey\Uuid\UuidFactoryInterface;
 
 /**
  * Uses `ramsey/uuid` to generator v4 UUIDs for request ids.
  */
-final class RamseyUuid4Generator implements RequestIdGeneratorInterface
+final class RamseyUuid4Generator implements IdGeneratorInterface
 {
     public function __construct(private readonly UuidFactoryInterface $factory = new UuidFactory())
     {

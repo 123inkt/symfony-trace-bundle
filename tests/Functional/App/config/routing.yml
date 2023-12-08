@@ -2,4 +2,4 @@ main:
     path: /
     defaults:
         _controller: Symfony\Bundle\FrameworkBundle\Controller\TemplateController::templateAction
-        template: "@requestid/index.html.twig"
+        template: "@traceid/index.html.twig"

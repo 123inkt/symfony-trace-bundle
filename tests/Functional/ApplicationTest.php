@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Tests\Functional;
+namespace DR\SymfonyTraceBundle\Tests\Functional;
 
-use DR\SymfonyRequestId\RequestIdStorageInterface;
+use DR\SymfonyTraceBundle\IdStorageInterface;
 use Exception;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
@@ -19,18 +19,18 @@ class ApplicationTest extends KernelTestCase
     /**
      * @throws Exception
      */
-    public function testCommandShouldSetRequestId(): void
+    public function testCommandShouldSetTraceId(): void
     {
         $application = new Application(static::bootKernel(['environment' => 'test', 'debug' => false]));
 
         $storage = self::getContainer()->get('request.id.storage');
-        static::assertInstanceOf(RequestIdStorageInterface::class, $storage);
+        static::assertInstanceOf(IdStorageInterface::class, $storage);
 
         $input  = new ArrayInput(['help']);
         $output = new NullOutput();
 
         $exitCode = $application->doRun($input, $output);
         static::assertSame(Command::SUCCESS, $exitCode);
-        static::assertNotNull($storage->getRequestId());
+        static::assertNotNull($storage->getTraceId());
     }
 }
