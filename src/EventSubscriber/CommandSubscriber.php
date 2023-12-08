@@ -3,18 +3,18 @@ declare(strict_types=1);
 
 namespace DR\SymfonyRequestId\EventSubscriber;
 
-use DR\SymfonyRequestId\RequestIdGeneratorInterface;
-use DR\SymfonyRequestId\RequestIdStorageInterface;
+use DR\SymfonyRequestId\IdGeneratorInterface;
+use DR\SymfonyRequestId\IdStorageInterface;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Set up request id for command.
+ * Set up tracing ids for command.
  * @internal
  */
 final class CommandSubscriber implements EventSubscriberInterface
 {
-    public function __construct(private readonly RequestIdStorageInterface $requestIdStorage, private readonly RequestIdGeneratorInterface $generator)
+    public function __construct(private readonly IdStorageInterface $idStorage, private readonly IdGeneratorInterface $generator)
     {
     }
 
@@ -28,6 +28,7 @@ final class CommandSubscriber implements EventSubscriberInterface
 
     public function onCommand(): void
     {
-        $this->requestIdStorage->setRequestId($this->generator->generate());
+        $this->idStorage->setTraceId($this->generator->generate());
+        $this->idStorage->setTransactionId($this->generator->generate());
     }
 }

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace DR\SymfonyRequestId\Tests\Functional;
 
-use DR\SymfonyRequestId\Messenger\RequestIdStamp;
-use DR\SymfonyRequestId\RequestIdStorageInterface;
+use DR\SymfonyRequestId\Messenger\TraceIdStamp;
+use DR\SymfonyRequestId\IdStorageInterface;
 use DR\SymfonyRequestId\Tests\Functional\App\Messenger\TestMessage;
-use DR\SymfonyRequestId\Tests\Functional\App\Service\TestRequestIdStorage;
+use DR\SymfonyRequestId\Tests\Functional\App\Service\TestIdStorage;
 use DR\Utils\Assert;
 use Exception;
 use PHPUnit\Framework\Attributes\CoversNothing;
@@ -23,7 +23,7 @@ use Symfony\Component\Messenger\Worker;
 #[CoversNothing]
 class MessengerTest extends KernelTestCase
 {
-    private TestRequestIdStorage $storage;
+    private TestIdStorage $storage;
     private MessageBusInterface $bus;
     private EventDispatcherInterface $dispatcher;
     private InMemoryTransport $transport;
@@ -31,8 +31,7 @@ class MessengerTest extends KernelTestCase
 
     protected function setUp(): void
     {
-        parent::setUp();
-        $this->storage    = Assert::isInstanceOf(self::getContainer()->get(RequestIdStorageInterface::class), TestRequestIdStorage::class);
+        $this->storage    = Assert::isInstanceOf(self::getContainer()->get(IdStorageInterface::class), TestIdStorage::class);
         $this->bus        = Assert::isInstanceOf(self::getContainer()->get(MessageBusInterface::class), MessageBusInterface::class);
         $this->dispatcher = Assert::isInstanceOf(self::getContainer()->get('event_dispatcher'), EventDispatcherInterface::class);
         $this->transport  = Assert::isInstanceOf(self::getContainer()->get('messenger.transport.test_transport'), InMemoryTransport::class);
@@ -44,35 +43,35 @@ class MessengerTest extends KernelTestCase
      */
     public function testMessageBusShouldAddAndHandlerStamp(): void
     {
-        $this->storage->setRequestId('foobar');
+        $this->storage->setTraceId('foobar');
 
         // ** dispatch **
         $this->bus->dispatch(new TestMessage());
-        self::assertTransportHasEnvelopWithRequestIdStamp($this->transport);
+        self::assertTransportHasEnvelopWithTraceIdStamp($this->transport);
 
         // ** consume ** (simulate worker)
         (new Worker([$this->transport], $this->bus, $this->dispatcher, clock: $this->clock))->run();
-        self::assertStorageHasRequestId($this->storage);
+        self::assertStorageHasTraceId($this->storage);
     }
 
-    private static function assertTransportHasEnvelopWithRequestIdStamp(InMemoryTransport $transport): void
+    private static function assertTransportHasEnvelopWithTraceIdStamp(InMemoryTransport $transport): void
     {
         static::assertCount(1, $transport->getSent());
 
         $envelop = Assert::isArray($transport->get())[0];
         static::assertInstanceOf(Envelope::class, $envelop);
 
-        $stamp = $envelop->last(RequestIdStamp::class);
-        static::assertInstanceOf(RequestIdStamp::class, $stamp);
-        static::assertSame('foobar', $stamp->requestId);
+        $stamp = $envelop->last(TraceIdStamp::class);
+        static::assertInstanceOf(TraceIdStamp::class, $stamp);
+        static::assertSame('foobar', $stamp->traceId);
     }
 
-    private static function assertStorageHasRequestId(TestRequestIdStorage $storage): void
+    private static function assertStorageHasTraceId(TestIdStorage $storage): void
     {
         // expect 5: 1x dispatch, 1x receive, 1x handled, 1x dispatch, 1x receive
-        static::assertSame(5, $storage->getRequestIdCount);
+        static::assertSame(5, $storage->getTraceIdCount);
 
         // expect 3: 1x dispatch, 1x receive, 1x handled
-        static::assertSame(3, $storage->setRequestIdCount);
+        static::assertSame(3, $storage->setTraceIdCount);
     }
 }

@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace DR\SymfonyRequestId\Tests\Unit\Monolog;
 
 use DateTimeImmutable;
-use DR\SymfonyRequestId\Monolog\RequestIdProcessor;
-use DR\SymfonyRequestId\RequestIdStorageInterface;
+use DR\SymfonyRequestId\Monolog\TraceIdProcessor;
+use DR\SymfonyRequestId\IdStorageInterface;
 use Monolog\Level;
 use Monolog\Logger;
 use Monolog\LogRecord;
@@ -13,56 +13,56 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(RequestIdProcessor::class)]
-class RequestIdProcessorTest extends TestCase
+#[CoversClass(TraceIdProcessor::class)]
+class TraceIdProcessorTest extends TestCase
 {
-    private RequestIdStorageInterface&MockObject $idStorage;
-    private RequestIdProcessor $processor;
+    private IdStorageInterface&MockObject $idStorage;
+    private TraceIdProcessor $processor;
 
     protected function setUp(): void
     {
-        $this->idStorage = $this->createMock(RequestIdStorageInterface::class);
-        $this->processor = new RequestIdProcessor($this->idStorage);
+        $this->idStorage = $this->createMock(IdStorageInterface::class);
+        $this->processor = new TraceIdProcessor($this->idStorage);
     }
 
-    public function testProcessorDoesNotSetRequestIdWhenNoIdIsPresent(): void
+    public function testProcessorDoesNotSetTraceIdWhenNoIdIsPresent(): void
     {
         if (version_compare((string)Logger::API, '3', 'lt')) {
             self::markTestSkipped('The Monolog at least 3 is required to run this test.');
         }
 
-        $this->idStorage->expects(static::once())->method('getRequestId')->willReturn(null);
+        $this->idStorage->expects(static::once())->method('getTraceId')->willReturn(null);
 
         $record = ($this->processor)(new LogRecord(new DateTimeImmutable('now'), 'channel', Level::Info, 'foo'));
         static::assertInstanceOf(LogRecord::class, $record);
-        static::assertArrayNotHasKey('request_id', $record->extra);
+        static::assertArrayNotHasKey('trace_id', $record->extra);
     }
 
-    public function testProcessorAddsRequestIdWhenIdIsPresent(): void
+    public function testProcessorAddsTraceIdWhenIdIsPresent(): void
     {
         if (version_compare((string)Logger::API, '3', 'lt')) {
             self::markTestSkipped('The Monolog at least 3 is required to run this test.');
         }
 
-        $this->idStorage->expects(static::once())->method('getRequestId')->willReturn('abc123');
+        $this->idStorage->expects(static::once())->method('getTraceId')->willReturn('abc123');
 
         $record = ($this->processor)(new LogRecord(new DateTimeImmutable('now'), 'channel', Level::Info, 'foo'));
         static::assertInstanceOf(LogRecord::class, $record);
-        static::assertArrayHasKey('request_id', $record->extra);
-        static::assertSame('abc123', $record->extra['request_id']);
+        static::assertArrayHasKey('trace_id', $record->extra);
+        static::assertSame('abc123', $record->extra['trace_id']);
     }
 
-    public function testProcessorAddsRequestIdWhenIdIsPresentArrayFormat(): void
+    public function testProcessorAddsTraceIdWhenIdIsPresentArrayFormat(): void
     {
         if (version_compare((string)Logger::API, '3', 'ge')) {
             self::markTestSkipped('The version 1 or 2 of Monolog is required to run this test.');
         }
 
-        $this->idStorage->expects(static::once())->method('getRequestId')->willReturn('abc123');
+        $this->idStorage->expects(static::once())->method('getTraceId')->willReturn('abc123');
 
         $record = ($this->processor)([]);
         static::assertIsArray($record);
-        static::assertArrayHasKey('request_id', $record['extra']);
-        static::assertSame('abc123', $record['extra']['request_id']);
+        static::assertArrayHasKey('trace_id', $record['extra']);
+        static::assertSame('abc123', $record['extra']['trace_id']);
     }
 }

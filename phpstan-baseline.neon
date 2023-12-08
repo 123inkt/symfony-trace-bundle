@@ -11,29 +11,29 @@ parameters:
 			path: src/DependencyInjection/SymfonyRequestIdExtension.php
 
 		-
-			message: "#^Method DR\\\\SymfonyRequestId\\\\Http\\\\RequestIdAwareHttpClient\\:\\:request\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#"
+			message: "#^Method DR\\\\SymfonyRequestId\\\\Http\\\\TraceIdAwareHttpClient\\:\\:request\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#"
 			count: 1
-			path: src/Http/RequestIdAwareHttpClient.php
+			path: src/Http/TraceIdAwareHttpClient.php
 
 		-
-			message: "#^Method DR\\\\SymfonyRequestId\\\\Http\\\\RequestIdAwareHttpClient\\:\\:withOptions\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#"
+			message: "#^Method DR\\\\SymfonyRequestId\\\\Http\\\\TraceIdAwareHttpClient\\:\\:withOptions\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#"
 			count: 1
-			path: src/Http/RequestIdAwareHttpClient.php
+			path: src/Http/TraceIdAwareHttpClient.php
 
 		-
-			message: "#^Method DR\\\\SymfonyRequestId\\\\Monolog\\\\RequestIdProcessor\\:\\:__invoke\\(\\) has parameter \\$record with no value type specified in iterable type array\\.$#"
+			message: "#^Method DR\\\\SymfonyRequestId\\\\Monolog\\\\TraceIdProcessor\\:\\:__invoke\\(\\) has parameter \\$record with no value type specified in iterable type array\\.$#"
 			count: 1
-			path: src/Monolog/RequestIdProcessor.php
+			path: src/Monolog/TraceIdProcessor.php
 
 		-
-			message: "#^Method DR\\\\SymfonyRequestId\\\\Monolog\\\\RequestIdProcessor\\:\\:__invoke\\(\\) return type has no value type specified in iterable type array\\.$#"
+			message: "#^Method DR\\\\SymfonyRequestId\\\\Monolog\\\\TraceIdProcessor\\:\\:__invoke\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
-			path: src/Monolog/RequestIdProcessor.php
+			path: src/Monolog/TraceIdProcessor.php
 
 		-
-			message: "#^Return type \\(array\\|Monolog\\\\LogRecord\\) of method DR\\\\SymfonyRequestId\\\\Monolog\\\\RequestIdProcessor\\:\\:__invoke\\(\\) should be covariant with return type \\(Monolog\\\\LogRecord\\) of method Monolog\\\\Processor\\\\ProcessorInterface\\:\\:__invoke\\(\\)$#"
+			message: "#^Return type \\(array\\|Monolog\\\\LogRecord\\) of method DR\\\\SymfonyRequestId\\\\Monolog\\\\TraceIdProcessor\\:\\:__invoke\\(\\) should be covariant with return type \\(Monolog\\\\LogRecord\\) of method Monolog\\\\Processor\\\\ProcessorInterface\\:\\:__invoke\\(\\)$#"
 			count: 1
-			path: src/Monolog/RequestIdProcessor.php
+			path: src/Monolog/TraceIdProcessor.php
 
 		-
 			message: "#^Method DR\\\\SymfonyRequestId\\\\Tests\\\\Functional\\\\App\\\\Monolog\\\\MemoryHandler\\:\\:write\\(\\) has parameter \\$record with no value type specified in iterable type array\\.$#"
