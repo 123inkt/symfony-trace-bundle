@@ -121,8 +121,7 @@ final class SymfonyTraceExtension extends ConfigurableExtension
         }
 
         $container->setParameter(self::PARAMETER_KEY . '.http_client.enabled', false);
-
-        if ($mergedConfig['http_client']['enabled']) {
+        if (isset($mergedConfig['http_client']) && $mergedConfig['http_client']['enabled']) {
             if (interface_exists(HttpClientInterface::class) === false) {
                 throw new LogicException(
                     'HttpClient support cannot be enabled as the HttpClient component is not installed. ' .

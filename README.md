@@ -36,7 +36,7 @@ Then enable the bundle in your `/config/bundles.php`:
 
 return [
     ...
-    DR\SymfonyTraceBundle\TraceBundle::class => ['all' => true],
+    DR\SymfonyTraceBundle\SymfonyTraceBundle::class => ['all' => true],
 ];
 ```
 

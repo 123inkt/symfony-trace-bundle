@@ -13,7 +13,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 /**
  * @codeCoverageIgnore - This is a bundle class, tested by the functional test
  */
-final class TraceBundle extends Bundle
+final class SymfonyTraceBundle extends Bundle
 {
     public function build(ContainerBuilder $container): void
     {

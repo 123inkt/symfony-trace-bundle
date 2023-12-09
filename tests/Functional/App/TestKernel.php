@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace DR\SymfonyTraceBundle\Tests\Functional\App;
 
-use DR\SymfonyTraceBundle\TraceBundle;
+use DR\SymfonyTraceBundle\SymfonyTraceBundle;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\MonologBundle\MonologBundle;
@@ -23,7 +23,7 @@ final class TestKernel extends Kernel
             new FrameworkBundle(),
             new TwigBundle(),
             new MonologBundle(),
-            new TraceBundle(),
+            new SymfonyTraceBundle(),
         ];
     }
 
