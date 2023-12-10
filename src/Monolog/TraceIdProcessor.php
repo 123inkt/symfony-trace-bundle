@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DR\SymfonyRequestId\Monolog;
 
-use DR\SymfonyRequestId\IdStorageInterface;
+use DR\SymfonyRequestId\TraceStorageInterface;
 use Monolog\LogRecord;
 use Monolog\Processor\ProcessorInterface;
 
@@ -14,7 +14,7 @@ use Monolog\Processor\ProcessorInterface;
  */
 final class TraceIdProcessor implements ProcessorInterface
 {
-    public function __construct(private readonly IdStorageInterface $storage)
+    public function __construct(private readonly TraceStorageInterface $storage)
     {
     }
 

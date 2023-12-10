@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace DR\SymfonyRequestId\EventSubscriber;
 
-use DR\SymfonyRequestId\IdGeneratorInterface;
-use DR\SymfonyRequestId\IdStorageInterface;
+use DR\SymfonyRequestId\Generator\TraceId\TraceIdGeneratorInterface;
+use DR\SymfonyRequestId\TraceStorageInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
@@ -18,18 +18,18 @@ use Symfony\Component\HttpKernel\KernelEvents;
 final class TraceIdSubscriber implements EventSubscriberInterface
 {
     /**
-     * @param string               $requestHeader  The header to inspect for the incoming trace ID.
-     * @param string               $responseHeader The header that will contain the trace ID in the response.
-     * @param bool                 $trustRequest   Trust the value from the request? Or generate?
-     * @param IdStorageInterface   $idStorage      The trace ID storage, used to store the ID from the request or a newly generated ID.
-     * @param IdGeneratorInterface $idGenerator    Used to generate a trace ID if one isn't present.
+     * @param string                $requestHeader  The header to inspect for the incoming trace ID.
+     * @param string                $responseHeader The header that will contain the trace ID in the response.
+     * @param bool                  $trustRequest   Trust the value from the request? Or generate?
+     * @param TraceStorageInterface $traceStorage   The trace ID storage, used to store the ID from the request or a newly generated ID.
+     * @param TraceIdGeneratorInterface  $idGenerator    Used to generate a trace ID if one isn't present.
      */
     public function __construct(
-        private readonly string               $requestHeader,
-        private readonly string               $responseHeader,
-        private readonly bool                 $trustRequest,
-        private readonly IdStorageInterface   $idStorage,
-        private readonly IdGeneratorInterface $idGenerator
+        private readonly string                    $requestHeader,
+        private readonly string                    $responseHeader,
+        private readonly bool                      $trustRequest,
+        private readonly TraceStorageInterface     $traceStorage,
+        private readonly TraceIdGeneratorInterface $idGenerator,
     ) {
     }
 
@@ -50,30 +50,30 @@ final class TraceIdSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $req = $event->getRequest();
+        $request = $event->getRequest();
 
         // Generate a new transactionId for each request
-        $this->idStorage->setTransactionId($this->idGenerator->generate());
+        $this->traceStorage->setTransactionId($this->idGenerator->generate());
 
         // always give the incoming request priority. If it has the ID in
         // its headers already put that into our ID storage.
-        if ($this->trustRequest && $req->headers->get($this->requestHeader) !== null) {
-            $this->idStorage->setTraceId($req->headers->get($this->requestHeader));
+        if ($this->trustRequest && $request->headers->get($this->requestHeader) !== null) {
+            $this->traceStorage->setTraceId($request->headers->get($this->requestHeader));
 
             return;
         }
 
         // similarly, if the trace ID storage already has an ID set we
         // don't need to do anything other than put it into the request headers
-        if ($this->idStorage->getTraceId() !== null) {
-            $req->headers->set($this->requestHeader, $this->idStorage->getTraceId());
+        if ($this->traceStorage->getTraceId() !== null) {
+            $request->headers->set($this->requestHeader, $this->traceStorage->getTraceId());
 
             return;
         }
 
         $id = $this->idGenerator->generate();
-        $req->headers->set($this->requestHeader, $id);
-        $this->idStorage->setTraceId($id);
+        $request->headers->set($this->requestHeader, $id);
+        $this->traceStorage->setTraceId($id);
     }
 
     public function onResponse(ResponseEvent $event): void
@@ -82,8 +82,8 @@ final class TraceIdSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if ($this->idStorage->getTraceId() !== null) {
-            $event->getResponse()->headers->set($this->responseHeader, $this->idStorage->getTraceId());
+        if ($this->traceStorage->getTraceId() !== null) {
+            $event->getResponse()->headers->set($this->responseHeader, $this->traceStorage->getTraceId());
         }
     }
 }

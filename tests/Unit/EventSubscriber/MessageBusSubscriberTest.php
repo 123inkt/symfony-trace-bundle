@@ -4,9 +4,11 @@ declare(strict_types=1);
 namespace DR\SymfonyRequestId\Tests\Unit\EventSubscriber;
 
 use DR\SymfonyRequestId\EventSubscriber\MessageBusSubscriber;
-use DR\SymfonyRequestId\IdGeneratorInterface;
+use DR\SymfonyRequestId\Generator\TraceContext\TraceContextIdGenerator;
+use DR\SymfonyRequestId\Generator\TraceId\TraceIdGeneratorInterface;
+use DR\SymfonyRequestId\TraceId;
+use DR\SymfonyRequestId\TraceStorageInterface;
 use DR\SymfonyRequestId\Messenger\TraceIdStamp;
-use DR\SymfonyRequestId\IdStorageInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -17,23 +19,24 @@ use Symfony\Component\Messenger\Event\WorkerMessageFailedEvent;
 use Symfony\Component\Messenger\Event\WorkerMessageHandledEvent;
 use Symfony\Component\Messenger\Event\WorkerMessageReceivedEvent;
 use Symfony\Component\Messenger\Event\WorkerMessageRetriedEvent;
-
 use function DR\PHPUnitExtensions\Mock\consecutive;
 
 #[CoversClass(MessageBusSubscriber::class)]
 class MessageBusSubscriberTest extends TestCase
 {
-    private IdStorageInterface&MockObject $storage;
-    private IdGeneratorInterface&MockObject $generator;
+    private TraceStorageInterface&MockObject $storage;
+    private TraceIdGeneratorInterface&MockObject $traceIdGenerator;
+    private TraceContextIdGenerator&MockObject $traceContextGenerator;
     private MessageBusSubscriber $subscriber;
     private Envelope $envelope;
 
     protected function setUp(): void
     {
-        $this->envelope   = new Envelope(new stdClass());
-        $this->storage    = $this->createMock(IdStorageInterface::class);
-        $this->generator  = $this->createMock(IdGeneratorInterface::class);
-        $this->subscriber = new MessageBusSubscriber($this->storage, $this->generator);
+        $this->envelope              = new Envelope(new stdClass());
+        $this->storage               = $this->createMock(TraceStorageInterface::class);
+        $this->traceIdGenerator      = $this->createMock(TraceIdGeneratorInterface::class);
+        $this->traceContextGenerator = $this->createMock(TraceContextIdGenerator::class);
+        $this->subscriber            = new MessageBusSubscriber(TraceId::TRACEMODE, $this->storage, $this->traceIdGenerator, $this->traceContextGenerator);
     }
 
     /**
@@ -89,9 +92,9 @@ class MessageBusSubscriberTest extends TestCase
     {
         $event = new WorkerMessageReceivedEvent($this->envelope, 'receiver');
 
-        $this->generator->expects(self::exactly(2))->method('generate')->willReturn('ABC123', '123ABC');
-        $this->storage->expects(self::exactly(2))->method('setTransactionId')->with(...consecutive(['ABC123'], [null]));
+        $this->traceIdGenerator->expects(self::exactly(2))->method('generate')->willReturn('123ABC', 'ABC123');
         $this->storage->expects(self::exactly(2))->method('setTraceId')->with(...consecutive(['123ABC'], [null]));
+        $this->storage->expects(self::exactly(2))->method('setTransactionId')->with(...consecutive(['ABC123'], [null]));
 
         $this->subscriber->onReceived($event);
         $this->subscriber->onHandled();

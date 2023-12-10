@@ -3,9 +3,12 @@ declare(strict_types=1);
 
 namespace DR\SymfonyRequestId\EventSubscriber;
 
-use DR\SymfonyRequestId\IdGeneratorInterface;
+use DR\SymfonyRequestId\Generator\TraceId\TraceIdGeneratorInterface;
+use DR\SymfonyRequestId\Generator\TraceContext\TraceContextIdGenerator;
+use DR\SymfonyRequestId\TraceId;
+use DR\SymfonyRequestId\TraceStorageInterface;
 use DR\SymfonyRequestId\Messenger\TraceIdStamp;
-use DR\SymfonyRequestId\IdStorageInterface;
+use Exception;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\Event\SendMessageToTransportsEvent;
 use Symfony\Component\Messenger\Event\WorkerMessageFailedEvent;
@@ -23,8 +26,12 @@ final class MessageBusSubscriber implements EventSubscriberInterface
     private ?string $originalTraceId = null;
     private ?string $originalTransactionId = null;
 
-    public function __construct(private readonly IdStorageInterface $storage, private readonly IdGeneratorInterface $generator)
-    {
+    public function __construct(
+        private readonly string                    $traceMode,
+        private readonly TraceStorageInterface     $storage,
+        private readonly TraceIdGeneratorInterface $generator,
+        private readonly TraceContextIdGenerator   $traceContextIdGenerator
+    ) {
     }
 
     /**
@@ -51,12 +58,20 @@ final class MessageBusSubscriber implements EventSubscriberInterface
         $this->originalTraceId       = $this->storage->getTraceId();
         $this->originalTransactionId = $this->storage->getTransactionId();
 
+        if ($this->traceMode === TraceId::TRACEMODE) {
+            $newTraceId       = $this->generator->generate();
+            $newTransactionId = $this->generator->generate();
+        } else {
+            $newTraceId       = $this->traceContextIdGenerator->generateTraceId();
+            $newTransactionId = $this->traceContextIdGenerator->generateTransactionId();
+        }
+
         // Set new ids for handling this event
-        $this->storage->setTransactionId($this->generator->generate());
+        $this->storage->setTransactionId($newTransactionId);
         if ($stamp instanceof TraceIdStamp) {
             $this->storage->setTraceId($stamp->traceId);
         } else {
-            $this->storage->setTraceId($this->generator->generate());
+            $this->storage->setTraceId($newTraceId);
         }
     }
 

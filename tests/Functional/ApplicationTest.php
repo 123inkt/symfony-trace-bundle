@@ -4,33 +4,56 @@ declare(strict_types=1);
 
 namespace DR\SymfonyRequestId\Tests\Functional;
 
-use DR\SymfonyRequestId\IdStorageInterface;
+use DR\SymfonyRequestId\TraceContext;
+use DR\SymfonyRequestId\TraceId;
+use DR\SymfonyRequestId\TraceStorageInterface;
 use Exception;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 
 #[CoversNothing]
-class ApplicationTest extends KernelTestCase
+class ApplicationTest extends AbstractKernelTestCase
 {
     /**
      * @throws Exception
      */
     public function testCommandShouldSetTraceId(): void
     {
-        $application = new Application(static::bootKernel(['environment' => 'test', 'debug' => false]));
+        $application = new Application(static::bootKernel(['environment' => 'test', 'debug' => false, 'tracemode' => TraceId::TRACEMODE]));
 
         $storage = self::getContainer()->get('request.id.storage');
-        static::assertInstanceOf(IdStorageInterface::class, $storage);
+        static::assertInstanceOf(TraceStorageInterface::class, $storage);
 
         $input  = new ArrayInput(['help']);
         $output = new NullOutput();
 
         $exitCode = $application->doRun($input, $output);
         static::assertSame(Command::SUCCESS, $exitCode);
+        static::assertInstanceOf(TraceId::class, $storage->getTrace());
         static::assertNotNull($storage->getTraceId());
+        static::assertNotNull($storage->getTransactionId());
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testCommandShouldSetTraceContext(): void
+    {
+        $application = new Application(static::bootKernel(['environment' => 'test', 'debug' => false, 'tracemode' => TraceContext::TRACEMODE]));
+
+        $storage = self::getContainer()->get('request.id.storage');
+        static::assertInstanceOf(TraceStorageInterface::class, $storage);
+
+        $input  = new ArrayInput(['help']);
+        $output = new NullOutput();
+
+        $exitCode = $application->doRun($input, $output);
+        static::assertSame(Command::SUCCESS, $exitCode);
+        static::assertInstanceOf(TraceContext::class, $storage->getTrace());
+        static::assertNotNull($storage->getTraceId());
+        static::assertNotNull($storage->getTransactionId());
     }
 }

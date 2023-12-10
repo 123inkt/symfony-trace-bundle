@@ -2,16 +2,15 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Generator;
+namespace DR\SymfonyRequestId\Generator\TraceId;
 
-use DR\SymfonyRequestId\IdGeneratorInterface;
 use Symfony\Component\Uid\Factory\UuidFactory;
 use Symfony\Component\Uid\UuidV4;
 
 /**
  * Uses symfony/uid to generate a UUIDv4 request ID.
  */
-final class SymfonyUuid4Generator implements IdGeneratorInterface
+final class SymfonyUuid4Generator implements TraceIdGeneratorInterface
 {
     public function __construct(private readonly UuidFactory $factory = new UuidFactory(UuidV4::class, UuidV4::class, UuidV4::class, UuidV4::class))
     {

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace DR\SymfonyRequestId\Tests\Functional;
 
 use DR\SymfonyRequestId\Messenger\TraceIdStamp;
-use DR\SymfonyRequestId\IdStorageInterface;
+use DR\SymfonyRequestId\TraceStorageInterface;
 use DR\SymfonyRequestId\Tests\Functional\App\Messenger\TestMessage;
-use DR\SymfonyRequestId\Tests\Functional\App\Service\TestIdStorage;
+use DR\SymfonyRequestId\Tests\Functional\App\Service\TestTraceStorage;
 use DR\Utils\Assert;
 use Exception;
 use PHPUnit\Framework\Attributes\CoversNothing;
@@ -23,7 +23,7 @@ use Symfony\Component\Messenger\Worker;
 #[CoversNothing]
 class MessengerTest extends KernelTestCase
 {
-    private TestIdStorage $storage;
+    private TestTraceStorage $storage;
     private MessageBusInterface $bus;
     private EventDispatcherInterface $dispatcher;
     private InMemoryTransport $transport;
@@ -31,7 +31,7 @@ class MessengerTest extends KernelTestCase
 
     protected function setUp(): void
     {
-        $this->storage    = Assert::isInstanceOf(self::getContainer()->get(IdStorageInterface::class), TestIdStorage::class);
+        $this->storage    = Assert::isInstanceOf(self::getContainer()->get(TraceStorageInterface::class), TestTraceStorage::class);
         $this->bus        = Assert::isInstanceOf(self::getContainer()->get(MessageBusInterface::class), MessageBusInterface::class);
         $this->dispatcher = Assert::isInstanceOf(self::getContainer()->get('event_dispatcher'), EventDispatcherInterface::class);
         $this->transport  = Assert::isInstanceOf(self::getContainer()->get('messenger.transport.test_transport'), InMemoryTransport::class);
@@ -66,7 +66,7 @@ class MessengerTest extends KernelTestCase
         static::assertSame('foobar', $stamp->traceId);
     }
 
-    private static function assertStorageHasTraceId(TestIdStorage $storage): void
+    private static function assertStorageHasTraceId(TestTraceStorage $storage): void
     {
         // expect 5: 1x dispatch, 1x receive, 1x handled, 1x dispatch, 1x receive
         static::assertSame(5, $storage->getTraceIdCount);

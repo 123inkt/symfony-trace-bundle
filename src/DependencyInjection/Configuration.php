@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace DR\SymfonyRequestId\DependencyInjection;
 
+use DR\SymfonyRequestId\TraceContext;
+use DR\SymfonyRequestId\TraceId;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -21,25 +23,38 @@ class Configuration implements ConfigurationInterface
         $node = $tree->getRootNode();
         $node
             ->children()
-            ->scalarNode('request_header')
+            ->scalarNode('traceMode')
                 ->cannotBeEmpty()
-                ->defaultValue('X-Trace-Id')
-                ->info('The header in which the bundle will look for and set trace IDs')
+                ->defaultValue(TraceContext::TRACEMODE)
+                ->validate()
+                    ->ifNotInArray([TraceContext::TRACEMODE, TraceId::TRACEMODE])
+                    ->thenInvalid('Invalid trace mode %s, must be either `' . TraceContext::TRACEMODE . '` or `' . TraceId::TRACEMODE . '`')
+                    ->end()
+                ->info('The trace mode to use. Either `' . TraceContext::TRACEMODE . '` or `' . TraceId::TRACEMODE . '`')
+            ->end()
+            ->arrayNode('traceid')
+                ->children()
+                    ->scalarNode('request_header')
+                        ->cannotBeEmpty()
+                        ->defaultValue('X-Trace-Id')
+                        ->info('The header in which the bundle will look for and set trace IDs')
+                    ->end()
+                    ->scalarNode('response_header')
+                        ->cannotBeEmpty()
+                        ->defaultValue('X-Trace-Id')
+                        ->info('The header the bundle will set the trace ID at in the response')
+                    ->end()
+                    ->scalarNode('generator_service')
+                        ->info('The service name for the trace ID generator. Defaults to `symfony/uid` or `ramsey/uuid`')
+                    ->end()
+                ->end()
             ->end()
             ->booleanNode('trust_request_header')
                 ->defaultValue(true)
                 ->info("Whether or not to trust the incoming request's `Trace-Id` header as a real ID")
             ->end()
-            ->scalarNode('response_header')
-                ->cannotBeEmpty()
-                ->defaultValue('X-Trace-Id')
-                ->info('The header the bundle will set the trace ID at in the response')
-            ->end()
             ->scalarNode('storage_service')
-                ->info('The service name for trace ID storage. Defaults to `SimpleIdStorage`')
-            ->end()
-            ->scalarNode('generator_service')
-                ->info('The service name for the trace ID generator. Defaults to `symfony/uid` or `ramsey/uuid`')
+                ->info('The service name for trace ID storage. Defaults to `TraceStorage`')
             ->end()
             ->booleanNode('enable_monolog')
                 ->info('Whether or not to turn on the trace ID processor for monolog')

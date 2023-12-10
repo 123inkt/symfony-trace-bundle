@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DR\SymfonyRequestId\Tests\Unit\Twig;
 
-use DR\SymfonyRequestId\SimpleIdStorage;
+use DR\SymfonyRequestId\TraceStorage;
 use DR\SymfonyRequestId\Twig\TraceIdExtension;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -18,11 +18,11 @@ class TraceIdExtensionTest extends TestCase
     private const TEMPLATE = 'Trace: {{ trace_id() }}. Transaction: {{ transaction_id() }}.';
 
     private Environment $environment;
-    private SimpleIdStorage $storage;
+    private TraceStorage $storage;
 
     protected function setUp(): void
     {
-        $this->storage = new SimpleIdStorage();
+        $this->storage = new TraceStorage();
         $this->environment = new Environment(new ArrayLoader(['test' => self::TEMPLATE]));
         $this->environment->addExtension(new TraceIdExtension($this->storage));
     }

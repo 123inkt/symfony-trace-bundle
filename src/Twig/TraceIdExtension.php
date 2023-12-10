@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DR\SymfonyRequestId\Twig;
 
-use DR\SymfonyRequestId\IdStorageInterface;
+use DR\SymfonyRequestId\TraceStorageInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -14,7 +14,7 @@ use Twig\TwigFunction;
  */
 final class TraceIdExtension extends AbstractExtension
 {
-    public function __construct(private readonly IdStorageInterface $storage)
+    public function __construct(private readonly TraceStorageInterface $storage)
     {
     }
 

@@ -20,16 +20,6 @@ framework:
   handle_all_throwables: true
   default_locale: "%locale%"
 
-symfony_request_id:
-  request_header: Trace-Id
-  response_header: Trace-Id
-  trust_request_header: true
-  storage_service: request.id.storage
-  enable_messenger: true
-  http_client:
-    enabled: true
-    header: Trace-Id
-
 twig:
   strict_variables: "%kernel.debug%"
   paths:
@@ -46,7 +36,7 @@ services:
     calls:
       - [ setFormatter, [ "@log.formatter" ] ]
   request.id.storage:
-    class: DR\SymfonyRequestId\Tests\Functional\App\Service\TestIdStorage
+    class: DR\SymfonyRequestId\Tests\Functional\App\Service\TestTraceStorage
   stop.worker.event-subscriber:
     class: DR\SymfonyRequestId\Tests\Functional\App\EventSubscriber\StopWorkerEventSubscriber
     tags:

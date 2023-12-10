@@ -4,8 +4,11 @@ declare(strict_types=1);
 namespace DR\SymfonyRequestId\Tests\Unit\EventSubscriber;
 
 use DR\SymfonyRequestId\EventSubscriber\CommandSubscriber;
-use DR\SymfonyRequestId\IdGeneratorInterface;
-use DR\SymfonyRequestId\IdStorageInterface;
+use DR\SymfonyRequestId\Generator\TraceContext\TraceContextIdGenerator;
+use DR\SymfonyRequestId\Generator\TraceId\TraceIdGeneratorInterface;
+use DR\SymfonyRequestId\TraceContext;
+use DR\SymfonyRequestId\TraceId;
+use DR\SymfonyRequestId\TraceStorageInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -14,24 +17,57 @@ use Symfony\Component\Console\ConsoleEvents;
 #[CoversClass(CommandSubscriber::class)]
 class CommandSubscriberTest extends TestCase
 {
-    private IdStorageInterface&MockObject $idStorage;
-    private IdGeneratorInterface&MockObject $generator;
-    private CommandSubscriber $subscriber;
+    private TraceStorageInterface&MockObject $traceStorage;
+    private TraceIdGeneratorInterface&MockObject $traceIdGenerator;
+    private TraceContextIdGenerator&MockObject $traceContextGenerator;
 
     protected function setUp(): void
     {
-        $this->idStorage = $this->createMock(IdStorageInterface::class);
-        $this->generator = $this->createMock(IdGeneratorInterface::class);
-        $this->subscriber = new CommandSubscriber($this->idStorage, $this->generator);
+        $this->traceStorage          = $this->createMock(TraceStorageInterface::class);
+        $this->traceIdGenerator      = $this->createMock(TraceIdGeneratorInterface::class);
+        $this->traceContextGenerator = $this->createMock(TraceContextIdGenerator::class);
     }
 
-    public function testOnCommand(): void
+    public function testOnCommandTraceId(): void
     {
-        $this->generator->expects(self::exactly(2))->method('generate')->willReturn('trace-id', 'transaction-id');
-        $this->idStorage->expects(self::once())->method('setTraceId')->with('trace-id');
-        $this->idStorage->expects(self::once())->method('setTransactionId')->with('transaction-id');
+        $subscriber = new CommandSubscriber(
+            TraceId::TRACEMODE,
+            $this->traceStorage,
+            $this->traceIdGenerator,
+            $this->traceContextGenerator
+        );
 
-        $this->subscriber->onCommand();
+        $this->traceIdGenerator->expects(self::exactly(2))->method('generate')->willReturn('trace-id', 'transaction-id');
+        $this->traceContextGenerator->expects(self::never())->method('generateTraceId');
+        $this->traceContextGenerator->expects(self::never())->method('generateTransactionId');
+
+        $traceId = new TraceId();
+        $traceId->setTraceId('trace-id');
+        $traceId->setTransactionId('transaction-id');
+        $this->traceStorage->expects(self::once())->method('setTrace')->with($traceId);
+
+        $subscriber->onCommand();
+    }
+
+    public function testOnCommandTraceContext(): void
+    {
+        $subscriber = new CommandSubscriber(
+            TraceContext::TRACEMODE,
+            $this->traceStorage,
+            $this->traceIdGenerator,
+            $this->traceContextGenerator
+        );
+
+        $this->traceIdGenerator->expects(self::never())->method('generate');
+        $this->traceContextGenerator->expects(self::once())->method('generateTraceId')->willReturn('trace-id');
+        $this->traceContextGenerator->expects(self::once())->method('generateTransactionId')->willReturn('transaction-id');
+
+        $traceContext = new TraceContext();
+        $traceContext->setTraceId('trace-id');
+        $traceContext->setTransactionId('transaction-id');
+        $this->traceStorage->expects(self::once())->method('setTrace')->with($traceContext);
+
+        $subscriber->onCommand();
     }
 
     public function testGetSubscribedEvents(): void

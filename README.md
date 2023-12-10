@@ -46,9 +46,7 @@ return [
 <?php
 declare(strict_types=1);
 
-use DR\SymfonyRequestId\Generator\RamseyUuid4Generator;
-use DR\SymfonyRequestId\SimpleIdStorage;
-use Symfony\Config\SymfonyRequestIdConfig;
+use DR\SymfonyRequestId\Generator\TraceId\RamseyUuid4Generator;use DR\SymfonyRequestId\TraceStorage;use Symfony\Config\SymfonyRequestIdConfig;
 
 return static function (SymfonyRequestIdConfig $config): void {
     // The header which the bundle inspects for the incoming trace ID
@@ -65,8 +63,8 @@ return static function (SymfonyRequestIdConfig $config): void {
     $config->responseHeader('X-Trace-Id');
 
     // The service key of an object that implements
-    // DR\SymfonyRequestId\IdStorageInterface
-    $config->storageService(SimpleIdStorage::class);
+    // DR\SymfonyRequestId\TraceStorageInterface
+    $config->storageService(TraceStorage::class);
 
     // The service key of an object that implements
     // DR\SymfonyRequestId\IdGeneratorInterface

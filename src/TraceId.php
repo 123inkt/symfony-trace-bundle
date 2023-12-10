@@ -1,13 +1,13 @@
 <?php
+
 declare(strict_types=1);
 
 namespace DR\SymfonyRequestId;
 
-/**
- * And ID storage backed by a property, simple.
- */
-final class SimpleIdStorage implements IdStorageInterface
+class TraceId
 {
+    public const TRACEMODE = 'traceid';
+
     private ?string $transactionId = null;
     private ?string $traceId = null;
 

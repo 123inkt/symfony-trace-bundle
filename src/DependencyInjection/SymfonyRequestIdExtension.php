@@ -6,13 +6,17 @@ namespace DR\SymfonyRequestId\DependencyInjection;
 
 use DR\SymfonyRequestId\EventSubscriber\CommandSubscriber;
 use DR\SymfonyRequestId\EventSubscriber\MessageBusSubscriber;
+use DR\SymfonyRequestId\EventSubscriber\TraceContextSubscriber;
 use DR\SymfonyRequestId\EventSubscriber\TraceIdSubscriber;
-use DR\SymfonyRequestId\Generator\RamseyUuid4Generator;
-use DR\SymfonyRequestId\Generator\SymfonyUuid4Generator;
+use DR\SymfonyRequestId\Generator\TraceId\TraceIdGeneratorInterface;
+use DR\SymfonyRequestId\Generator\TraceId\RamseyUuid4Generator;
+use DR\SymfonyRequestId\Generator\TraceId\SymfonyUuid4Generator;
+use DR\SymfonyRequestId\Generator\TraceContext\TraceContextIdGenerator;
+use DR\SymfonyRequestId\Service\TraceContextService;
+use DR\SymfonyRequestId\TraceId;
+use DR\SymfonyRequestId\TraceStorageInterface;
 use DR\SymfonyRequestId\Monolog\TraceIdProcessor;
-use DR\SymfonyRequestId\IdGeneratorInterface;
-use DR\SymfonyRequestId\IdStorageInterface;
-use DR\SymfonyRequestId\SimpleIdStorage;
+use DR\SymfonyRequestId\TraceStorage;
 use DR\SymfonyRequestId\Twig\TraceIdExtension;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -21,6 +25,8 @@ use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Twig\Extension\AbstractExtension;
+use Symfony\Component\Console\Application;
 
 /**
  * @codeCoverageIgnore - This is a configuration class, tested by the functional test
@@ -32,11 +38,14 @@ final class SymfonyRequestIdExtension extends ConfigurableExtension
 
     /**
      * @param array{
-     *     request_header: string,
+     *     traceMode: TraceContext::TRACEMODE|TraceId::TRACEMODE,
+     *     traceid: array{
+     *         request_header: string,
+     *         response_header: string,
+     *         generator_service: ?string,
+     *     },
      *     trust_request_header: bool,
-     *     response_header: string,
      *     storage_service: ?string,
-     *     generator_service: ?string,
      *     enable_monolog: bool,
      *     enable_console: bool,
      *     enable_messenger: bool,
@@ -50,12 +59,12 @@ final class SymfonyRequestIdExtension extends ConfigurableExtension
      */
     protected function loadInternal(array $mergedConfig, ContainerBuilder $container): void
     {
-        $container->register(SimpleIdStorage::class)->setPublic(false);
-        $storeId = $mergedConfig['storage_service'] ?? SimpleIdStorage::class;
+        $container->register(TraceStorage::class)->setPublic(false);
+        $storeId = $mergedConfig['storage_service'] ?? TraceStorage::class;
 
         // configure generator service
-        if (isset($mergedConfig['generator_service'])) {
-            $generatorId = $mergedConfig['generator_service'];
+        if (isset($mergedConfig['traceid']['generator_service'])) {
+            $generatorId = $mergedConfig['traceid']['generator_service'];
         } elseif (RamseyUuid4Generator::isSupported()) {
             $generatorId = RamseyUuid4Generator::class;
         } elseif (SymfonyUuid4Generator::isSupported()) {
@@ -70,21 +79,38 @@ final class SymfonyRequestIdExtension extends ConfigurableExtension
             $container->register(SymfonyUuid4Generator::class)->setPublic(false);
         }
 
-        $container->setAlias(IdStorageInterface::class, $storeId)->setPublic(true);
-        $container->setAlias(IdGeneratorInterface::class, $generatorId)->setPublic(true);
+        $container->register(TraceContextService::class)->setPublic(false);
+        $container->register(TraceContextIdGenerator::class)->setPublic(false);
 
-        $container->register(TraceIdSubscriber::class)
-            ->setArguments(
-                [
-                    $mergedConfig['request_header'],
-                    $mergedConfig['response_header'],
-                    $mergedConfig['trust_request_header'],
-                    new Reference($storeId),
-                    new Reference($generatorId),
-                ]
-            )
-            ->setPublic(false)
-            ->addTag('kernel.event_subscriber');
+        $container->setAlias(TraceStorageInterface::class, $storeId)->setPublic(true);
+        $container->setAlias(TraceIdGeneratorInterface::class, $generatorId)->setPublic(true);
+
+        if ($mergedConfig['traceMode'] === TraceId::TRACEMODE) {
+            $container->register(TraceIdSubscriber::class)
+                ->setArguments(
+                    [
+                        $mergedConfig[TraceId::TRACEMODE]['request_header'],
+                        $mergedConfig[TraceId::TRACEMODE]['response_header'],
+                        $mergedConfig['trust_request_header'],
+                        new Reference($storeId),
+                        new Reference($generatorId),
+                    ]
+                )
+                ->setPublic(false)
+                ->addTag('kernel.event_subscriber');
+        } else {
+            $container->register(TraceContextSubscriber::class)
+                ->setArguments(
+                    [
+                        $mergedConfig['trust_request_header'],
+                        new Reference(TraceContextService::class),
+                        new Reference($storeId),
+                        new Reference(TraceContextIdGenerator::class),
+                    ]
+                )
+                ->setPublic(false)
+                ->addTag('kernel.event_subscriber');
+        }
 
         if ($mergedConfig['enable_monolog']) {
             $container->register(TraceIdProcessor::class)
@@ -93,9 +119,16 @@ final class SymfonyRequestIdExtension extends ConfigurableExtension
                 ->addTag('monolog.processor');
         }
 
-        if (class_exists('Symfony\Component\Console\Application') && $mergedConfig['enable_console']) {
+        if (class_exists(Application::class) && $mergedConfig['enable_console']) {
             $container->register(CommandSubscriber::class)
-                ->setArguments([new Reference($storeId), new Reference($generatorId)])
+                ->setArguments(
+                    [
+                        $mergedConfig['traceMode'],
+                        new Reference($storeId),
+                        new Reference($generatorId),
+                        new Reference(TraceContextIdGenerator::class)
+                    ]
+                )
                 ->setPublic(false)
                 ->addTag('kernel.event_subscriber');
         }
@@ -107,22 +140,30 @@ final class SymfonyRequestIdExtension extends ConfigurableExtension
                     'Try running "composer require symfony/messenger".'
                 );
             }
+
             $container->register(MessageBusSubscriber::class)
-                ->setArguments([new Reference($storeId), new Reference($generatorId)])
+                ->setArguments(
+                    [
+                        $mergedConfig['traceMode'],
+                        new Reference($storeId),
+                        new Reference($generatorId),
+                        new Reference(TraceContextIdGenerator::class)
+                    ]
+                )
                 ->setPublic(false)
                 ->addTag('kernel.event_subscriber');
         }
 
-        if (class_exists('Twig\Extension\AbstractExtension') && $mergedConfig['enable_twig']) {
+        if (class_exists(AbstractExtension::class) && $mergedConfig['enable_twig']) {
             $container->register(TraceIdExtension::class)
                 ->addArgument(new Reference($storeId))
                 ->setPublic(false)
                 ->addTag('twig.extension');
         }
 
+        $container->setParameter(self::PARAMETER_KEY . '.traceMode', $mergedConfig['traceMode']);
         $container->setParameter(self::PARAMETER_KEY . '.http_client.enabled', false);
-
-        if ($mergedConfig['http_client']['enabled']) {
+        if (isset($mergedConfig['http_client']) && $mergedConfig['http_client']['enabled']) {
             if (interface_exists(HttpClientInterface::class) === false) {
                 throw new LogicException(
                     'HttpClient support cannot be enabled as the HttpClient component is not installed. ' .

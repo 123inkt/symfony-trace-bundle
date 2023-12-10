@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DR\SymfonyRequestId\Tests\Unit\Generator;
 
-use DR\SymfonyRequestId\Generator\RamseyUuid4Generator;
+use DR\SymfonyRequestId\Generator\TraceId\RamseyUuid4Generator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 

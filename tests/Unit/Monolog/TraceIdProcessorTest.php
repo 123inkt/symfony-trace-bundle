@@ -5,7 +5,7 @@ namespace DR\SymfonyRequestId\Tests\Unit\Monolog;
 
 use DateTimeImmutable;
 use DR\SymfonyRequestId\Monolog\TraceIdProcessor;
-use DR\SymfonyRequestId\IdStorageInterface;
+use DR\SymfonyRequestId\TraceStorageInterface;
 use Monolog\Level;
 use Monolog\Logger;
 use Monolog\LogRecord;
@@ -16,12 +16,12 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(TraceIdProcessor::class)]
 class TraceIdProcessorTest extends TestCase
 {
-    private IdStorageInterface&MockObject $idStorage;
+    private TraceStorageInterface&MockObject $idStorage;
     private TraceIdProcessor $processor;
 
     protected function setUp(): void
     {
-        $this->idStorage = $this->createMock(IdStorageInterface::class);
+        $this->idStorage = $this->createMock(TraceStorageInterface::class);
         $this->processor = new TraceIdProcessor($this->idStorage);
     }
 

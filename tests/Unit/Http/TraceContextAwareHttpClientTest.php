@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace DR\SymfonyRequestId\Tests\Unit\Http;
 
-use DR\SymfonyRequestId\Http\TraceIdAwareHttpClient;
+use DR\SymfonyRequestId\Http\TraceContextAwareHttpClient;
 use DR\SymfonyRequestId\Service\TraceContextService;
-use DR\SymfonyRequestId\TraceId;
+use DR\SymfonyRequestId\TraceContext;
 use DR\SymfonyRequestId\TraceStorageInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -14,25 +14,40 @@ use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpClient\ScopingHttpClient;
 
-#[CoversClass(TraceIdAwareHttpClient::class)]
-class TraceIdAwareHttpClientTest extends TestCase
+#[CoversClass(TraceContextAwareHttpClient::class)]
+class TraceContextAwareHttpClientTest extends TestCase
 {
     private ScopingHttpClient&MockObject $client;
     private TraceStorageInterface&MockObject $storage;
-    private TraceIdAwareHttpClient $traceAwareHttpClient;
+    private TraceContextService&MockObject $service;
+    private TraceContextAwareHttpClient $traceAwareHttpClient;
 
     protected function setUp(): void
     {
         $this->client               = $this->createMock(ScopingHttpClient::class);
         $this->storage              = $this->createMock(TraceStorageInterface::class);
-        $this->traceAwareHttpClient = new TraceIdAwareHttpClient($this->client, $this->storage, 'X-Trace-Id');
+        $this->service              = $this->createMock(TraceContextService::class);
+        $this->traceAwareHttpClient = new TraceContextAwareHttpClient($this->client, $this->storage, $this->service);
     }
 
     public function testRequest(): void
     {
-        $this->storage->expects(self::once())->method('getTraceId')->willReturn('12345');
+        $this->storage->method('getTrace')->willReturn(new TraceContext());
+        $this->service->method('renderTraceParent')->willReturn('00-123-ABC-00');
         $this->client->expects(self::once())->method('request')->with('GET', 'http://localhost', [
-            'headers' => ['X-Trace-Id' => '12345'],
+            'headers' => ['traceparent' => '00-123-ABC-00'],
+        ]);
+
+        $this->traceAwareHttpClient->request('GET', 'http://localhost');
+    }
+
+    public function testRequestTraceState(): void
+    {
+        $this->storage->method('getTrace')->willReturn(new TraceContext());
+        $this->service->method('renderTraceParent')->willReturn('00-123-ABC-00');
+        $this->service->method('renderTraceState')->willReturn('dr=1');
+        $this->client->expects(self::once())->method('request')->with('GET', 'http://localhost', [
+            'headers' => ['traceparent' => '00-123-ABC-00', 'tracestate' => 'dr=1'],
         ]);
 
         $this->traceAwareHttpClient->request('GET', 'http://localhost');

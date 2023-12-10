@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace DR\SymfonyRequestId\Tests\Unit\EventSubscriber;
 
 use DR\SymfonyRequestId\EventSubscriber\TraceIdSubscriber;
-use DR\SymfonyRequestId\IdGeneratorInterface;
-use DR\SymfonyRequestId\IdStorageInterface;
+use DR\SymfonyRequestId\Generator\TraceId\TraceIdGeneratorInterface;
+use DR\SymfonyRequestId\TraceStorageInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -24,8 +24,8 @@ class TraceIdSubscriberTest extends TestCase
     private const REQUEST_HEADER  = 'Trace-Id';
     private const RESPONSE_HEADER = 'Response-Id';
 
-    private IdStorageInterface&MockOBject $idStorage;
-    private IdGeneratorInterface&MockObject $idGen;
+    private TraceStorageInterface&MockOBject $idStorage;
+    private TraceIdGeneratorInterface&MockObject $idGen;
     private TraceIdSubscriber $listener;
     private EventDispatcher $dispatcher;
     private Request $request;
@@ -34,8 +34,8 @@ class TraceIdSubscriberTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->idStorage  = $this->createMock(IdStorageInterface::class);
-        $this->idGen      = $this->createMock(IdGeneratorInterface::class);
+        $this->idStorage  = $this->createMock(TraceStorageInterface::class);
+        $this->idGen      = $this->createMock(TraceIdGeneratorInterface::class);
         $this->listener   = new TraceIdSubscriber(
             self::REQUEST_HEADER,
             self::RESPONSE_HEADER,

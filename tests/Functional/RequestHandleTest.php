@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace DR\SymfonyRequestId\Tests\Functional;
 
-use DR\SymfonyRequestId\IdGeneratorInterface;
-use DR\SymfonyRequestId\IdStorageInterface;
+use DR\SymfonyRequestId\Generator\TraceId\TraceIdGeneratorInterface;
+use DR\SymfonyRequestId\TraceStorageInterface;
 use DR\SymfonyRequestId\Tests\Functional\App\Monolog\MemoryHandler;
 use Exception;
 use PHPUnit\Framework\Attributes\CoversNothing;
@@ -27,7 +27,7 @@ class RequestHandleTest extends WebTestCase
 
         $response = $client->getResponse();
         static::assertSame('testId', $response->headers->get('Trace-Id'));
-        static::assertSame('testId', self::getService(IdStorageInterface::class)->getTraceId());
+        static::assertSame('testId', self::getService(TraceStorageInterface::class)->getTraceId());
         self::assertLogsHaveTraceId('testId');
         static::assertGreaterThan(
             0,
@@ -42,7 +42,7 @@ class RequestHandleTest extends WebTestCase
     public function testAlreadySetTraceIdUsesValueFromStorage(): void
     {
         $client = self::createClient();
-        self::getService(IdStorageInterface::class)->setTraceId('abc123');
+        self::getService(TraceStorageInterface::class)->setTraceId('abc123');
 
         $crawler = $client->request('GET', '/');
         static::assertResponseIsSuccessful();
@@ -66,7 +66,7 @@ class RequestHandleTest extends WebTestCase
         $crawler = $client->request('GET', '/');
         static::assertResponseIsSuccessful();
 
-        $id = self::getService(IdStorageInterface::class)->getTraceId();
+        $id = self::getService(TraceStorageInterface::class)->getTraceId();
         static::assertNotEmpty($id);
         static::assertSame($id, $client->getResponse()->headers->get('Trace-Id'));
         static::assertSame($id, $client->getRequest()->headers->get('Trace-Id'));
@@ -83,8 +83,8 @@ class RequestHandleTest extends WebTestCase
      *
      * @throws Exception
      */
-    #[TestWith([IdStorageInterface::class])]
-    #[TestWith([IdGeneratorInterface::class])]
+    #[TestWith([TraceStorageInterface::class])]
+    #[TestWith([TraceIdGeneratorInterface::class])]
     public function testExpectedServicesArePubliclyAvailableFromTheContainer(string $class): void
     {
         /** @var object $service */
