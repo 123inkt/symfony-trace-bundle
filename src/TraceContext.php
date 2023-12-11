@@ -46,7 +46,7 @@ class TraceContext
     /**
      * @internal
      */
-    public function setTraceId(string $traceId): void
+    public function setTraceId(?string $traceId): void
     {
         $this->traceId = $traceId;
     }
