@@ -4,12 +4,9 @@ declare(strict_types=1);
 namespace DR\SymfonyTraceBundle\Tests\Unit\EventSubscriber;
 
 use DR\SymfonyTraceBundle\EventSubscriber\MessageBusSubscriber;
-use DR\SymfonyTraceBundle\Generator\TraceContext\TraceContextIdGenerator;
-use DR\SymfonyTraceBundle\Generator\TraceId\TraceIdGeneratorInterface;
-use DR\SymfonyTraceBundle\TraceContext;
-use DR\SymfonyTraceBundle\TraceId;
-use DR\SymfonyTraceBundle\TraceStorageInterface;
+use DR\SymfonyTraceBundle\Generator\TraceIdGeneratorInterface;
 use DR\SymfonyTraceBundle\Messenger\TraceIdStamp;
+use DR\SymfonyTraceBundle\TraceStorageInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -26,23 +23,16 @@ use function DR\PHPUnitExtensions\Mock\consecutive;
 class MessageBusSubscriberTest extends TestCase
 {
     private TraceStorageInterface&MockObject $storage;
-    private TraceIdGeneratorInterface&MockObject $traceIdGenerator;
-    private TraceContextIdGenerator&MockObject $traceContextGenerator;
+    private TraceIdGeneratorInterface&MockObject $generator;
     private MessageBusSubscriber $subscriber;
     private Envelope $envelope;
 
     protected function setUp(): void
     {
-        $this->envelope              = new Envelope(new stdClass());
-        $this->storage               = $this->createMock(TraceStorageInterface::class);
-        $this->traceIdGenerator      = $this->createMock(TraceIdGeneratorInterface::class);
-        $this->traceContextGenerator = $this->createMock(TraceContextIdGenerator::class);
-        $this->subscriber            = new MessageBusSubscriber(
-            TraceId::TRACEMODE,
-            $this->storage,
-            $this->traceIdGenerator,
-            $this->traceContextGenerator
-        );
+        $this->envelope   = new Envelope(new stdClass());
+        $this->storage    = $this->createMock(TraceStorageInterface::class);
+        $this->generator  = $this->createMock(TraceIdGeneratorInterface::class);
+        $this->subscriber = new MessageBusSubscriber($this->storage, $this->generator);
     }
 
     /**
@@ -94,36 +84,12 @@ class MessageBusSubscriberTest extends TestCase
      * New transactionId and traceId values are generated,
      * on handled the original (null) values are set back into the storage
      */
-    public function testOnReceivedAndHandledWithoutTraceId(): void
+    public function testOnReceivedAndHandledWithoutTrace(): void
     {
         $event = new WorkerMessageReceivedEvent($this->envelope, 'receiver');
 
-        $this->traceIdGenerator->expects(self::exactly(2))->method('generate')->willReturn('123ABC', 'ABC123');
-        $this->storage->expects(self::exactly(2))->method('setTraceId')->with(...consecutive(['123ABC'], [null]));
-        $this->storage->expects(self::exactly(2))->method('setTransactionId')->with(...consecutive(['ABC123'], [null]));
-
-        $this->subscriber->onReceived($event);
-        $this->subscriber->onHandled();
-    }
-
-    /**
-     * An event is received without traceIdStamp.
-     * New transactionId and traceId values are generated,
-     * on handled the original (null) values are set back into the storage
-     */
-    public function testOnReceivedAndHandledWithoutTraceContext(): void
-    {
-        $this->subscriber = new MessageBusSubscriber(
-            TraceContext::TRACEMODE,
-            $this->storage,
-            $this->traceIdGenerator,
-            $this->traceContextGenerator
-        );
-
-        $event = new WorkerMessageReceivedEvent($this->envelope, 'receiver');
-
-        $this->traceContextGenerator->expects(self::once())->method('generateTraceId')->willReturn('123ABC');
-        $this->traceContextGenerator->expects(self::once())->method('generateTransactionId')->willReturn('ABC123');
+        $this->generator->expects(self::once())->method('generateTraceId')->willReturn('123ABC');
+        $this->generator->expects(self::once())->method('generateTransactionId')->willReturn('ABC123');
         $this->storage->expects(self::exactly(2))->method('setTraceId')->with(...consecutive(['123ABC'], [null]));
         $this->storage->expects(self::exactly(2))->method('setTransactionId')->with(...consecutive(['ABC123'], [null]));
 

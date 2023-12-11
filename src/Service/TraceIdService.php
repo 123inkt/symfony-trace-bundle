@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DR\SymfonyTraceBundle\Service;
 
-use DR\SymfonyTraceBundle\Generator\TraceId\TraceIdGeneratorInterface;
+use DR\SymfonyTraceBundle\Generator\TraceIdGeneratorInterface;
 use DR\SymfonyTraceBundle\TraceContext;
 use DR\SymfonyTraceBundle\TraceId;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,8 +31,8 @@ class TraceIdService implements TraceServiceInterface
     public function createNewTrace(): TraceId
     {
         $trace = new TraceId();
-        $trace->setTraceId($this->generator->generate());
-        $trace->setTransactionId($this->generator->generate());
+        $trace->setTraceId($this->generator->generateTraceId());
+        $trace->setTransactionId($this->generator->generateTransactionId());
 
         return $trace;
     }
@@ -41,7 +41,7 @@ class TraceIdService implements TraceServiceInterface
     {
         $trace = new TraceId();
         $trace->setTraceId($request->headers->get($this->requestHeader));
-        $trace->setTransactionId($this->generator->generate());
+        $trace->setTransactionId($this->generator->generateTransactionId());
 
         return $trace;
     }

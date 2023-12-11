@@ -7,19 +7,21 @@ namespace DR\SymfonyTraceBundle\DependencyInjection;
 use DR\SymfonyTraceBundle\EventSubscriber\CommandSubscriber;
 use DR\SymfonyTraceBundle\EventSubscriber\MessageBusSubscriber;
 use DR\SymfonyTraceBundle\EventSubscriber\TraceSubscriber;
-use DR\SymfonyTraceBundle\Generator\TraceId\TraceIdGeneratorInterface;
+use DR\SymfonyTraceBundle\Generator\TraceContext\TraceContextIdGenerator;
 use DR\SymfonyTraceBundle\Generator\TraceId\RamseyUuid4Generator;
 use DR\SymfonyTraceBundle\Generator\TraceId\SymfonyUuid4Generator;
-use DR\SymfonyTraceBundle\Generator\TraceContext\TraceContextIdGenerator;
+use DR\SymfonyTraceBundle\Generator\TraceIdGeneratorInterface;
+use DR\SymfonyTraceBundle\Monolog\TraceIdProcessor;
 use DR\SymfonyTraceBundle\Service\TraceContextService;
 use DR\SymfonyTraceBundle\Service\TraceIdService;
 use DR\SymfonyTraceBundle\Service\TraceServiceInterface;
+use DR\SymfonyTraceBundle\TraceContext;
 use DR\SymfonyTraceBundle\TraceId;
-use DR\SymfonyTraceBundle\TraceStorageInterface;
-use DR\SymfonyTraceBundle\Monolog\TraceIdProcessor;
 use DR\SymfonyTraceBundle\TraceStorage;
+use DR\SymfonyTraceBundle\TraceStorageInterface;
 use DR\SymfonyTraceBundle\Twig\TraceIdExtension;
 use RuntimeException;
+use Symfony\Component\Console\Application;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\LogicException;
 use Symfony\Component\DependencyInjection\Reference;
@@ -27,7 +29,6 @@ use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Twig\Extension\AbstractExtension;
-use Symfony\Component\Console\Application;
 
 /**
  * @codeCoverageIgnore - This is a configuration class, tested by the functional test
@@ -64,7 +65,9 @@ final class SymfonyTraceExtension extends ConfigurableExtension
         $storeId = $mergedConfig['storage_service'] ?? TraceStorage::class;
 
         // configure generator service
-        if (isset($mergedConfig['traceid']['generator_service'])) {
+        if ($mergedConfig['traceMode'] === TraceContext::TRACEMODE) {
+            $generatorId = TraceContextIdGenerator::class;
+        } elseif (isset($mergedConfig['traceid']['generator_service'])) {
             $generatorId = $mergedConfig['traceid']['generator_service'];
         } elseif (RamseyUuid4Generator::isSupported()) {
             $generatorId = RamseyUuid4Generator::class;
@@ -74,6 +77,7 @@ final class SymfonyTraceExtension extends ConfigurableExtension
             throw new RuntimeException('No generator service found. Please install symfony/uid or ramsey/uuid');
         }
 
+        $container->register(TraceContextIdGenerator::class)->setPublic(false);
         if ($generatorId === RamseyUuid4Generator::class) {
             $container->register(RamseyUuid4Generator::class)->setPublic(false);
         } elseif ($generatorId === SymfonyUuid4Generator::class) {
@@ -88,11 +92,7 @@ final class SymfonyTraceExtension extends ConfigurableExtension
 
         $container->setAlias(TraceServiceInterface::class, $serviceId)->setPublic(false);
         $container->register(TraceContextService::class)
-            ->setArguments(
-                [
-                    new Reference(TraceContextIdGenerator::class)
-                ]
-            )
+            ->setArguments([new Reference(TraceContextIdGenerator::class)])
             ->setPublic(false);
 
         $container->register(TraceIdService::class)
@@ -106,7 +106,6 @@ final class SymfonyTraceExtension extends ConfigurableExtension
             )
             ->setPublic(false);
 
-        $container->register(TraceContextIdGenerator::class)->setPublic(false);
         $container->setAlias(TraceStorageInterface::class, $storeId)->setPublic(true);
         $container->setAlias(TraceIdGeneratorInterface::class, $generatorId)->setPublic(true);
 
@@ -144,14 +143,7 @@ final class SymfonyTraceExtension extends ConfigurableExtension
             }
 
             $container->register(MessageBusSubscriber::class)
-                ->setArguments(
-                    [
-                        $mergedConfig['traceMode'],
-                        new Reference($storeId),
-                        new Reference($generatorId),
-                        new Reference(TraceContextIdGenerator::class)
-                    ]
-                )
+                ->setArguments([new Reference($storeId), new Reference($generatorId)])
                 ->setPublic(false)
                 ->addTag('kernel.event_subscriber');
         }

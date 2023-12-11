@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DR\SymfonyTraceBundle\Generator\TraceId;
 
+use DR\SymfonyTraceBundle\Generator\TraceIdGeneratorInterface;
 use Ramsey\Uuid\UuidFactory;
 use Ramsey\Uuid\UuidFactoryInterface;
 
@@ -21,7 +22,12 @@ final class RamseyUuid4Generator implements TraceIdGeneratorInterface
         return class_exists(UuidFactory::class);
     }
 
-    public function generate(): string
+    public function generateTransactionId(): string
+    {
+        return (string)$this->factory->uuid4();
+    }
+
+    public function generateTraceId(): string
     {
         return (string)$this->factory->uuid4();
     }

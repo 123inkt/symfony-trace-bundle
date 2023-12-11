@@ -3,12 +3,9 @@ declare(strict_types=1);
 
 namespace DR\SymfonyTraceBundle\EventSubscriber;
 
-use DR\SymfonyTraceBundle\Generator\TraceId\TraceIdGeneratorInterface;
-use DR\SymfonyTraceBundle\Generator\TraceContext\TraceContextIdGenerator;
-use DR\SymfonyTraceBundle\TraceId;
-use DR\SymfonyTraceBundle\TraceStorageInterface;
+use DR\SymfonyTraceBundle\Generator\TraceIdGeneratorInterface;
 use DR\SymfonyTraceBundle\Messenger\TraceIdStamp;
-use Exception;
+use DR\SymfonyTraceBundle\TraceStorageInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\Event\SendMessageToTransportsEvent;
 use Symfony\Component\Messenger\Event\WorkerMessageFailedEvent;
@@ -26,12 +23,8 @@ final class MessageBusSubscriber implements EventSubscriberInterface
     private ?string $originalTraceId = null;
     private ?string $originalTransactionId = null;
 
-    public function __construct(
-        private readonly string                    $traceMode,
-        private readonly TraceStorageInterface     $storage,
-        private readonly TraceIdGeneratorInterface $generator,
-        private readonly TraceContextIdGenerator   $traceContextIdGenerator
-    ) {
+    public function __construct(private readonly TraceStorageInterface $storage, private readonly TraceIdGeneratorInterface $generator)
+    {
     }
 
     /**
@@ -58,13 +51,8 @@ final class MessageBusSubscriber implements EventSubscriberInterface
         $this->originalTraceId       = $this->storage->getTraceId();
         $this->originalTransactionId = $this->storage->getTransactionId();
 
-        if ($this->traceMode === TraceId::TRACEMODE) {
-            $newTraceId       = $this->generator->generate();
-            $newTransactionId = $this->generator->generate();
-        } else {
-            $newTraceId       = $this->traceContextIdGenerator->generateTraceId();
-            $newTransactionId = $this->traceContextIdGenerator->generateTransactionId();
-        }
+        $newTraceId       = $this->generator->generateTraceId();
+        $newTransactionId = $this->generator->generateTransactionId();
 
         // Set new ids for handling this event
         $this->storage->setTransactionId($newTransactionId);

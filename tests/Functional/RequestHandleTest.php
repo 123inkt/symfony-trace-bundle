@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace DR\SymfonyTraceBundle\Tests\Functional;
 
-use DR\SymfonyTraceBundle\Generator\TraceId\TraceIdGeneratorInterface;
+use DR\SymfonyTraceBundle\Generator\TraceIdGeneratorInterface;
+use DR\SymfonyTraceBundle\Tests\Functional\App\Monolog\MemoryHandler;
 use DR\SymfonyTraceBundle\TraceContext;
 use DR\SymfonyTraceBundle\TraceStorageInterface;
-use DR\SymfonyTraceBundle\Tests\Functional\App\Monolog\MemoryHandler;
 use Exception;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\TestWith;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 #[CoversNothing]
 class RequestHandleTest extends AbstractWebTestCase

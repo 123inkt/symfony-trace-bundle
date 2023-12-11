@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DR\SymfonyTraceBundle\Tests\Unit\Service;
 
-use DR\SymfonyTraceBundle\Generator\TraceId\TraceIdGeneratorInterface;
+use DR\SymfonyTraceBundle\Generator\TraceIdGeneratorInterface;
 use DR\SymfonyTraceBundle\Service\TraceIdService;
 use DR\SymfonyTraceBundle\TraceId;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -45,7 +45,8 @@ class TraceIdServiceTest extends TestCase
 
     public function testCreateNewTrace(): void
     {
-        $this->generator->expects(static::exactly(2))->method('generate')->willReturnOnConsecutiveCalls('abc', '123');
+        $this->generator->expects(static::once())->method('generateTraceId')->willReturn('abc');
+        $this->generator->expects(static::once())->method('generateTransactionId')->willReturn('123');
 
         $trace = $this->service->createNewTrace();
         static::assertSame('abc', $trace->getTraceId());
@@ -54,7 +55,7 @@ class TraceIdServiceTest extends TestCase
 
     public function testGetRequestTrace(): void
     {
-        $this->generator->expects(static::once())->method('generate')->willReturn('123');
+        $this->generator->expects(static::once())->method('generateTransactionId')->willReturn('123');
 
         $request = new Request();
         $request->headers->set(self::REQUEST_HEADER, 'abc');

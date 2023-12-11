@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace DR\SymfonyTraceBundle\Generator\TraceContext;
 
+use DR\SymfonyTraceBundle\Generator\TraceIdGeneratorInterface;
 use Exception;
 
 /**
  * Generator class that generates trace values according to the tracecontext spec.
  * @internal
  */
-class TraceContextIdGenerator
+class TraceContextIdGenerator implements TraceIdGeneratorInterface
 {
     public function generateTransactionId(): string
     {

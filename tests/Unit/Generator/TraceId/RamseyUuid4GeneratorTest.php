@@ -23,6 +23,7 @@ class RamseyUuid4GeneratorTest extends TestCase
         // correctly than worry about mocking method calls.
         $generator = new RamseyUuid4Generator();
 
-        static::assertNotEmpty($generator->generate());
+        static::assertNotEmpty($generator->generateTraceId());
+        static::assertNotEmpty($generator->generateTransactionId());
     }
 }

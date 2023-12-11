@@ -4,10 +4,7 @@ declare(strict_types=1);
 namespace DR\SymfonyTraceBundle\Tests\Unit\EventSubscriber;
 
 use DR\SymfonyTraceBundle\EventSubscriber\CommandSubscriber;
-use DR\SymfonyTraceBundle\Generator\TraceContext\TraceContextIdGenerator;
-use DR\SymfonyTraceBundle\Generator\TraceId\TraceIdGeneratorInterface;
 use DR\SymfonyTraceBundle\Service\TraceServiceInterface;
-use DR\SymfonyTraceBundle\TraceContext;
 use DR\SymfonyTraceBundle\TraceId;
 use DR\SymfonyTraceBundle\TraceStorageInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
