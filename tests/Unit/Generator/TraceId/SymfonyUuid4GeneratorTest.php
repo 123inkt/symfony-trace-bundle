@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Tests\Unit\Generator;
+namespace DR\SymfonyRequestId\Tests\Unit\Generator\TraceId;
 
 use DR\SymfonyRequestId\Generator\TraceId\SymfonyUuid4Generator;
 use PHPUnit\Framework\Attributes\CoversClass;

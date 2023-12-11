@@ -14,11 +14,11 @@ class TraceContextIdGenerator
 {
     public function generateTransactionId(): string
     {
-        return bin2hex(random_bytes(16));
+        return substr(bin2hex(random_bytes(8)), 8);
     }
 
     public function generateTraceId(): string
     {
-        return bin2hex(random_bytes(16));
+        return substr(bin2hex(random_bytes(16)), 16);
     }
 }

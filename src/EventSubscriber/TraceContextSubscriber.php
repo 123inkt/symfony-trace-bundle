@@ -82,8 +82,7 @@ final class TraceContextSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $headers      = $event->getResponse()->headers;
+        $headers = $event->getResponse()->headers;
         $headers->set(TraceContextService::HEADER_TRACEPARENT, $this->traceContextService->renderTraceParent($traceContext));
-        $headers->set(TraceContextService::HEADER_TRACESTATE, $this->traceContextService->renderTraceState($traceContext));
     }
 }

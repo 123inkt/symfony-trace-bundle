@@ -24,8 +24,8 @@ class TraceIdSubscriberTest extends TestCase
     private const REQUEST_HEADER  = 'Trace-Id';
     private const RESPONSE_HEADER = 'Response-Id';
 
-    private TraceStorageInterface&MockOBject $idStorage;
-    private TraceIdGeneratorInterface&MockObject $idGen;
+    private TraceStorageInterface&MockOBject $storage;
+    private TraceIdGeneratorInterface&MockObject $generator;
     private TraceIdSubscriber $listener;
     private EventDispatcher $dispatcher;
     private Request $request;
@@ -34,15 +34,16 @@ class TraceIdSubscriberTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->idStorage  = $this->createMock(TraceStorageInterface::class);
-        $this->idGen      = $this->createMock(TraceIdGeneratorInterface::class);
-        $this->listener   = new TraceIdSubscriber(
+        $this->storage   = $this->createMock(TraceStorageInterface::class);
+        $this->generator = $this->createMock(TraceIdGeneratorInterface::class);
+        $this->listener  = new TraceIdSubscriber(
             self::REQUEST_HEADER,
             self::RESPONSE_HEADER,
             true,
-            $this->idStorage,
-            $this->idGen
+            $this->storage,
+            $this->generator
         );
+
         $this->dispatcher = new EventDispatcher();
         $this->dispatcher->addSubscriber($this->listener);
         $this->request  = Request::create('/');
@@ -52,12 +53,8 @@ class TraceIdSubscriberTest extends TestCase
 
     public function testNonMasterRequestsDoNothingOnRequest(): void
     {
-        $event = new RequestEvent(
-            $this->kernel,
-            $this->request,
-            HttpKernelInterface::SUB_REQUEST
-        );
-        $this->idStorage->expects(self::never())
+        $event = new RequestEvent($this->kernel, $this->request, HttpKernelInterface::SUB_REQUEST);
+        $this->storage->expects(self::never())
             ->method('getTraceId');
 
         $this->dispatcher->dispatch($event, KernelEvents::REQUEST);
@@ -70,13 +67,13 @@ class TraceIdSubscriberTest extends TestCase
     public function testListenerSetsTheTraceIdToStorageWhenFoundInRequestHeaders(): void
     {
         $this->request->headers->set(self::REQUEST_HEADER, 'testId');
-        $this->idGen->expects(self::once())->method('generate')->willReturn('transactionId');
-        $this->idStorage->expects(self::never())
+        $this->generator->expects(self::once())->method('generate')->willReturn('transactionId');
+        $this->storage->expects(self::never())
             ->method('getTraceId');
-        $this->idStorage->expects(self::once())
+        $this->storage->expects(self::once())
             ->method('setTraceId')
             ->with('testId');
-        $this->idStorage->expects(self::once())
+        $this->storage->expects(self::once())
             ->method('setTransactionId')
             ->with('transactionId');
 
@@ -95,13 +92,13 @@ class TraceIdSubscriberTest extends TestCase
      */
     public function testListenerSetsTheIdOnRequestWhenItsFoundInStorage(): void
     {
-        $this->idGen->expects(self::once())->method('generate')->willReturn('transactionId');
-        $this->idStorage->expects(self::exactly(2))
+        $this->generator->expects(self::once())->method('generate')->willReturn('transactionId');
+        $this->storage->expects(self::exactly(2))
             ->method('getTraceId')
             ->willReturn('abc123');
-        $this->idStorage->expects(self::never())
+        $this->storage->expects(self::never())
             ->method('setTraceId');
-        $this->idStorage->expects(self::once())
+        $this->storage->expects(self::once())
             ->method('setTransactionId')
             ->with('transactionId');
 
@@ -122,16 +119,16 @@ class TraceIdSubscriberTest extends TestCase
      */
     public function testListenerGenerateNewIdAndSetsItOnRequestAndStorageWhenNoIdIsFound(): void
     {
-        $this->idGen->expects(self::exactly(2))
+        $this->generator->expects(self::exactly(2))
             ->method('generate')
             ->willReturn('transactionId', 'def234');
-        $this->idStorage->expects(self::once())
+        $this->storage->expects(self::once())
             ->method('getTraceId')
             ->willReturn(null);
-        $this->idStorage->expects(self::once())
+        $this->storage->expects(self::once())
             ->method('setTraceId')
             ->with('def234');
-        $this->idStorage->expects(self::once())
+        $this->storage->expects(self::once())
             ->method('setTransactionId')
             ->with('transactionId');
 
@@ -158,20 +155,20 @@ class TraceIdSubscriberTest extends TestCase
                 self::REQUEST_HEADER,
                 self::REQUEST_HEADER,
                 false,
-                $this->idStorage,
-                $this->idGen
+                $this->storage,
+                $this->generator
             )
         );
-        $this->idGen->expects(self::exactly(2))
+        $this->generator->expects(self::exactly(2))
             ->method('generate')
             ->willReturn('transaction-id', 'def234');
-        $this->idStorage->expects(self::once())
+        $this->storage->expects(self::once())
             ->method('getTraceId')
             ->willReturn(null);
-        $this->idStorage->expects(self::once())
+        $this->storage->expects(self::once())
             ->method('setTransactionId')
             ->with('transaction-id');
-        $this->idStorage->expects(self::once())
+        $this->storage->expects(self::once())
             ->method('setTraceId')
             ->with('def234');
 
@@ -189,7 +186,7 @@ class TraceIdSubscriberTest extends TestCase
 
     public function testListenerDoesNothingToResponseWithoutMasterRequest(): void
     {
-        $this->idStorage->expects(self::never())
+        $this->storage->expects(self::never())
             ->method('getTraceId');
 
         $this->dispatcher->dispatch(
@@ -207,7 +204,7 @@ class TraceIdSubscriberTest extends TestCase
 
     public function testRequestWithoutIdInStorageDoesNotSetHeaderOnResponse(): void
     {
-        $this->idStorage->expects(self::once())
+        $this->storage->expects(self::once())
             ->method('getTraceId')
             ->willReturn(null);
 
@@ -226,7 +223,7 @@ class TraceIdSubscriberTest extends TestCase
 
     public function testRequestWithIdInStorageSetsIdOnResponse(): void
     {
-        $this->idStorage->expects(self::exactly(2))
+        $this->storage->expects(self::exactly(2))
             ->method('getTraceId')
             ->willReturn('ghi345');
 
