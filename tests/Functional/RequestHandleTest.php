@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DR\SymfonyTraceBundle\Tests\Functional;
 
 use DR\SymfonyTraceBundle\Generator\TraceId\TraceIdGeneratorInterface;
+use DR\SymfonyTraceBundle\TraceContext;
 use DR\SymfonyTraceBundle\TraceStorageInterface;
 use DR\SymfonyTraceBundle\Tests\Functional\App\Monolog\MemoryHandler;
 use Exception;
@@ -13,7 +14,7 @@ use PHPUnit\Framework\Attributes\TestWith;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 #[CoversNothing]
-class RequestHandleTest extends WebTestCase
+class RequestHandleTest extends AbstractWebTestCase
 {
     /**
      * @throws Exception
@@ -39,27 +40,7 @@ class RequestHandleTest extends WebTestCase
     /**
      * @throws Exception
      */
-    public function testAlreadySetTraceIdUsesValueFromStorage(): void
-    {
-        $client = self::createClient();
-        self::getService(TraceStorageInterface::class)->setTraceId('abc123');
-
-        $crawler = $client->request('GET', '/');
-        static::assertResponseIsSuccessful();
-        static::assertSame('abc123', $client->getResponse()->headers->get('Trace-Id'));
-        static::assertSame('abc123', $client->getRequest()->headers->get('Trace-Id'));
-        self::assertLogsHaveTraceId('abc123');
-        static::assertGreaterThan(
-            0,
-            $crawler->filter('h1:contains("abc123")')->count(),
-            'should have the request ID in the response HTML'
-        );
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function testRequestWithOutTraceIdCreatesOnAndPassesThroughTheResponse(): void
+    public function testRequestWithOutTraceIdCreatesOneAndPassesThroughTheResponse(): void
     {
         $client = self::createClient();
 
@@ -69,7 +50,45 @@ class RequestHandleTest extends WebTestCase
         $id = self::getService(TraceStorageInterface::class)->getTraceId();
         static::assertNotEmpty($id);
         static::assertSame($id, $client->getResponse()->headers->get('Trace-Id'));
-        static::assertSame($id, $client->getRequest()->headers->get('Trace-Id'));
+        self::assertLogsHaveTraceId($id);
+        static::assertGreaterThan(
+            0,
+            $crawler->filter(sprintf('h1:contains("%s")', $id))->count(),
+            'should have the request ID in the response HTML'
+        );
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testRequestThatAlreadyHasATraceContextDoesNotReplaceIt(): void
+    {
+        $client = self::createClient(['tracemode' => TraceContext::TRACEMODE]);
+
+        $crawler = $client->request('GET', '/', [], [], ['HTTP_TRACEPARENT' => '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-00']);
+        static::assertResponseIsSuccessful();
+
+        static::assertSame('0af7651916cd43dd8448eb211c80319c', self::getService(TraceStorageInterface::class)->getTraceId());
+        self::assertLogsHaveTraceId('0af7651916cd43dd8448eb211c80319c');
+        static::assertGreaterThan(
+            0,
+            $crawler->filter('h1:contains("0af7651916cd43dd8448eb211c80319c")')->count(),
+            'should have the request ID in the response HTML'
+        );
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testRequestWithOutTraceContextCreatesOneAndPassesThroughTheResponse(): void
+    {
+        $client = self::createClient(['tracemode' => TraceContext::TRACEMODE]);
+
+        $crawler = $client->request('GET', '/');
+        static::assertResponseIsSuccessful();
+
+        $id = self::getService(TraceStorageInterface::class)->getTraceId();
+        static::assertNotEmpty($id);
         self::assertLogsHaveTraceId($id);
         static::assertGreaterThan(
             0,

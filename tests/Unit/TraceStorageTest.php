@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace DR\SymfonyTraceBundle\Tests\Unit;
 
+use DR\SymfonyTraceBundle\TraceContext;
+use DR\SymfonyTraceBundle\TraceId;
 use DR\SymfonyTraceBundle\TraceStorage;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -47,5 +49,15 @@ class TraceStorageTest extends TestCase
         $storage->setTransactionId(null);
 
         static::assertNull($storage->getTransactionId());
+    }
+
+    public function testGetTraceReturnsTheSameValueThatWasSet(): void
+    {
+        $storage = new TraceStorage();
+        static::assertInstanceOf(TraceId::class, $storage->getTrace());
+
+        $trace = new TraceContext();
+        $storage->setTrace($trace);
+        static::assertSame($trace, $storage->getTrace());
     }
 }

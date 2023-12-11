@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace DR\SymfonyTraceBundle\Http;
 
-use DR\SymfonyTraceBundle\Service\TraceContextService;
-use DR\SymfonyTraceBundle\TraceContext;
-use DR\SymfonyTraceBundle\TraceId;
+use DR\SymfonyTraceBundle\Service\TraceServiceInterface;
 use DR\SymfonyTraceBundle\TraceStorageInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
@@ -15,26 +13,18 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 use Symfony\Contracts\HttpClient\ResponseStreamInterface;
 use Symfony\Contracts\Service\ResetInterface;
 
-class TraceContextAwareHttpClient implements HttpClientInterface, ResetInterface, LoggerAwareInterface
+class TraceAwareHttpClient implements HttpClientInterface, ResetInterface, LoggerAwareInterface
 {
     public function __construct(
         private HttpClientInterface            $client,
         private readonly TraceStorageInterface $storage,
-        private readonly TraceContextService   $traceContextService
+        private readonly TraceServiceInterface $service,
     ) {
     }
 
     public function request(string $method, string $url, array $options = []): ResponseInterface
     {
-        if ($this->storage->getTrace() instanceof TraceContext) {
-            $traceParent = $this->traceContextService->renderTraceParent($this->storage->getTrace());
-            $options['headers'][TraceContextService::HEADER_TRACEPARENT] = $traceParent;
-
-            $traceState = $this->traceContextService->renderTraceState($this->storage->getTrace());
-            if ($traceState !== '') {
-                $options['headers'][TraceContextService::HEADER_TRACESTATE] = $traceState;
-            }
-        }
+        $options = $this->service->handleClientRequest($this->storage->getTrace(), $method, $url, $options);
 
         return $this->client->request($method, $url, $options);
     }

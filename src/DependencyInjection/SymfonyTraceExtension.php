@@ -6,13 +6,14 @@ namespace DR\SymfonyTraceBundle\DependencyInjection;
 
 use DR\SymfonyTraceBundle\EventSubscriber\CommandSubscriber;
 use DR\SymfonyTraceBundle\EventSubscriber\MessageBusSubscriber;
-use DR\SymfonyTraceBundle\EventSubscriber\TraceContextSubscriber;
-use DR\SymfonyTraceBundle\EventSubscriber\TraceIdSubscriber;
+use DR\SymfonyTraceBundle\EventSubscriber\TraceSubscriber;
 use DR\SymfonyTraceBundle\Generator\TraceId\TraceIdGeneratorInterface;
 use DR\SymfonyTraceBundle\Generator\TraceId\RamseyUuid4Generator;
 use DR\SymfonyTraceBundle\Generator\TraceId\SymfonyUuid4Generator;
 use DR\SymfonyTraceBundle\Generator\TraceContext\TraceContextIdGenerator;
 use DR\SymfonyTraceBundle\Service\TraceContextService;
+use DR\SymfonyTraceBundle\Service\TraceIdService;
+use DR\SymfonyTraceBundle\Service\TraceServiceInterface;
 use DR\SymfonyTraceBundle\TraceId;
 use DR\SymfonyTraceBundle\TraceStorageInterface;
 use DR\SymfonyTraceBundle\Monolog\TraceIdProcessor;
@@ -79,38 +80,46 @@ final class SymfonyTraceExtension extends ConfigurableExtension
             $container->register(SymfonyUuid4Generator::class)->setPublic(false);
         }
 
-        $container->register(TraceContextService::class)->setPublic(false);
-        $container->register(TraceContextIdGenerator::class)->setPublic(false);
+        if ($mergedConfig['traceMode'] === TraceId::TRACEMODE) {
+            $serviceId = TraceIdService::class;
+        } else {
+            $serviceId = TraceContextService::class;
+        }
 
+        $container->setAlias(TraceServiceInterface::class, $serviceId)->setPublic(false);
+        $container->register(TraceContextService::class)
+            ->setArguments(
+                [
+                    new Reference(TraceContextIdGenerator::class)
+                ]
+            )
+            ->setPublic(false);
+
+        $container->register(TraceIdService::class)
+            ->setArguments(
+                [
+                    $mergedConfig[TraceId::TRACEMODE]['request_header'],
+                    $mergedConfig[TraceId::TRACEMODE]['response_header'],
+                    $mergedConfig['http_client']['header'] ?? $mergedConfig[TraceId::TRACEMODE]['response_header'],
+                    new Reference($generatorId)
+                ]
+            )
+            ->setPublic(false);
+
+        $container->register(TraceContextIdGenerator::class)->setPublic(false);
         $container->setAlias(TraceStorageInterface::class, $storeId)->setPublic(true);
         $container->setAlias(TraceIdGeneratorInterface::class, $generatorId)->setPublic(true);
 
-        if ($mergedConfig['traceMode'] === TraceId::TRACEMODE) {
-            $container->register(TraceIdSubscriber::class)
-                ->setArguments(
-                    [
-                        $mergedConfig[TraceId::TRACEMODE]['request_header'],
-                        $mergedConfig[TraceId::TRACEMODE]['response_header'],
-                        $mergedConfig['trust_request_header'],
-                        new Reference($storeId),
-                        new Reference($generatorId),
-                    ]
-                )
-                ->setPublic(false)
-                ->addTag('kernel.event_subscriber');
-        } else {
-            $container->register(TraceContextSubscriber::class)
-                ->setArguments(
-                    [
-                        $mergedConfig['trust_request_header'],
-                        new Reference(TraceContextService::class),
-                        new Reference($storeId),
-                        new Reference(TraceContextIdGenerator::class),
-                    ]
-                )
-                ->setPublic(false)
-                ->addTag('kernel.event_subscriber');
-        }
+        $container->register(TraceSubscriber::class)
+            ->setArguments(
+                [
+                    $mergedConfig['trust_request_header'],
+                    new Reference($serviceId),
+                    new Reference($storeId)
+                ]
+            )
+            ->setPublic(false)
+            ->addTag('kernel.event_subscriber');
 
         if ($mergedConfig['enable_monolog']) {
             $container->register(TraceIdProcessor::class)
@@ -121,14 +130,7 @@ final class SymfonyTraceExtension extends ConfigurableExtension
 
         if (class_exists(Application::class) && $mergedConfig['enable_console']) {
             $container->register(CommandSubscriber::class)
-                ->setArguments(
-                    [
-                        $mergedConfig['traceMode'],
-                        new Reference($storeId),
-                        new Reference($generatorId),
-                        new Reference(TraceContextIdGenerator::class)
-                    ]
-                )
+                ->setArguments([new Reference($storeId), new Reference($serviceId)])
                 ->setPublic(false)
                 ->addTag('kernel.event_subscriber');
         }
@@ -161,7 +163,6 @@ final class SymfonyTraceExtension extends ConfigurableExtension
                 ->addTag('twig.extension');
         }
 
-        $container->setParameter(self::PARAMETER_KEY . '.traceMode', $mergedConfig['traceMode']);
         $container->setParameter(self::PARAMETER_KEY . '.http_client.enabled', false);
         if (isset($mergedConfig['http_client']) && $mergedConfig['http_client']['enabled']) {
             if (interface_exists(HttpClientInterface::class) === false) {

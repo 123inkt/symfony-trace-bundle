@@ -5,4 +5,5 @@
   <violation rule="PHPMD\Rule\Design\NpathComplexity" file="src/DependencyInjection/SymfonyTraceExtension.php" method="loadInternal"/>
   <violation rule="PHPMD\Rule\Design\LongMethod" file="src/DependencyInjection/SymfonyTraceExtension.php" method="loadInternal"/>
   <violation rule="PHPMD\Rule\Controversial\Superglobals" file="tests/Functional/AbstractKernelTestCase.php" method="createKernel"/>
+  <violation rule="PHPMD\Rule\Controversial\Superglobals" file="tests/Functional/AbstractWebTestCase.php" method="createKernel"/>
 </phpmd-baseline>
