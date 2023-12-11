@@ -1,4 +1,4 @@
-symfony_request_id:
+symfony_trace:
   traceMode: 'tracecontext'
   traceid:
     request_header: Trace-Id
