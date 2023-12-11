@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Tests\Unit\Http;
+namespace DR\SymfonyTraceBundle\Tests\Unit\Http;
 
-use DR\SymfonyRequestId\Http\TraceIdAwareHttpClient;
-use DR\SymfonyRequestId\IdStorageInterface;
+use DR\SymfonyTraceBundle\Http\TraceIdAwareHttpClient;
+use DR\SymfonyTraceBundle\IdStorageInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

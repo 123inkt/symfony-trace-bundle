@@ -13,14 +13,14 @@ framework:
     transports:
       test_transport: 'in-memory://'
     routing:
-      DR\SymfonyRequestId\Tests\Functional\App\Messenger\TestMessage: test_transport
+      DR\SymfonyTraceBundle\Tests\Functional\App\Messenger\TestMessage: test_transport
   http_method_override: false
   php_errors:
     log: true
   handle_all_throwables: true
   default_locale: "%locale%"
 
-symfony_request_id:
+symfony_trace:
   request_header: Trace-Id
   response_header: Trace-Id
   trust_request_header: true
@@ -42,21 +42,21 @@ services:
       - "[%%level_name%%][%%extra.trace_id%%][%%extra.transaction_id%%] %%message%%"
   log.memory_handler:
     public: true
-    class: DR\SymfonyRequestId\Tests\Functional\App\Monolog\MemoryHandler
+    class: DR\SymfonyTraceBundle\Tests\Functional\App\Monolog\MemoryHandler
     calls:
       - [ setFormatter, [ "@log.formatter" ] ]
   request.id.storage:
-    class: DR\SymfonyRequestId\Tests\Functional\App\Service\TestIdStorage
+    class: DR\SymfonyTraceBundle\Tests\Functional\App\Service\TestIdStorage
   stop.worker.event-subscriber:
-    class: DR\SymfonyRequestId\Tests\Functional\App\EventSubscriber\StopWorkerEventSubscriber
+    class: DR\SymfonyTraceBundle\Tests\Functional\App\EventSubscriber\StopWorkerEventSubscriber
     tags:
       - { name: kernel.event_subscriber }
-  DR\SymfonyRequestId\Tests\Functional\App\Service\MockClientCallbackHelper:
+  DR\SymfonyTraceBundle\Tests\Functional\App\Service\MockClientCallbackHelper:
   test.http_client:
     class: Symfony\Component\HttpClient\MockHttpClient
     public: true
     arguments:
-      - '@DR\SymfonyRequestId\Tests\Functional\App\Service\MockClientCallbackHelper'
+      - '@DR\SymfonyTraceBundle\Tests\Functional\App\Service\MockClientCallbackHelper'
     tags:
       - { name: 'http_client.trace_id' }
 monolog:

@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Tests\Unit\EventSubscriber;
+namespace DR\SymfonyTraceBundle\Tests\Unit\EventSubscriber;
 
-use DR\SymfonyRequestId\EventSubscriber\MessageBusSubscriber;
-use DR\SymfonyRequestId\IdGeneratorInterface;
-use DR\SymfonyRequestId\Messenger\TraceIdStamp;
-use DR\SymfonyRequestId\IdStorageInterface;
+use DR\SymfonyTraceBundle\EventSubscriber\MessageBusSubscriber;
+use DR\SymfonyTraceBundle\IdGeneratorInterface;
+use DR\SymfonyTraceBundle\Messenger\TraceIdStamp;
+use DR\SymfonyTraceBundle\IdStorageInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

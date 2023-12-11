@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Tests\Functional;
+namespace DR\SymfonyTraceBundle\Tests\Functional;
 
-use DR\SymfonyRequestId\IdStorageInterface;
+use DR\SymfonyTraceBundle\IdStorageInterface;
 use Exception;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use Symfony\Bundle\FrameworkBundle\Console\Application;

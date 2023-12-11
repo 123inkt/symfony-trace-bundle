@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\DependencyInjection\Compiler;
+namespace DR\SymfonyTraceBundle\DependencyInjection\Compiler;
 
-use DR\SymfonyRequestId\DependencyInjection\SymfonyRequestIdExtension;
-use DR\SymfonyRequestId\Http\TraceIdAwareHttpClient;
-use DR\SymfonyRequestId\IdStorageInterface;
+use DR\SymfonyTraceBundle\DependencyInjection\SymfonyTraceExtension;
+use DR\SymfonyTraceBundle\Http\TraceIdAwareHttpClient;
+use DR\SymfonyTraceBundle\IdStorageInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Parameter;
@@ -22,13 +22,13 @@ class HttpClientTraceIdPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if ($container->hasParameter(SymfonyRequestIdExtension::PARAMETER_KEY . '.http_client.enabled') === false ||
-            $container->getParameter(SymfonyRequestIdExtension::PARAMETER_KEY . '.http_client.enabled') === false
+        if ($container->hasParameter(SymfonyTraceExtension::PARAMETER_KEY . '.http_client.enabled') === false ||
+            $container->getParameter(SymfonyTraceExtension::PARAMETER_KEY . '.http_client.enabled') === false
         ) {
             return;
         }
 
-        if ($container->getParameter(SymfonyRequestIdExtension::PARAMETER_KEY . '.http_client.tag_default_client') === true &&
+        if ($container->getParameter(SymfonyTraceExtension::PARAMETER_KEY . '.http_client.tag_default_client') === true &&
             $container->hasDefinition('http_client')
         ) {
             $container->getDefinition('http_client')
@@ -42,7 +42,7 @@ class HttpClientTraceIdPass implements CompilerPassInterface
                 ->setArguments([
                     new Reference($id . '.trace_id' . '.inner'),
                     new Reference(IdStorageInterface::class),
-                    new Parameter(SymfonyRequestIdExtension::PARAMETER_KEY . '.http_client.header')
+                    new Parameter(SymfonyTraceExtension::PARAMETER_KEY . '.http_client.header')
                 ])
                 ->setDecoratedService($id, null, 1);
         }

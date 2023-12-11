@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\EventSubscriber;
+namespace DR\SymfonyTraceBundle\EventSubscriber;
 
-use DR\SymfonyRequestId\IdGeneratorInterface;
-use DR\SymfonyRequestId\IdStorageInterface;
+use DR\SymfonyTraceBundle\IdGeneratorInterface;
+use DR\SymfonyTraceBundle\IdStorageInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
