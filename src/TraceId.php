@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId;
+namespace DR\SymfonyTraceBundle;
 
 class TraceId
 {

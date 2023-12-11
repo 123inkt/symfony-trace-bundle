@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Monolog;
+namespace DR\SymfonyTraceBundle\Monolog;
 
-use DR\SymfonyRequestId\TraceStorageInterface;
+use DR\SymfonyTraceBundle\TraceStorageInterface;
 use Monolog\LogRecord;
 use Monolog\Processor\ProcessorInterface;
 

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\DependencyInjection\Compiler;
+namespace DR\SymfonyTraceBundle\DependencyInjection\Compiler;
 
-use DR\SymfonyRequestId\DependencyInjection\SymfonyRequestIdExtension;
-use DR\SymfonyRequestId\Http\TraceContextAwareHttpClient;
-use DR\SymfonyRequestId\Http\TraceIdAwareHttpClient;
-use DR\SymfonyRequestId\Service\TraceContextService;
-use DR\SymfonyRequestId\TraceContext;
-use DR\SymfonyRequestId\TraceId;
-use DR\SymfonyRequestId\TraceStorageInterface;
+use DR\SymfonyTraceBundle\DependencyInjection\SymfonyTraceExtension;
+use DR\SymfonyTraceBundle\Http\TraceContextAwareHttpClient;
+use DR\SymfonyTraceBundle\Http\TraceIdAwareHttpClient;
+use DR\SymfonyTraceBundle\Service\TraceContextService;
+use DR\SymfonyTraceBundle\TraceContext;
+use DR\SymfonyTraceBundle\TraceId;
+use DR\SymfonyTraceBundle\TraceStorageInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Parameter;
@@ -26,13 +26,13 @@ class HttpClientTraceIdPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if ($container->hasParameter(SymfonyRequestIdExtension::PARAMETER_KEY . '.http_client.enabled') === false ||
-            $container->getParameter(SymfonyRequestIdExtension::PARAMETER_KEY . '.http_client.enabled') === false
+        if ($container->hasParameter(SymfonyTraceExtension::PARAMETER_KEY . '.http_client.enabled') === false ||
+            $container->getParameter(SymfonyTraceExtension::PARAMETER_KEY . '.http_client.enabled') === false
         ) {
             return;
         }
 
-        if ($container->getParameter(SymfonyRequestIdExtension::PARAMETER_KEY . '.http_client.tag_default_client') === true &&
+        if ($container->getParameter(SymfonyTraceExtension::PARAMETER_KEY . '.http_client.tag_default_client') === true &&
             $container->hasDefinition('http_client')
         ) {
             $container->getDefinition('http_client')
@@ -46,7 +46,7 @@ class HttpClientTraceIdPass implements CompilerPassInterface
                     ->setArguments([
                         new Reference($id . '.trace_id' . '.inner'),
                         new Reference(TraceStorageInterface::class),
-                        new Parameter(SymfonyRequestIdExtension::PARAMETER_KEY . '.http_client.header'),
+                        new Parameter(SymfonyTraceExtension::PARAMETER_KEY . '.http_client.header'),
                     ])
                     ->setDecoratedService($id, null, 1);
             } else {

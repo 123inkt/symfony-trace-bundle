@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Http;
+namespace DR\SymfonyTraceBundle\Http;
 
-use DR\SymfonyRequestId\TraceStorageInterface;
+use DR\SymfonyTraceBundle\TraceStorageInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;

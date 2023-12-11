@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\EventSubscriber;
+namespace DR\SymfonyTraceBundle\EventSubscriber;
 
-use DR\SymfonyRequestId\Generator\TraceId\TraceIdGeneratorInterface;
-use DR\SymfonyRequestId\Generator\TraceContext\TraceContextIdGenerator;
-use DR\SymfonyRequestId\TraceId;
-use DR\SymfonyRequestId\TraceContext;
-use DR\SymfonyRequestId\TraceStorageInterface;
+use DR\SymfonyTraceBundle\Generator\TraceId\TraceIdGeneratorInterface;
+use DR\SymfonyTraceBundle\Generator\TraceContext\TraceContextIdGenerator;
+use DR\SymfonyTraceBundle\TraceId;
+use DR\SymfonyTraceBundle\TraceContext;
+use DR\SymfonyTraceBundle\TraceStorageInterface;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 

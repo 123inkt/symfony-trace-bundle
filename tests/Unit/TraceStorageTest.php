@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Tests\Unit;
+namespace DR\SymfonyTraceBundle\Tests\Unit;
 
-use DR\SymfonyRequestId\TraceStorage;
+use DR\SymfonyTraceBundle\TraceStorage;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 

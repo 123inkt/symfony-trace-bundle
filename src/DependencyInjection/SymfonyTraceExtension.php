@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\DependencyInjection;
+namespace DR\SymfonyTraceBundle\DependencyInjection;
 
-use DR\SymfonyRequestId\EventSubscriber\CommandSubscriber;
-use DR\SymfonyRequestId\EventSubscriber\MessageBusSubscriber;
-use DR\SymfonyRequestId\EventSubscriber\TraceContextSubscriber;
-use DR\SymfonyRequestId\EventSubscriber\TraceIdSubscriber;
-use DR\SymfonyRequestId\Generator\TraceId\TraceIdGeneratorInterface;
-use DR\SymfonyRequestId\Generator\TraceId\RamseyUuid4Generator;
-use DR\SymfonyRequestId\Generator\TraceId\SymfonyUuid4Generator;
-use DR\SymfonyRequestId\Generator\TraceContext\TraceContextIdGenerator;
-use DR\SymfonyRequestId\Service\TraceContextService;
-use DR\SymfonyRequestId\TraceId;
-use DR\SymfonyRequestId\TraceStorageInterface;
-use DR\SymfonyRequestId\Monolog\TraceIdProcessor;
-use DR\SymfonyRequestId\TraceStorage;
-use DR\SymfonyRequestId\Twig\TraceIdExtension;
+use DR\SymfonyTraceBundle\EventSubscriber\CommandSubscriber;
+use DR\SymfonyTraceBundle\EventSubscriber\MessageBusSubscriber;
+use DR\SymfonyTraceBundle\EventSubscriber\TraceContextSubscriber;
+use DR\SymfonyTraceBundle\EventSubscriber\TraceIdSubscriber;
+use DR\SymfonyTraceBundle\Generator\TraceId\TraceIdGeneratorInterface;
+use DR\SymfonyTraceBundle\Generator\TraceId\RamseyUuid4Generator;
+use DR\SymfonyTraceBundle\Generator\TraceId\SymfonyUuid4Generator;
+use DR\SymfonyTraceBundle\Generator\TraceContext\TraceContextIdGenerator;
+use DR\SymfonyTraceBundle\Service\TraceContextService;
+use DR\SymfonyTraceBundle\TraceId;
+use DR\SymfonyTraceBundle\TraceStorageInterface;
+use DR\SymfonyTraceBundle\Monolog\TraceIdProcessor;
+use DR\SymfonyTraceBundle\TraceStorage;
+use DR\SymfonyTraceBundle\Twig\TraceIdExtension;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\LogicException;
@@ -32,9 +32,9 @@ use Symfony\Component\Console\Application;
  * @codeCoverageIgnore - This is a configuration class, tested by the functional test
  * @internal
  */
-final class SymfonyRequestIdExtension extends ConfigurableExtension
+final class SymfonyTraceExtension extends ConfigurableExtension
 {
-    public const PARAMETER_KEY = 'digital_revolution.symfony_request_id';
+    public const PARAMETER_KEY = 'digital_revolution.symfony_trace';
 
     /**
      * @param array{

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Tests\Functional;
+namespace DR\SymfonyTraceBundle\Tests\Functional;
 
-use DR\SymfonyRequestId\Messenger\TraceIdStamp;
-use DR\SymfonyRequestId\TraceStorageInterface;
-use DR\SymfonyRequestId\Tests\Functional\App\Messenger\TestMessage;
-use DR\SymfonyRequestId\Tests\Functional\App\Service\TestTraceStorage;
+use DR\SymfonyTraceBundle\Messenger\TraceIdStamp;
+use DR\SymfonyTraceBundle\TraceStorageInterface;
+use DR\SymfonyTraceBundle\Tests\Functional\App\Messenger\TestMessage;
+use DR\SymfonyTraceBundle\Tests\Functional\App\Service\TestTraceStorage;
 use DR\Utils\Assert;
 use Exception;
 use PHPUnit\Framework\Attributes\CoversNothing;

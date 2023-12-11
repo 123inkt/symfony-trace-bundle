@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Tests\Unit\Twig;
+namespace DR\SymfonyTraceBundle\Tests\Unit\Twig;
 
-use DR\SymfonyRequestId\TraceStorage;
-use DR\SymfonyRequestId\Twig\TraceIdExtension;
+use DR\SymfonyTraceBundle\TraceStorage;
+use DR\SymfonyTraceBundle\Twig\TraceIdExtension;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Throwable;

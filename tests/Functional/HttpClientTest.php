@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace DR\SymfonyRequestId\Tests\Functional;
 
-use DR\SymfonyRequestId\TraceContext;
-use DR\SymfonyRequestId\TraceId;
-use DR\SymfonyRequestId\TraceStorageInterface;
+use DR\SymfonyTraceBundle\TraceContext;
+use DR\SymfonyTraceBundle\TraceId;
+use DR\SymfonyTraceBundle\TraceStorageInterface;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 

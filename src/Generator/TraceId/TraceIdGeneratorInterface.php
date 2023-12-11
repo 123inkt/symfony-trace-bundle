@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Generator\TraceId;
+namespace DR\SymfonyTraceBundle\Generator\TraceId;
 
 /**
  * Generates new (hopefully) unique ID's for incoming requests, as transactionId and if lacking as traceId.
@@ -10,7 +10,7 @@ namespace DR\SymfonyRequestId\Generator\TraceId;
 interface TraceIdGeneratorInterface
 {
     /**
-     * Create a new request ID.
+     * Create a new ID.
      */
     public function generate(): string;
 }

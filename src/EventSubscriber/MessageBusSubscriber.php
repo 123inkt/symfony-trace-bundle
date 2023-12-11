@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\EventSubscriber;
+namespace DR\SymfonyTraceBundle\EventSubscriber;
 
-use DR\SymfonyRequestId\Generator\TraceId\TraceIdGeneratorInterface;
-use DR\SymfonyRequestId\Generator\TraceContext\TraceContextIdGenerator;
-use DR\SymfonyRequestId\TraceId;
-use DR\SymfonyRequestId\TraceStorageInterface;
-use DR\SymfonyRequestId\Messenger\TraceIdStamp;
+use DR\SymfonyTraceBundle\Generator\TraceId\TraceIdGeneratorInterface;
+use DR\SymfonyTraceBundle\Generator\TraceContext\TraceContextIdGenerator;
+use DR\SymfonyTraceBundle\TraceId;
+use DR\SymfonyTraceBundle\TraceStorageInterface;
+use DR\SymfonyTraceBundle\Messenger\TraceIdStamp;
 use Exception;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\Event\SendMessageToTransportsEvent;

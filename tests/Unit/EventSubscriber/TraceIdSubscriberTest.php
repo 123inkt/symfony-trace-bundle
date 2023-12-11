@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Tests\Unit\EventSubscriber;
+namespace DR\SymfonyTraceBundle\Tests\Unit\EventSubscriber;
 
-use DR\SymfonyRequestId\EventSubscriber\TraceIdSubscriber;
-use DR\SymfonyRequestId\Generator\TraceId\TraceIdGeneratorInterface;
-use DR\SymfonyRequestId\TraceStorageInterface;
+use DR\SymfonyTraceBundle\EventSubscriber\TraceIdSubscriber;
+use DR\SymfonyTraceBundle\Generator\TraceId\TraceIdGeneratorInterface;
+use DR\SymfonyTraceBundle\TraceStorageInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

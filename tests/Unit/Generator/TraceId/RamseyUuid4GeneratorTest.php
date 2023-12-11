@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Tests\Unit\Generator\TraceId;
+namespace DR\SymfonyTraceBundle\Tests\Unit\Generator\TraceId;
 
-use DR\SymfonyRequestId\Generator\TraceId\RamseyUuid4Generator;
+use DR\SymfonyTraceBundle\Generator\TraceId\RamseyUuid4Generator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 

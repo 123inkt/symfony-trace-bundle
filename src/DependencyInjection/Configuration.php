@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\DependencyInjection;
+namespace DR\SymfonyTraceBundle\DependencyInjection;
 
 use DR\SymfonyRequestId\TraceContext;
 use DR\SymfonyRequestId\TraceId;
@@ -18,7 +18,7 @@ class Configuration implements ConfigurationInterface
 {
     public function getConfigTreeBuilder(): TreeBuilder
     {
-        $tree = new TreeBuilder('symfony_request_id');
+        $tree = new TreeBuilder('symfony_trace');
         /** @var ArrayNodeDefinition $node */
         $node = $tree->getRootNode();
         $node

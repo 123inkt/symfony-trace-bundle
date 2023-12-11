@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Tests\Functional\App;
+namespace DR\SymfonyTraceBundle\Tests\Functional\App;
 
-use DR\SymfonyRequestId\RequestIdBundle;
-use DR\SymfonyRequestId\TraceId;
+use DR\SymfonyTraceBundle\SymfonyTraceBundle;
+use DR\SymfonyTraceBundle\TraceId;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\MonologBundle\MonologBundle;
@@ -29,7 +29,7 @@ final class TestKernel extends Kernel
             new FrameworkBundle(),
             new TwigBundle(),
             new MonologBundle(),
-            new RequestIdBundle(),
+            new SymfonyTraceBundle(),
         ];
     }
 
