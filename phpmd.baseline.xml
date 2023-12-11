@@ -2,4 +2,5 @@
 <phpmd-baseline>
   <violation rule="PHPMD\Rule\CyclomaticComplexity" file="src/DependencyInjection/SymfonyRequestIdExtension.php" method="loadInternal"/>
   <violation rule="PHPMD\Rule\Design\NpathComplexity" file="src/DependencyInjection/SymfonyRequestIdExtension.php" method="loadInternal"/>
+  <violation rule="PHPMD\Rule\Controversial\Superglobals" file="tests/Functional/AbstractKernelTestCase.php" method="createKernel"/>
 </phpmd-baseline>
