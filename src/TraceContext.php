@@ -87,6 +87,9 @@ class TraceContext
         $this->flags = $flags;
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getTraceState(): array
     {
         return $this->traceState;
@@ -94,7 +97,7 @@ class TraceContext
 
     /**
      * @internal
-     * @return array<string, string>
+     * @param array<string, string> $traceState
      */
     public function setTraceState(array $traceState): void
     {

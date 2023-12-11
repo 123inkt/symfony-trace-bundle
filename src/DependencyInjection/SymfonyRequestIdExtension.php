@@ -38,7 +38,7 @@ final class SymfonyRequestIdExtension extends ConfigurableExtension
 
     /**
      * @param array{
-     *     traceMode: TraceContext::TRACEMODE|TraceId::TRACEMODE,
+     *     traceMode: 'tracecontext'|'traceid',
      *     traceid: array{
      *         request_header: string,
      *         response_header: string,
