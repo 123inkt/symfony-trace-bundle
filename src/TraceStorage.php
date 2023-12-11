@@ -5,7 +5,7 @@ namespace DR\SymfonyRequestId;
 
 final class TraceStorage implements TraceStorageInterface
 {
-    private TraceContext|TraceId|null $trace = null;
+    private TraceContext|TraceId $trace;
 
     public function __construct()
     {

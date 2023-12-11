@@ -59,6 +59,9 @@ class TraceContextService
         return new TraceContext($parts[0], $parts[1], $parts[2], $parts[3]);
     }
 
+    /**
+     * @return array<string, string>
+     */
     private function parseTraceState(string $traceState): array
     {
         $vendorStates = explode(',', $traceState);

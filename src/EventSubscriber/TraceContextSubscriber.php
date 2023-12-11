@@ -59,7 +59,7 @@ final class TraceContextSubscriber implements EventSubscriberInterface
         // If the request contains a valid traceparent header, parse it and the tracestate and store it.
         $traceParent = $request->headers->get(TraceContextService::HEADER_TRACEPARENT);
         if ($traceParent !== null && $this->traceContextService->validateTraceParent($traceParent)) {
-            $traceState   = $request->headers->get(TraceContextService::HEADER_TRACESTATE);
+            $traceState   = $request->headers->get(TraceContextService::HEADER_TRACESTATE, '');
             $traceContext = $this->traceContextService->parseTraceContext($traceParent, $traceState);
         } else {
             // generate a new tracecontext, discard a potential tracestate header
@@ -78,6 +78,10 @@ final class TraceContextSubscriber implements EventSubscriberInterface
         }
 
         $traceContext = $this->traceStorage->getTrace();
+        if ($traceContext instanceof TraceContext === false) {
+            return;
+        }
+
         $headers      = $event->getResponse()->headers;
         $headers->set(TraceContextService::HEADER_TRACEPARENT, $this->traceContextService->renderTraceParent($traceContext));
         $headers->set(TraceContextService::HEADER_TRACESTATE, $this->traceContextService->renderTraceState($traceContext));

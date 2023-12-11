@@ -9,6 +9,9 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class AbstractKernelTestCase extends KernelTestCase
 {
+    /**
+     * @param array{environment: string, debug: bool, tracemode: string} $options
+     */
     protected static function createKernel(array $options = []): TestKernel
     {
         return new TestKernel($options['environment'], $options['debug'], $options['tracemode']);

@@ -26,7 +26,7 @@ class TraceId
         return $this->traceId;
     }
 
-    public function setTraceId(?string $id): void
+    public function setTraceId(string $id): void
     {
         $this->traceId = $id;
     }

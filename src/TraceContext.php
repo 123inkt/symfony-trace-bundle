@@ -13,6 +13,9 @@ class TraceContext
 
     private ?string $transactionId = null;
 
+    /**
+     * @param array<string, string> $traceState
+     */
     public function __construct(
         private string $version = '00',
         private ?string $traceId = null,
@@ -35,7 +38,7 @@ class TraceContext
         $this->version = $version;
     }
 
-    public function getTraceId(): string
+    public function getTraceId(): ?string
     {
         return $this->traceId;
     }
@@ -91,6 +94,7 @@ class TraceContext
 
     /**
      * @internal
+     * @return array<string, string>
      */
     public function setTraceState(array $traceState): void
     {
