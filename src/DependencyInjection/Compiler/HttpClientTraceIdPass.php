@@ -8,7 +8,6 @@ use DR\SymfonyTraceBundle\DependencyInjection\SymfonyTraceExtension;
 use DR\SymfonyTraceBundle\Http\TraceContextAwareHttpClient;
 use DR\SymfonyTraceBundle\Http\TraceIdAwareHttpClient;
 use DR\SymfonyTraceBundle\Service\TraceContextService;
-use DR\SymfonyTraceBundle\TraceContext;
 use DR\SymfonyTraceBundle\TraceId;
 use DR\SymfonyTraceBundle\TraceStorageInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -41,7 +40,7 @@ class HttpClientTraceIdPass implements CompilerPassInterface
 
         $taggedServices = $container->findTaggedServiceIds('http_client.trace_id');
         foreach ($taggedServices as $id => $tag) {
-            if ($container->getParameter(SymfonyRequestIdExtension::PARAMETER_KEY . '.traceMode') === TraceId::TRACEMODE) {
+            if ($container->getParameter(SymfonyTraceExtension::PARAMETER_KEY . '.traceMode') === TraceId::TRACEMODE) {
                 $container->register($id . '.trace_id', TraceIdAwareHttpClient::class)
                     ->setArguments([
                         new Reference($id . '.trace_id' . '.inner'),

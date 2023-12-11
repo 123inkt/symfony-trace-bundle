@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Service;
+namespace DR\SymfonyTraceBundle\Service;
 
-use DR\SymfonyRequestId\TraceContext;
+use DR\SymfonyTraceBundle\TraceContext;
 use InvalidArgumentException;
 
 /**

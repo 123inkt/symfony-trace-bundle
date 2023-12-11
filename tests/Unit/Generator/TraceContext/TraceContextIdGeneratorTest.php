@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Tests\Unit\Generator\TraceContext;
+namespace DR\SymfonyTraceBundle\Tests\Unit\Generator\TraceContext;
 
-use DR\SymfonyRequestId\Generator\TraceContext\TraceContextIdGenerator;
+use DR\SymfonyTraceBundle\Generator\TraceContext\TraceContextIdGenerator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 

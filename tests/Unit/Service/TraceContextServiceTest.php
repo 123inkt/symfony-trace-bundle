@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Tests\Unit\Service;
+namespace DR\SymfonyTraceBundle\Tests\Unit\Service;
 
-use DR\SymfonyRequestId\Service\TraceContextService;
+use DR\SymfonyTraceBundle\Service\TraceContextService;
 use Generator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;

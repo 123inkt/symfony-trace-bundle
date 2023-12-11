@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Tests\Unit\EventSubscriber;
+namespace DR\SymfonyTraceBundle\Tests\Unit\EventSubscriber;
 
-use DR\SymfonyRequestId\EventSubscriber\TraceContextSubscriber;
-use DR\SymfonyRequestId\Generator\TraceContext\TraceContextIdGenerator;
-use DR\SymfonyRequestId\Service\TraceContextService;
-use DR\SymfonyRequestId\TraceContext;
-use DR\SymfonyRequestId\TraceStorageInterface;
+use DR\SymfonyTraceBundle\EventSubscriber\TraceContextSubscriber;
+use DR\SymfonyTraceBundle\Generator\TraceContext\TraceContextIdGenerator;
+use DR\SymfonyTraceBundle\Service\TraceContextService;
+use DR\SymfonyTraceBundle\TraceContext;
+use DR\SymfonyTraceBundle\TraceStorageInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

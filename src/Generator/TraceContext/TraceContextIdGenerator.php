@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Generator\TraceContext;
+namespace DR\SymfonyTraceBundle\Generator\TraceContext;
 
 use Exception;
 

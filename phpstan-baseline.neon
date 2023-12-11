@@ -6,12 +6,12 @@ parameters:
 			path: src/DependencyInjection/SymfonyTraceExtension.php
 
 		-
-			message: "#^Method DR\\\\SymfonyRequestId\\\\Http\\\\TraceContextAwareHttpClient\\:\\:request\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#"
+			message: "#^Method DR\\\\SymfonyTraceBundle\\\\Http\\\\TraceContextAwareHttpClient\\:\\:request\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Http/TraceContextAwareHttpClient.php
 
 		-
-			message: "#^Method DR\\\\SymfonyRequestId\\\\Http\\\\TraceContextAwareHttpClient\\:\\:withOptions\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#"
+			message: "#^Method DR\\\\SymfonyTraceBundle\\\\Http\\\\TraceContextAwareHttpClient\\:\\:withOptions\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Http/TraceContextAwareHttpClient.php
 
@@ -41,7 +41,7 @@ parameters:
 			path: src/Monolog/TraceIdProcessor.php
 
 		-
-			message: "#^Parameter \\#1 \\$options \\(array\\{environment\\?\\: string, debug\\?\\: bool, tracemode\\?\\: string\\}\\) of method DR\\\\SymfonyRequestId\\\\Tests\\\\Functional\\\\AbstractKernelTestCase\\:\\:createKernel\\(\\) should be contravariant with parameter \\$options \\(array\\) of method Symfony\\\\Bundle\\\\FrameworkBundle\\\\Test\\\\KernelTestCase\\:\\:createKernel\\(\\)$#"
+			message: "#^Parameter \\#1 \\$options \\(array\\{environment\\?\\: string, debug\\?\\: bool, tracemode\\?\\: string\\}\\) of method DR\\\\SymfonyTraceBundle\\\\Tests\\\\Functional\\\\AbstractKernelTestCase\\:\\:createKernel\\(\\) should be contravariant with parameter \\$options \\(array\\) of method Symfony\\\\Bundle\\\\FrameworkBundle\\\\Test\\\\KernelTestCase\\:\\:createKernel\\(\\)$#"
 			count: 1
 			path: tests/Functional/AbstractKernelTestCase.php
 

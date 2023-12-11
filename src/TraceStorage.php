@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId;
+namespace DR\SymfonyTraceBundle;
 
 final class TraceStorage implements TraceStorageInterface
 {

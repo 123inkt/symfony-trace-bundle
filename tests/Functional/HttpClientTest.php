@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Tests\Functional;
+namespace DR\SymfonyTraceBundle\Tests\Functional;
 
 use DR\SymfonyTraceBundle\TraceContext;
 use DR\SymfonyTraceBundle\TraceId;

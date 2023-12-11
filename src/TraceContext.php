@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId;
+namespace DR\SymfonyTraceBundle;
 
 /**
  * The trace context is a container for the traceparent and tracestate header values

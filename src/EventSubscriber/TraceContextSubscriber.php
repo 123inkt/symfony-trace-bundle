@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\EventSubscriber;
+namespace DR\SymfonyTraceBundle\EventSubscriber;
 
-use DR\SymfonyRequestId\Generator\TraceId\TraceIdGeneratorInterface;
-use DR\SymfonyRequestId\Generator\TraceContext\TraceContextIdGenerator;
-use DR\SymfonyRequestId\TraceStorageInterface;
-use DR\SymfonyRequestId\Service\TraceContextService;
-use DR\SymfonyRequestId\TraceContext;
+use DR\SymfonyTraceBundle\Generator\TraceId\TraceIdGeneratorInterface;
+use DR\SymfonyTraceBundle\Generator\TraceContext\TraceContextIdGenerator;
+use DR\SymfonyTraceBundle\TraceStorageInterface;
+use DR\SymfonyTraceBundle\Service\TraceContextService;
+use DR\SymfonyTraceBundle\TraceContext;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;

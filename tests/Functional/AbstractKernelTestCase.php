@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Tests\Functional;
+namespace DR\SymfonyTraceBundle\Tests\Functional;
 
-use DR\SymfonyRequestId\Tests\Functional\App\TestKernel;
-use DR\SymfonyRequestId\TraceId;
+use DR\SymfonyTraceBundle\Tests\Functional\App\TestKernel;
+use DR\SymfonyTraceBundle\TraceId;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class AbstractKernelTestCase extends KernelTestCase

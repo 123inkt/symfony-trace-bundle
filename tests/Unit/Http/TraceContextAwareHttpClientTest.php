@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Tests\Unit\Http;
+namespace DR\SymfonyTraceBundle\Tests\Unit\Http;
 
-use DR\SymfonyRequestId\Http\TraceContextAwareHttpClient;
-use DR\SymfonyRequestId\Service\TraceContextService;
-use DR\SymfonyRequestId\TraceContext;
-use DR\SymfonyRequestId\TraceStorageInterface;
+use DR\SymfonyTraceBundle\Http\TraceContextAwareHttpClient;
+use DR\SymfonyTraceBundle\Service\TraceContextService;
+use DR\SymfonyTraceBundle\TraceContext;
+use DR\SymfonyTraceBundle\TraceStorageInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

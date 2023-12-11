@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Http;
+namespace DR\SymfonyTraceBundle\Http;
 
-use DR\SymfonyRequestId\Service\TraceContextService;
-use DR\SymfonyRequestId\TraceContext;
-use DR\SymfonyRequestId\TraceId;
-use DR\SymfonyRequestId\TraceStorageInterface;
+use DR\SymfonyTraceBundle\Service\TraceContextService;
+use DR\SymfonyTraceBundle\TraceContext;
+use DR\SymfonyTraceBundle\TraceId;
+use DR\SymfonyTraceBundle\TraceStorageInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;

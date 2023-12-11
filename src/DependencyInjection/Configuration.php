@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace DR\SymfonyTraceBundle\DependencyInjection;
 
-use DR\SymfonyRequestId\TraceContext;
-use DR\SymfonyRequestId\TraceId;
+use DR\SymfonyTraceBundle\TraceContext;
+use DR\SymfonyTraceBundle\TraceId;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;

@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace DR\SymfonyRequestId\Tests\Functional\App\Service;
+namespace DR\SymfonyTraceBundle\Tests\Functional\App\Service;
 
-use DR\SymfonyRequestId\TraceId;
-use DR\SymfonyRequestId\TraceContext;
-use DR\SymfonyRequestId\TraceStorageInterface;
+use DR\SymfonyTraceBundle\TraceId;
+use DR\SymfonyTraceBundle\TraceContext;
+use DR\SymfonyTraceBundle\TraceStorageInterface;
 
 class TestTraceStorage implements TraceStorageInterface
 {
