@@ -12,11 +12,9 @@ use DR\SymfonyTraceBundle\Generator\TraceId\RamseyUuid4Generator;
 use DR\SymfonyTraceBundle\Generator\TraceId\SymfonyUuid4Generator;
 use DR\SymfonyTraceBundle\Generator\TraceIdGeneratorInterface;
 use DR\SymfonyTraceBundle\Monolog\TraceIdProcessor;
-use DR\SymfonyTraceBundle\Service\TraceContextService;
-use DR\SymfonyTraceBundle\Service\TraceIdService;
+use DR\SymfonyTraceBundle\Service\TraceContext\TraceContextService;
+use DR\SymfonyTraceBundle\Service\TraceId\TraceIdService;
 use DR\SymfonyTraceBundle\Service\TraceServiceInterface;
-use DR\SymfonyTraceBundle\TraceContext;
-use DR\SymfonyTraceBundle\TraceId;
 use DR\SymfonyTraceBundle\TraceStorage;
 use DR\SymfonyTraceBundle\TraceStorageInterface;
 use DR\SymfonyTraceBundle\Twig\TraceIdExtension;
@@ -65,7 +63,7 @@ final class SymfonyTraceExtension extends ConfigurableExtension
         $storeId = $mergedConfig['storage_service'] ?? TraceStorage::class;
 
         // configure generator service
-        if ($mergedConfig['traceMode'] === TraceContext::TRACEMODE) {
+        if ($mergedConfig['traceMode'] === Configuration::TRACEMODE_TRACECONTEXT) {
             $generatorId = TraceContextIdGenerator::class;
         } elseif (isset($mergedConfig['traceid']['generator_service'])) {
             $generatorId = $mergedConfig['traceid']['generator_service'];
@@ -84,7 +82,7 @@ final class SymfonyTraceExtension extends ConfigurableExtension
             $container->register(SymfonyUuid4Generator::class)->setPublic(false);
         }
 
-        if ($mergedConfig['traceMode'] === TraceId::TRACEMODE) {
+        if ($mergedConfig['traceMode'] === Configuration::TRACEMODE_TRACEID) {
             $serviceId = TraceIdService::class;
         } else {
             $serviceId = TraceContextService::class;
@@ -98,9 +96,9 @@ final class SymfonyTraceExtension extends ConfigurableExtension
         $container->register(TraceIdService::class)
             ->setArguments(
                 [
-                    $mergedConfig[TraceId::TRACEMODE]['request_header'],
-                    $mergedConfig[TraceId::TRACEMODE]['response_header'],
-                    $mergedConfig['http_client']['header'] ?? $mergedConfig[TraceId::TRACEMODE]['response_header'],
+                    $mergedConfig['traceid']['request_header'],
+                    $mergedConfig['traceid']['response_header'],
+                    $mergedConfig['http_client']['header'] ?? $mergedConfig['traceid']['response_header'],
                     new Reference($generatorId)
                 ]
             )

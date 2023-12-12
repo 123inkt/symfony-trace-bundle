@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyTraceBundle\Tests\Unit\Service;
+namespace DR\SymfonyTraceBundle\Tests\Unit\Service\TraceId;
 
 use DR\SymfonyTraceBundle\Generator\TraceIdGeneratorInterface;
-use DR\SymfonyTraceBundle\Service\TraceIdService;
-use DR\SymfonyTraceBundle\TraceId;
+use DR\SymfonyTraceBundle\Service\TraceId\TraceIdService;
+use DR\SymfonyTraceBundle\TraceContext;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -67,7 +67,7 @@ class TraceIdServiceTest extends TestCase
 
     public function testHandleResponse(): void
     {
-        $trace = new TraceId();
+        $trace = new TraceContext();
         $trace->setTraceId('abc');
         $trace->setTransactionId('123');
 
@@ -78,7 +78,7 @@ class TraceIdServiceTest extends TestCase
 
     public function testHandleClientRequest(): void
     {
-        $trace = new TraceId();
+        $trace = new TraceContext();
         $trace->setTraceId('abc');
         $trace->setTransactionId('123');
 

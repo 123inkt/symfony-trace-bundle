@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DR\SymfonyTraceBundle\Tests\Functional;
 
 use DR\SymfonyTraceBundle\Messenger\TraceIdStamp;
+use DR\SymfonyTraceBundle\TraceContext;
 use DR\SymfonyTraceBundle\TraceStorageInterface;
 use DR\SymfonyTraceBundle\Tests\Functional\App\Messenger\TestMessage;
 use DR\SymfonyTraceBundle\Tests\Functional\App\Service\TestTraceStorage;
@@ -13,7 +14,6 @@ use Exception;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Clock\ClockInterface;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -21,7 +21,7 @@ use Symfony\Component\Messenger\Transport\InMemory\InMemoryTransport;
 use Symfony\Component\Messenger\Worker;
 
 #[CoversNothing]
-class MessengerTest extends KernelTestCase
+class MessengerTest extends AbstractKernelTestCase
 {
     private TestTraceStorage $storage;
     private MessageBusInterface $bus;
@@ -41,9 +41,10 @@ class MessengerTest extends KernelTestCase
     /**
      * @throws Exception
      */
-    public function testMessageBusShouldAddAndHandlerStamp(): void
+    public function testMessageBusShouldAddAndHandlerStampTraceId(): void
     {
         $this->storage->setTraceId('foobar');
+        $this->storage->setTransactionId('barfoo');
 
         // ** dispatch **
         $this->bus->dispatch(new TestMessage());
@@ -63,7 +64,11 @@ class MessengerTest extends KernelTestCase
 
         $stamp = $envelop->last(TraceIdStamp::class);
         static::assertInstanceOf(TraceIdStamp::class, $stamp);
-        static::assertSame('foobar', $stamp->traceId);
+
+        $trace = new TraceContext();
+        $trace->setTraceId('foobar');
+        $trace->setParentTransactionId('barfoo');
+        static::assertEquals($trace, $stamp->trace);
     }
 
     private static function assertStorageHasTraceId(TestTraceStorage $storage): void

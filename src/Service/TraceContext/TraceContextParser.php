@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyTraceBundle\Service;
+namespace DR\SymfonyTraceBundle\Service\TraceContext;
 
 use DR\SymfonyTraceBundle\TraceContext;
 use InvalidArgumentException;

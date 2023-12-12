@@ -6,7 +6,7 @@ namespace DR\SymfonyTraceBundle\Tests\Unit\EventSubscriber;
 
 use DR\SymfonyTraceBundle\EventSubscriber\TraceSubscriber;
 use DR\SymfonyTraceBundle\Service\TraceServiceInterface;
-use DR\SymfonyTraceBundle\TraceId;
+use DR\SymfonyTraceBundle\TraceContext;
 use DR\SymfonyTraceBundle\TraceStorageInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -57,7 +57,7 @@ class TraceIdSubscriberTest extends TestCase
      */
     public function testListenerSetsTheTraceToStorageWhenFoundInRequestHeaders(): void
     {
-        $trace = new TraceId();
+        $trace = new TraceContext();
         $this->service->expects(static::once())->method('supports')->willReturn(true);
         $this->service->expects(static::never())->method('createNewTrace');
         $this->service->expects(static::once())->method('getRequestTrace')->willReturn($trace);
@@ -76,7 +76,7 @@ class TraceIdSubscriberTest extends TestCase
         $this->dispatcher->removeSubscriber($this->listener);
         $this->dispatcher->addSubscriber(new TraceSubscriber(false, $this->service, $this->storage));
 
-        $trace = new TraceId();
+        $trace = new TraceContext();
         $this->service->expects(static::never())->method('supports');
         $this->service->expects(static::once())->method('createNewTrace')->willReturn($trace);
         $this->service->expects(static::never())->method('getRequestTrace');
@@ -92,7 +92,7 @@ class TraceIdSubscriberTest extends TestCase
      */
     public function testListenerGenerateNewIdAndSetsItOnRequestAndStorageWhenNoIdIsFound(): void
     {
-        $trace = new TraceId();
+        $trace = new TraceContext();
         $this->service->expects(static::once())->method('supports')->willReturn(false);
         $this->service->expects(static::once())->method('createNewTrace')->willReturn($trace);
         $this->service->expects(static::never())->method('getRequestTrace');
@@ -115,7 +115,7 @@ class TraceIdSubscriberTest extends TestCase
 
     public function testRequestSetsIdOnResponse(): void
     {
-        $trace = new TraceId();
+        $trace = new TraceContext();
         $this->storage->expects(static::once())->method('getTrace')->willReturn($trace);
         $this->service->expects(static::once())->method('handleResponse')->with($this->response, $trace);
 

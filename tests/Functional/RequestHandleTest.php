@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DR\SymfonyTraceBundle\Tests\Functional;
 
+use DR\SymfonyTraceBundle\DependencyInjection\Configuration;
 use DR\SymfonyTraceBundle\Generator\TraceIdGeneratorInterface;
 use DR\SymfonyTraceBundle\Tests\Functional\App\Monolog\MemoryHandler;
 use DR\SymfonyTraceBundle\TraceContext;
@@ -62,7 +63,7 @@ class RequestHandleTest extends AbstractWebTestCase
      */
     public function testRequestThatAlreadyHasATraceContextDoesNotReplaceIt(): void
     {
-        $client = self::createClient(['tracemode' => TraceContext::TRACEMODE]);
+        $client = self::createClient(['tracemode' => Configuration::TRACEMODE_TRACECONTEXT]);
 
         $crawler = $client->request('GET', '/', [], [], ['HTTP_TRACEPARENT' => '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-00']);
         static::assertResponseIsSuccessful();
@@ -81,7 +82,7 @@ class RequestHandleTest extends AbstractWebTestCase
      */
     public function testRequestWithOutTraceContextCreatesOneAndPassesThroughTheResponse(): void
     {
-        $client = self::createClient(['tracemode' => TraceContext::TRACEMODE]);
+        $client = self::createClient(['tracemode' => Configuration::TRACEMODE_TRACECONTEXT]);
 
         $crawler = $client->request('GET', '/');
         static::assertResponseIsSuccessful();

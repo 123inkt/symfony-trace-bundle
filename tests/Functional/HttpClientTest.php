@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace DR\SymfonyTraceBundle\Tests\Functional;
 
+use DR\SymfonyTraceBundle\DependencyInjection\Configuration;
 use DR\SymfonyTraceBundle\TraceContext;
-use DR\SymfonyTraceBundle\TraceId;
 use DR\SymfonyTraceBundle\TraceStorageInterface;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -15,7 +15,7 @@ class HttpClientTest extends AbstractKernelTestCase
 {
     public function testHttpClientIsDecoratedTraceId(): void
     {
-        static::bootKernel(['environment' => 'test', 'debug' => false, 'tracemode' => TraceId::TRACEMODE]);
+        static::bootKernel(['environment' => 'test', 'debug' => false, 'tracemode' => Configuration::TRACEMODE_TRACEID]);
 
         /** @var TraceStorageInterface $storage */
         $storage = static::getContainer()->get('request.id.storage');
@@ -31,7 +31,7 @@ class HttpClientTest extends AbstractKernelTestCase
 
     public function testHttpClientIsDecoratedTraceContext(): void
     {
-        static::bootKernel(['environment' => 'test', 'debug' => false, 'tracemode' => TraceContext::TRACEMODE]);
+        static::bootKernel(['environment' => 'test', 'debug' => false, 'tracemode' => Configuration::TRACEMODE_TRACECONTEXT]);
 
         /** @var TraceStorageInterface $storage */
         $storage = static::getContainer()->get('request.id.storage');
@@ -51,7 +51,7 @@ class HttpClientTest extends AbstractKernelTestCase
 
     public function testHttpClientIsDecoratedTraceContextTraceState(): void
     {
-        static::bootKernel(['environment' => 'test', 'debug' => false, 'tracemode' => TraceContext::TRACEMODE]);
+        static::bootKernel(['environment' => 'test', 'debug' => false, 'tracemode' => Configuration::TRACEMODE_TRACECONTEXT]);
 
         /** @var TraceStorageInterface $storage */
         $storage = static::getContainer()->get('request.id.storage');

@@ -32,10 +32,16 @@ final class MessageBusSubscriber implements EventSubscriberInterface
      */
     public function onSend(SendMessageToTransportsEvent $event): void
     {
-        $traceId = $this->storage->getTraceId();
-        if ($traceId !== null) {
-            $event->setEnvelope($event->getEnvelope()->with(new TraceIdStamp($traceId)));
+        if ($this->storage->getTraceId() === null) {
+            return;
         }
+
+        // pass our current transactionId to the async handler as 'parentTransactionId'
+        $trace = clone $this->storage->getTrace();
+        $trace->setParentTransactionId($this->storage->getTransactionId());
+        $trace->setTransactionId(null);
+
+        $event->setEnvelope($event->getEnvelope()->with(new TraceIdStamp($trace)));
     }
 
     /**
@@ -51,15 +57,12 @@ final class MessageBusSubscriber implements EventSubscriberInterface
         $this->originalTraceId       = $this->storage->getTraceId();
         $this->originalTransactionId = $this->storage->getTransactionId();
 
-        $newTraceId       = $this->generator->generateTraceId();
-        $newTransactionId = $this->generator->generateTransactionId();
-
         // Set new ids for handling this event
-        $this->storage->setTransactionId($newTransactionId);
+        $this->storage->setTransactionId($this->generator->generateTransactionId());
         if ($stamp instanceof TraceIdStamp) {
-            $this->storage->setTraceId($stamp->traceId);
+            $this->storage->setTraceId($stamp->trace->getTraceId());
         } else {
-            $this->storage->setTraceId($newTraceId);
+            $this->storage->setTraceId($this->generator->generateTraceId());
         }
     }
 

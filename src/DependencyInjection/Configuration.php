@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace DR\SymfonyTraceBundle\DependencyInjection;
 
-use DR\SymfonyTraceBundle\TraceContext;
-use DR\SymfonyTraceBundle\TraceId;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -16,6 +14,9 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  */
 class Configuration implements ConfigurationInterface
 {
+    public const TRACEMODE_TRACECONTEXT = 'tracecontext';
+    public const TRACEMODE_TRACEID = 'traceid';
+
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $tree = new TreeBuilder('symfony_trace');
@@ -25,12 +26,12 @@ class Configuration implements ConfigurationInterface
             ->children()
             ->scalarNode('traceMode')
                 ->cannotBeEmpty()
-                ->defaultValue(TraceContext::TRACEMODE)
+                ->defaultValue(self::TRACEMODE_TRACECONTEXT)
                 ->validate()
-                    ->ifNotInArray([TraceContext::TRACEMODE, TraceId::TRACEMODE])
-                    ->thenInvalid('Invalid trace mode %s, must be either `' . TraceContext::TRACEMODE . '` or `' . TraceId::TRACEMODE . '`')
+                    ->ifNotInArray([self::TRACEMODE_TRACECONTEXT, self::TRACEMODE_TRACEID])
+                    ->thenInvalid('Invalid trace mode %s, must be either `' . self::TRACEMODE_TRACECONTEXT . '` or `' . self::TRACEMODE_TRACEID . '`')
                     ->end()
-                ->info('The trace mode to use. Either `' . TraceContext::TRACEMODE . '` or `' . TraceId::TRACEMODE . '`')
+                ->info('The trace mode to use. Either `' . self::TRACEMODE_TRACECONTEXT . '` or `' . self::TRACEMODE_TRACEID . '`')
             ->end()
             ->arrayNode('traceid')
                 ->children()

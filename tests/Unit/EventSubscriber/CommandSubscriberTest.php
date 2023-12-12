@@ -5,7 +5,7 @@ namespace DR\SymfonyTraceBundle\Tests\Unit\EventSubscriber;
 
 use DR\SymfonyTraceBundle\EventSubscriber\CommandSubscriber;
 use DR\SymfonyTraceBundle\Service\TraceServiceInterface;
-use DR\SymfonyTraceBundle\TraceId;
+use DR\SymfonyTraceBundle\TraceContext;
 use DR\SymfonyTraceBundle\TraceStorageInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -28,7 +28,7 @@ class CommandSubscriberTest extends TestCase
     {
         $subscriber = new CommandSubscriber($this->storage, $this->service);
 
-        $traceId = new TraceId();
+        $traceId = new TraceContext();
         $traceId->setTraceId('trace-id');
         $traceId->setTransactionId('transaction-id');
         $this->service->expects(static::once())->method('createNewTrace')->willReturn($traceId);

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyTraceBundle\Tests\Unit\Service;
+namespace DR\SymfonyTraceBundle\Tests\Unit\Service\TraceContext;
 
-use DR\SymfonyTraceBundle\Service\TraceContextParser;
+use DR\SymfonyTraceBundle\Service\TraceContext\TraceContextParser;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 

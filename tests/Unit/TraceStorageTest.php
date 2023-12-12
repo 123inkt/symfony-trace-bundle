@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace DR\SymfonyTraceBundle\Tests\Unit;
 
 use DR\SymfonyTraceBundle\TraceContext;
-use DR\SymfonyTraceBundle\TraceId;
 use DR\SymfonyTraceBundle\TraceStorage;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -54,7 +53,7 @@ class TraceStorageTest extends TestCase
     public function testGetTraceReturnsTheSameValueThatWasSet(): void
     {
         $storage = new TraceStorage();
-        static::assertInstanceOf(TraceId::class, $storage->getTrace());
+        static::assertInstanceOf(TraceContext::class, $storage->getTrace());
 
         $trace = new TraceContext();
         $storage->setTrace($trace);

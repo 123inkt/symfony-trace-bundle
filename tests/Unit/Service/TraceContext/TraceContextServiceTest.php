@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyTraceBundle\Tests\Unit\Service;
+namespace DR\SymfonyTraceBundle\Tests\Unit\Service\TraceContext;
 
 use DR\SymfonyTraceBundle\Generator\TraceContext\TraceContextIdGenerator;
-use DR\SymfonyTraceBundle\Service\TraceContextService;
+use DR\SymfonyTraceBundle\Service\TraceContext\TraceContextService;
 use DR\SymfonyTraceBundle\TraceContext;
 use Generator;
 use PHPUnit\Framework\Attributes\CoversClass;

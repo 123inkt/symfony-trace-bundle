@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace DR\SymfonyTraceBundle\Tests\Unit\Http;
 
 use DR\SymfonyTraceBundle\Http\TraceAwareHttpClient;
-use DR\SymfonyTraceBundle\Service\TraceContextService;
 use DR\SymfonyTraceBundle\Service\TraceServiceInterface;
-use DR\SymfonyTraceBundle\TraceId;
+use DR\SymfonyTraceBundle\TraceContext;
 use DR\SymfonyTraceBundle\TraceStorageInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -33,7 +32,7 @@ class TraceAwareHttpClientTest extends TestCase
 
     public function testRequest(): void
     {
-        $trace = new TraceId();
+        $trace = new TraceContext();
         $trace->setTraceId('12345');
 
         $this->storage->expects(static::once())->method('getTrace')->willReturn($trace);

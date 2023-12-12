@@ -5,11 +5,11 @@ namespace DR\SymfonyTraceBundle;
 
 final class TraceStorage implements TraceStorageInterface
 {
-    private TraceContext|TraceId $trace;
+    private TraceContext $trace;
 
     public function __construct()
     {
-        $this->trace = new TraceId();
+        $this->trace = new TraceContext();
     }
 
     public function getTransactionId(): ?string
@@ -32,12 +32,12 @@ final class TraceStorage implements TraceStorageInterface
         $this->trace->setTraceId($id);
     }
 
-    public function getTrace(): TraceId|TraceContext
+    public function getTrace(): TraceContext
     {
         return $this->trace;
     }
 
-    public function setTrace(TraceId|TraceContext $trace): void
+    public function setTrace(TraceContext $trace): void
     {
         $this->trace = $trace;
     }

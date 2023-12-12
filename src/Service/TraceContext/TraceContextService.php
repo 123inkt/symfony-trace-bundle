@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyTraceBundle\Service;
+namespace DR\SymfonyTraceBundle\Service\TraceContext;
 
 use DR\SymfonyTraceBundle\Generator\TraceContext\TraceContextIdGenerator;
+use DR\SymfonyTraceBundle\Service\TraceServiceInterface;
 use DR\SymfonyTraceBundle\TraceContext;
-use DR\SymfonyTraceBundle\TraceId;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -56,21 +56,19 @@ class TraceContextService implements TraceServiceInterface
     /**
      * @codeCoverageIgnore
      */
-    public function handleResponse(Response $response, TraceId|TraceContext $context): void
+    public function handleResponse(Response $response, TraceContext $context): void
     {
         // Do nothing
     }
 
-    public function handleClientRequest(TraceId|TraceContext $trace, string $method, string $url, array $options = []): array
+    public function handleClientRequest(TraceContext $trace, string $method, string $url, array $options = []): array
     {
-        if ($trace instanceof TraceContext) {
-            $traceParent = $this->renderTraceParent($trace);
-            $options['headers'][self::HEADER_TRACEPARENT] = $traceParent;
+        $traceParent = $this->renderTraceParent($trace);
+        $options['headers'][self::HEADER_TRACEPARENT] = $traceParent;
 
-            $traceState = $this->renderTraceState($trace);
-            if ($traceState !== '') {
-                $options['headers'][self::HEADER_TRACESTATE] = $traceState;
-            }
+        $traceState = $this->renderTraceState($trace);
+        if ($traceState !== '') {
+            $options['headers'][self::HEADER_TRACESTATE] = $traceState;
         }
 
         return $options;

@@ -9,8 +9,6 @@ namespace DR\SymfonyTraceBundle;
  */
 class TraceContext
 {
-    public const TRACEMODE = 'tracecontext';
-
     private ?string $transactionId = null;
 
     /**
@@ -56,7 +54,7 @@ class TraceContext
         return $this->transactionId;
     }
 
-    public function setTransactionId(string $transactionId): void
+    public function setTransactionId(?string $transactionId): void
     {
         $this->transactionId = $transactionId;
     }
@@ -69,7 +67,7 @@ class TraceContext
     /**
      * @internal
      */
-    public function setParentTransactionId(string $parentId): void
+    public function setParentTransactionId(?string $parentId): void
     {
         $this->parentTransactionId = $parentId;
     }

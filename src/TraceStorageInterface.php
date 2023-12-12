@@ -15,6 +15,6 @@ interface TraceStorageInterface
     public function getTraceId(): ?string;
     public function setTraceId(?string $id): void;
 
-    public function getTrace(): TraceId|TraceContext;
-    public function setTrace(TraceId|TraceContext $trace): void;
+    public function getTrace(): TraceContext;
+    public function setTrace(TraceContext $trace): void;
 }

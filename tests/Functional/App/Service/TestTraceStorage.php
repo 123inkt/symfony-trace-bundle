@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace DR\SymfonyTraceBundle\Tests\Functional\App\Service;
 
-use DR\SymfonyTraceBundle\TraceId;
 use DR\SymfonyTraceBundle\TraceContext;
 use DR\SymfonyTraceBundle\TraceStorageInterface;
 
@@ -14,11 +13,11 @@ class TestTraceStorage implements TraceStorageInterface
     public int $getTraceIdCount = 0;
     public int $setTraceIdCount = 0;
 
-    private TraceId|TraceContext $trace;
+    private TraceContext $trace;
 
     public function __construct()
     {
-        $this->trace = new TraceId();
+        $this->trace = new TraceContext();
     }
 
     public function getTransactionId(): ?string
@@ -48,12 +47,12 @@ class TestTraceStorage implements TraceStorageInterface
         ++$this->setTraceIdCount;
     }
 
-    public function getTrace(): TraceId|TraceContext
+    public function getTrace(): TraceContext
     {
         return $this->trace;
     }
 
-    public function setTrace(TraceId|TraceContext $trace): void
+    public function setTrace(TraceContext $trace): void
     {
         $this->trace = $trace;
     }

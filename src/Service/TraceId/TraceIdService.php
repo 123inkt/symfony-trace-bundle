@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyTraceBundle\Service;
+namespace DR\SymfonyTraceBundle\Service\TraceId;
 
 use DR\SymfonyTraceBundle\Generator\TraceIdGeneratorInterface;
+use DR\SymfonyTraceBundle\Service\TraceServiceInterface;
 use DR\SymfonyTraceBundle\TraceContext;
-use DR\SymfonyTraceBundle\TraceId;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -28,32 +28,32 @@ class TraceIdService implements TraceServiceInterface
         return $request->headers->has($this->requestHeader);
     }
 
-    public function createNewTrace(): TraceId
+    public function createNewTrace(): TraceContext
     {
-        $trace = new TraceId();
+        $trace = new TraceContext();
         $trace->setTraceId($this->generator->generateTraceId());
         $trace->setTransactionId($this->generator->generateTransactionId());
 
         return $trace;
     }
 
-    public function getRequestTrace(Request $request): TraceId
+    public function getRequestTrace(Request $request): TraceContext
     {
-        $trace = new TraceId();
+        $trace = new TraceContext();
         $trace->setTraceId($request->headers->get($this->requestHeader));
         $trace->setTransactionId($this->generator->generateTransactionId());
 
         return $trace;
     }
 
-    public function handleResponse(Response $response, TraceId|TraceContext $context): void
+    public function handleResponse(Response $response, TraceContext $context): void
     {
         if ($context->getTraceId() !== null) {
             $response->headers->set($this->responseHeader, $context->getTraceId());
         }
     }
 
-    public function handleClientRequest(TraceId|TraceContext $trace, string $method, string $url, array $options = []): array
+    public function handleClientRequest(TraceContext $trace, string $method, string $url, array $options = []): array
     {
         $options['headers'][$this->clientHeader] ??= $trace->getTraceId();
 

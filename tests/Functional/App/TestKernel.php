@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace DR\SymfonyTraceBundle\Tests\Functional\App;
 
+use DR\SymfonyTraceBundle\DependencyInjection\Configuration;
 use DR\SymfonyTraceBundle\SymfonyTraceBundle;
-use DR\SymfonyTraceBundle\TraceId;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\MonologBundle\MonologBundle;
@@ -15,7 +15,7 @@ use Symfony\Component\HttpKernel\Kernel;
 
 final class TestKernel extends Kernel
 {
-    public function __construct(string $environment, bool $debug, private string $traceMode = TraceId::TRACEMODE)
+    public function __construct(string $environment, bool $debug, private string $traceMode = Configuration::TRACEMODE_TRACEID)
     {
         parent::__construct($environment, $debug);
     }
@@ -39,7 +39,7 @@ final class TestKernel extends Kernel
     public function registerContainerConfiguration(LoaderInterface $loader): void
     {
         $loader->load($this->getProjectDir() . "/config/config.yml");
-        if ($this->traceMode === TraceId::TRACEMODE) {
+        if ($this->traceMode === Configuration::TRACEMODE_TRACEID) {
             $loader->load($this->getProjectDir() . "/config/traceid.yml");
         } else {
             $loader->load($this->getProjectDir() . "/config/tracecontext.yml");
