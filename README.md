@@ -21,13 +21,6 @@ Use [Composer](https://getcomposer.org/).
 composer require digitalrevolution/symfony-trace-bundle
 ```
 
-And one of the UUID generator libraries:
-```shell
-composer require ramsey/uuid
-# OR
-composer require symfony/uid
-```
-
 Then enable the bundle in your `/config/bundles.php`:
 
 ```php
@@ -41,57 +34,9 @@ return [
 ```
 
 ## Configuration
-
-```php
-# /config/packages/symfony-trace-bundle.php
-<?php
-declare(strict_types=1);
-
-use DR\SymfonyTraceBundle\Generator\TraceId\RamseyUuid4Generator;
-use DR\SymfonyTraceBundle\TraceStorage;
-use Symfony\Config\SymfonyTraceConfig;
-
-return static function (SymfonyTraceConfig $config): void {
-    // The header which the bundle inspects for the incoming trace ID
-    // if this is not set an ID will be generated and set at this header
-    $config->requestHeader('X-Trace-Id');
-
-    // Whether to trust the incoming request header. This is turned
-    // on by default. If true a value in the `X-Trace-Id` header in the request
-    // will be used as the trace ID for the rest of the request. If false
-    // those values are ignored.
-    $config->trustRequestHeader(true);
-
-    // The header which the bundle will set the trace ID to on the response
-    $config->responseHeader('X-Trace-Id');
-
-    // The service key of an object that implements
-    // DR\SymfonyTraceBundle\TraceStorageInterface
-    $config->storageService(TraceStorage::class);
-
-    // The service key of an object that implements
-    // DR\SymfonyTraceBundle\Generator\IdGeneratorInterface
-    // Optional, will default to Symfony's Uuid or Ramsey's Uuid.
-    $config->generatorService(RamseyUuid4Generator::class);
-
-    // Whether to add the monolog process, defaults to true
-    $config->enableMonolog(true);
-    
-    // Whether to add the request id to console commands, defaults to true
-    $config->enableConsole(true);
-    
-    // Whether to add the request id to message bus events, defaults to false
-    $config->enableMessenger(false);
-    
-    // Whether to add the twig extension, defaults to true
-    $config->enableTwig(true);
-    
-    $config->httpClient()
-        ->enabled(true)
-        ->tagDefaultClient(false)
-        ->header('X-Trace-Id');
-};
-```
+By default, the bundle will use the [W3C TraceContext](https://www.w3.org/TR/trace-context/) standard to receive and pass on the traceId.  
+It's also possible to configure the bundle to setup custom request/response headers and custom ID generators.  
+Read more about the [TraceId configuration](docs/configuration/traceid.md) and [TraceContext configuration](docs/configuration/tracecontext.md) in the /docs pages.
 
 ## How it Works
 
