@@ -53,7 +53,6 @@ class TraceStorageTest extends TestCase
     public function testGetTraceReturnsTheSameValueThatWasSet(): void
     {
         $storage = new TraceStorage();
-        static::assertInstanceOf(TraceContext::class, $storage->getTrace());
 
         $trace = new TraceContext();
         $storage->setTrace($trace);

@@ -31,24 +31,24 @@ parameters:
 			path: src/Monolog/TraceIdProcessor.php
 
 		-
-			message: "#^Method DR\\\\SymfonyTraceBundle\\\\Service\\\\TraceContextService\\:\\:handleClientRequest\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#"
+			message: "#^Method DR\\\\SymfonyTraceBundle\\\\Service\\\\TraceContext\\\\TraceContextService\\:\\:handleClientRequest\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#"
 			count: 1
-			path: src/Service/TraceContextService.php
+			path: src/Service/TraceContext/TraceContextService.php
 
 		-
-			message: "#^Method DR\\\\SymfonyTraceBundle\\\\Service\\\\TraceContextService\\:\\:handleClientRequest\\(\\) return type has no value type specified in iterable type array\\.$#"
+			message: "#^Method DR\\\\SymfonyTraceBundle\\\\Service\\\\TraceContext\\\\TraceContextService\\:\\:handleClientRequest\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
-			path: src/Service/TraceContextService.php
+			path: src/Service/TraceContext/TraceContextService.php
 
 		-
-			message: "#^Method DR\\\\SymfonyTraceBundle\\\\Service\\\\TraceIdService\\:\\:handleClientRequest\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#"
+			message: "#^Method DR\\\\SymfonyTraceBundle\\\\Service\\\\TraceId\\\\TraceIdService\\:\\:handleClientRequest\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#"
 			count: 1
-			path: src/Service/TraceIdService.php
+			path: src/Service/TraceId/TraceIdService.php
 
 		-
-			message: "#^Method DR\\\\SymfonyTraceBundle\\\\Service\\\\TraceIdService\\:\\:handleClientRequest\\(\\) return type has no value type specified in iterable type array\\.$#"
+			message: "#^Method DR\\\\SymfonyTraceBundle\\\\Service\\\\TraceId\\\\TraceIdService\\:\\:handleClientRequest\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
-			path: src/Service/TraceIdService.php
+			path: src/Service/TraceId/TraceIdService.php
 
 		-
 			message: "#^Method DR\\\\SymfonyTraceBundle\\\\Service\\\\TraceServiceInterface\\:\\:handleClientRequest\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#"
