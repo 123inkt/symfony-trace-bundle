@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace DR\SymfonyTraceBundle\EventSubscriber;
 
 use DR\SymfonyTraceBundle\Generator\TraceIdGeneratorInterface;
-use DR\SymfonyTraceBundle\Messenger\TraceIdStamp;
+use DR\SymfonyTraceBundle\Messenger\TraceStamp;
 use DR\SymfonyTraceBundle\TraceStorageInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\Event\SendMessageToTransportsEvent;
@@ -41,7 +41,7 @@ final class MessageBusSubscriber implements EventSubscriberInterface
         $trace->setParentTransactionId($this->storage->getTransactionId());
         $trace->setTransactionId(null);
 
-        $event->setEnvelope($event->getEnvelope()->with(new TraceIdStamp($trace)));
+        $event->setEnvelope($event->getEnvelope()->with(new TraceStamp($trace)));
     }
 
     /**
@@ -51,7 +51,7 @@ final class MessageBusSubscriber implements EventSubscriberInterface
      */
     public function onReceived(WorkerMessageReceivedEvent $event): void
     {
-        $stamp = $event->getEnvelope()->last(TraceIdStamp::class);
+        $stamp = $event->getEnvelope()->last(TraceStamp::class);
 
         // Remember the original tracing ids
         $this->originalTraceId       = $this->storage->getTraceId();
@@ -59,7 +59,7 @@ final class MessageBusSubscriber implements EventSubscriberInterface
 
         // Set new ids for handling this event
         $this->storage->setTransactionId($this->generator->generateTransactionId());
-        if ($stamp instanceof TraceIdStamp) {
+        if ($stamp instanceof TraceStamp) {
             $this->storage->setTraceId($stamp->trace->getTraceId());
         } else {
             $this->storage->setTraceId($this->generator->generateTraceId());

@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\Reference;
 /**
  * @codeCoverageIgnore - This is a config class
  */
-class HttpClientTraceIdPass implements CompilerPassInterface
+class HttpClientTracePass implements CompilerPassInterface
 {
     /**
      * @SuppressWarnings(PHPMD.UnusedLocalVariable)

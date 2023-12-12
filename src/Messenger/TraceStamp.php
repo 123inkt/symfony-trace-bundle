@@ -7,7 +7,7 @@ namespace DR\SymfonyTraceBundle\Messenger;
 use DR\SymfonyTraceBundle\TraceContext;
 use Symfony\Component\Messenger\Stamp\StampInterface;
 
-final class TraceIdStamp implements StampInterface
+final class TraceStamp implements StampInterface
 {
     /**
      * @codeCoverageIgnore - Simple DTO

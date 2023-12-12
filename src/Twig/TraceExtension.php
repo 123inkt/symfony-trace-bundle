@@ -12,7 +12,7 @@ use Twig\TwigFunction;
  * Add trace_id() and transaction_id() to twig as a function.
  * @internal
  */
-final class TraceIdExtension extends AbstractExtension
+final class TraceExtension extends AbstractExtension
 {
     public function __construct(private readonly TraceStorageInterface $storage)
     {

@@ -16,19 +16,19 @@ parameters:
 			path: src/Http/TraceAwareHttpClient.php
 
 		-
-			message: "#^Method DR\\\\SymfonyTraceBundle\\\\Monolog\\\\TraceIdProcessor\\:\\:__invoke\\(\\) has parameter \\$record with no value type specified in iterable type array\\.$#"
+			message: "#^Method DR\\\\SymfonyTraceBundle\\\\Monolog\\\\TraceProcessor\\:\\:__invoke\\(\\) has parameter \\$record with no value type specified in iterable type array\\.$#"
 			count: 1
-			path: src/Monolog/TraceIdProcessor.php
+			path: src/Monolog/TraceProcessor.php
 
 		-
-			message: "#^Method DR\\\\SymfonyTraceBundle\\\\Monolog\\\\TraceIdProcessor\\:\\:__invoke\\(\\) return type has no value type specified in iterable type array\\.$#"
+			message: "#^Method DR\\\\SymfonyTraceBundle\\\\Monolog\\\\TraceProcessor\\:\\:__invoke\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
-			path: src/Monolog/TraceIdProcessor.php
+			path: src/Monolog/TraceProcessor.php
 
 		-
-			message: "#^Return type \\(array\\|Monolog\\\\LogRecord\\) of method DR\\\\SymfonyTraceBundle\\\\Monolog\\\\TraceIdProcessor\\:\\:__invoke\\(\\) should be covariant with return type \\(Monolog\\\\LogRecord\\) of method Monolog\\\\Processor\\\\ProcessorInterface\\:\\:__invoke\\(\\)$#"
+			message: "#^Return type \\(array\\|Monolog\\\\LogRecord\\) of method DR\\\\SymfonyTraceBundle\\\\Monolog\\\\TraceProcessor\\:\\:__invoke\\(\\) should be covariant with return type \\(Monolog\\\\LogRecord\\) of method Monolog\\\\Processor\\\\ProcessorInterface\\:\\:__invoke\\(\\)$#"
 			count: 1
-			path: src/Monolog/TraceIdProcessor.php
+			path: src/Monolog/TraceProcessor.php
 
 		-
 			message: "#^Method DR\\\\SymfonyTraceBundle\\\\Service\\\\TraceContext\\\\TraceContextService\\:\\:handleClientRequest\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#"

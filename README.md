@@ -164,10 +164,10 @@ Here's an example of a template.
 
 ## HttpClient integration
 
-By default this bundle will check for services tagged with the `http_client.trace_id` tag and decorate them with the TraceIdAwareHttpClient.
+By default this bundle will check for services tagged with the `http_client.trace_id` tag and decorate them with the TraceAwareHttpClient.
 When `tagDefaultClient` is enabled the default symfony http client will also be tagged and thus decorated.
-This will add the `X-Trace-Id` header to all outgoing requests for the tagged clients.
-The header name can be changed with the `header` configuration option.
+This will add the trace header(s) to all outgoing requests for the tagged clients.
+In traceId modus the header name can be changed with the `header` configuration option.
 
 ## About us
 

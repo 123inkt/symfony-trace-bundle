@@ -11,13 +11,13 @@ use DR\SymfonyTraceBundle\Generator\TraceContext\TraceContextIdGenerator;
 use DR\SymfonyTraceBundle\Generator\TraceId\RamseyUuid4Generator;
 use DR\SymfonyTraceBundle\Generator\TraceId\SymfonyUuid4Generator;
 use DR\SymfonyTraceBundle\Generator\TraceIdGeneratorInterface;
-use DR\SymfonyTraceBundle\Monolog\TraceIdProcessor;
+use DR\SymfonyTraceBundle\Monolog\TraceProcessor;
 use DR\SymfonyTraceBundle\Service\TraceContext\TraceContextService;
 use DR\SymfonyTraceBundle\Service\TraceId\TraceIdService;
 use DR\SymfonyTraceBundle\Service\TraceServiceInterface;
 use DR\SymfonyTraceBundle\TraceStorage;
 use DR\SymfonyTraceBundle\TraceStorageInterface;
-use DR\SymfonyTraceBundle\Twig\TraceIdExtension;
+use DR\SymfonyTraceBundle\Twig\TraceExtension;
 use RuntimeException;
 use Symfony\Component\Console\Application;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -119,7 +119,7 @@ final class SymfonyTraceExtension extends ConfigurableExtension
             ->addTag('kernel.event_subscriber');
 
         if ($mergedConfig['enable_monolog']) {
-            $container->register(TraceIdProcessor::class)
+            $container->register(TraceProcessor::class)
                 ->addArgument(new Reference($storeId))
                 ->setPublic(false)
                 ->addTag('monolog.processor');
@@ -147,7 +147,7 @@ final class SymfonyTraceExtension extends ConfigurableExtension
         }
 
         if (class_exists(AbstractExtension::class) && $mergedConfig['enable_twig']) {
-            $container->register(TraceIdExtension::class)
+            $container->register(TraceExtension::class)
                 ->addArgument(new Reference($storeId))
                 ->setPublic(false)
                 ->addTag('twig.extension');

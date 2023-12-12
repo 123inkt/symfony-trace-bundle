@@ -5,7 +5,7 @@ namespace DR\SymfonyTraceBundle\Tests\Unit\EventSubscriber;
 
 use DR\SymfonyTraceBundle\EventSubscriber\MessageBusSubscriber;
 use DR\SymfonyTraceBundle\Generator\TraceIdGeneratorInterface;
-use DR\SymfonyTraceBundle\Messenger\TraceIdStamp;
+use DR\SymfonyTraceBundle\Messenger\TraceStamp;
 use DR\SymfonyTraceBundle\TraceContext;
 use DR\SymfonyTraceBundle\TraceStorageInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -49,7 +49,7 @@ class MessageBusSubscriberTest extends TestCase
         $this->storage->expects(self::once())->method('getTrace')->willReturn($trace);
 
         $this->subscriber->onSend($event);
-        self::assertEquals($trace, $event->getEnvelope()->last(TraceIdStamp::class)?->trace);
+        self::assertEquals($trace, $event->getEnvelope()->last(TraceStamp::class)?->trace);
     }
 
     /**
@@ -62,7 +62,7 @@ class MessageBusSubscriberTest extends TestCase
         $this->storage->expects(self::once())->method('getTraceId')->willReturn(null);
 
         $this->subscriber->onSend($event);
-        self::assertNull($event->getEnvelope()->last(TraceIdStamp::class));
+        self::assertNull($event->getEnvelope()->last(TraceStamp::class));
     }
 
     /**
@@ -75,7 +75,7 @@ class MessageBusSubscriberTest extends TestCase
         $trace = new TraceContext();
         $trace->setTraceId('trace-id');
 
-        $envelope = $this->envelope->with(new TraceIdStamp($trace));
+        $envelope = $this->envelope->with(new TraceStamp($trace));
         $event    = new WorkerMessageReceivedEvent($envelope, 'receiver');
 
         $this->storage->expects(self::exactly(2))->method('setTraceId')->with(...consecutive(['trace-id'], [null]));

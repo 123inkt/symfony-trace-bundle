@@ -31,7 +31,7 @@ class HttpClientTest extends AbstractKernelTestCase
 
     public function testHttpClientIsDecoratedTraceContext(): void
     {
-        static::bootKernel(['environment' => 'test', 'debug' => false, 'tracemode' => Configuration::TRACEMODE_TRACECONTEXT]);
+        static::bootKernel(['tracemode' => Configuration::TRACEMODE_TRACECONTEXT]);
 
         /** @var TraceStorageInterface $storage */
         $storage = static::getContainer()->get('request.id.storage');
@@ -51,7 +51,7 @@ class HttpClientTest extends AbstractKernelTestCase
 
     public function testHttpClientIsDecoratedTraceContextTraceState(): void
     {
-        static::bootKernel(['environment' => 'test', 'debug' => false, 'tracemode' => Configuration::TRACEMODE_TRACECONTEXT]);
+        static::bootKernel(['tracemode' => Configuration::TRACEMODE_TRACECONTEXT]);
 
         /** @var TraceStorageInterface $storage */
         $storage = static::getContainer()->get('request.id.storage');

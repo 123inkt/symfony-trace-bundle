@@ -7,7 +7,6 @@ namespace DR\SymfonyTraceBundle\Tests\Functional;
 use DR\SymfonyTraceBundle\DependencyInjection\Configuration;
 use DR\SymfonyTraceBundle\Generator\TraceIdGeneratorInterface;
 use DR\SymfonyTraceBundle\Tests\Functional\App\Monolog\MemoryHandler;
-use DR\SymfonyTraceBundle\TraceContext;
 use DR\SymfonyTraceBundle\TraceStorageInterface;
 use Exception;
 use PHPUnit\Framework\Attributes\CoversNothing;

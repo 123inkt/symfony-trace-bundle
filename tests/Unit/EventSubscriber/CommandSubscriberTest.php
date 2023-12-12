@@ -24,15 +24,15 @@ class CommandSubscriberTest extends TestCase
         $this->service = $this->createMock(TraceServiceInterface::class);
     }
 
-    public function testOnCommandTraceId(): void
+    public function testOnCommandTrace(): void
     {
         $subscriber = new CommandSubscriber($this->storage, $this->service);
 
-        $traceId = new TraceContext();
-        $traceId->setTraceId('trace-id');
-        $traceId->setTransactionId('transaction-id');
-        $this->service->expects(static::once())->method('createNewTrace')->willReturn($traceId);
-        $this->storage->expects(static::once())->method('setTrace')->with($traceId);
+        $trace = new TraceContext();
+        $trace->setTraceId('trace-id');
+        $trace->setTransactionId('transaction-id');
+        $this->service->expects(static::once())->method('createNewTrace')->willReturn($trace);
+        $this->storage->expects(static::once())->method('setTrace')->with($trace);
 
         $subscriber->onCommand();
     }
