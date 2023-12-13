@@ -89,7 +89,7 @@ will be reset to the original values of the consumer process (if any).
 
 ## Twig Integration
 
-By default this bundle will add a global `trace_id` function to your twig
+By default, this bundle will add a global `trace_id` and `transaction_id` function to your twig
 environment. To disable this set `enable_twig` to `false` in the bundle
 configuration.
 
