@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace DR\SymfonyTraceBundle\Tests\Unit\Monolog;
 
 use DateTimeImmutable;
-use DR\SymfonyTraceBundle\Monolog\TraceIdProcessor;
-use DR\SymfonyTraceBundle\IdStorageInterface;
+use DR\SymfonyTraceBundle\Monolog\TraceProcessor;
+use DR\SymfonyTraceBundle\TraceStorageInterface;
 use Monolog\Level;
 use Monolog\Logger;
 use Monolog\LogRecord;
@@ -13,16 +13,16 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(TraceIdProcessor::class)]
+#[CoversClass(TraceProcessor::class)]
 class TraceIdProcessorTest extends TestCase
 {
-    private IdStorageInterface&MockObject $idStorage;
-    private TraceIdProcessor $processor;
+    private TraceStorageInterface&MockObject $idStorage;
+    private TraceProcessor $processor;
 
     protected function setUp(): void
     {
-        $this->idStorage = $this->createMock(IdStorageInterface::class);
-        $this->processor = new TraceIdProcessor($this->idStorage);
+        $this->idStorage = $this->createMock(TraceStorageInterface::class);
+        $this->processor = new TraceProcessor($this->idStorage);
     }
 
     public function testProcessorDoesNotSetTraceIdWhenNoIdIsPresent(): void

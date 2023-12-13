@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace DR\SymfonyTraceBundle\Tests\Unit;
 
-use DR\SymfonyTraceBundle\SimpleIdStorage;
+use DR\SymfonyTraceBundle\TraceContext;
+use DR\SymfonyTraceBundle\TraceStorage;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(SimpleIdStorage::class)]
-class SimpleIdStorageTest extends TestCase
+#[CoversClass(TraceStorage::class)]
+class TraceStorageTest extends TestCase
 {
     public function testGetTraceIdReturnsTheSameValueThatWasSet(): void
     {
-        $storage = new SimpleIdStorage();
+        $storage = new TraceStorage();
 
         static::assertNull($storage->getTraceId());
         $storage->setTraceId('test');
@@ -22,7 +23,7 @@ class SimpleIdStorageTest extends TestCase
 
     public function testNullCanBePassedToSetTraceIdToClearIt(): void
     {
-        $storage = new SimpleIdStorage();
+        $storage = new TraceStorage();
         $storage->setTraceId('test');
 
         $storage->setTraceId(null);
@@ -32,7 +33,7 @@ class SimpleIdStorageTest extends TestCase
 
     public function testGetTransactionIdReturnsTheSameValueThatWasSet(): void
     {
-        $storage = new SimpleIdStorage();
+        $storage = new TraceStorage();
 
         static::assertNull($storage->getTransactionId());
         $storage->setTransactionId('test');
@@ -41,11 +42,20 @@ class SimpleIdStorageTest extends TestCase
 
     public function testNullCanBePassedToSetTransactionIdToClearIt(): void
     {
-        $storage = new SimpleIdStorage();
+        $storage = new TraceStorage();
         $storage->setTransactionId('test');
 
         $storage->setTransactionId(null);
 
         static::assertNull($storage->getTransactionId());
+    }
+
+    public function testGetTraceReturnsTheSameValueThatWasSet(): void
+    {
+        $storage = new TraceStorage();
+
+        $trace = new TraceContext();
+        $storage->setTrace($trace);
+        static::assertSame($trace, $storage->getTrace());
     }
 }

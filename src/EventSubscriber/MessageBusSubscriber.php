@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace DR\SymfonyTraceBundle\EventSubscriber;
 
-use DR\SymfonyTraceBundle\IdGeneratorInterface;
-use DR\SymfonyTraceBundle\Messenger\TraceIdStamp;
-use DR\SymfonyTraceBundle\IdStorageInterface;
+use DR\SymfonyTraceBundle\Generator\TraceIdGeneratorInterface;
+use DR\SymfonyTraceBundle\Messenger\TraceStamp;
+use DR\SymfonyTraceBundle\TraceStorageInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\Event\SendMessageToTransportsEvent;
 use Symfony\Component\Messenger\Event\WorkerMessageFailedEvent;
@@ -23,7 +23,7 @@ final class MessageBusSubscriber implements EventSubscriberInterface
     private ?string $originalTraceId = null;
     private ?string $originalTransactionId = null;
 
-    public function __construct(private readonly IdStorageInterface $storage, private readonly IdGeneratorInterface $generator)
+    public function __construct(private readonly TraceStorageInterface $storage, private readonly TraceIdGeneratorInterface $generator)
     {
     }
 
@@ -32,10 +32,16 @@ final class MessageBusSubscriber implements EventSubscriberInterface
      */
     public function onSend(SendMessageToTransportsEvent $event): void
     {
-        $traceId = $this->storage->getTraceId();
-        if ($traceId !== null) {
-            $event->setEnvelope($event->getEnvelope()->with(new TraceIdStamp($traceId)));
+        if ($this->storage->getTraceId() === null) {
+            return;
         }
+
+        // pass our current transactionId to the async handler as 'parentTransactionId'
+        $trace = clone $this->storage->getTrace();
+        $trace->setParentTransactionId($this->storage->getTransactionId());
+        $trace->setTransactionId(null);
+
+        $event->setEnvelope($event->getEnvelope()->with(new TraceStamp($trace)));
     }
 
     /**
@@ -45,18 +51,18 @@ final class MessageBusSubscriber implements EventSubscriberInterface
      */
     public function onReceived(WorkerMessageReceivedEvent $event): void
     {
-        $stamp = $event->getEnvelope()->last(TraceIdStamp::class);
+        $stamp = $event->getEnvelope()->last(TraceStamp::class);
 
         // Remember the original tracing ids
         $this->originalTraceId       = $this->storage->getTraceId();
         $this->originalTransactionId = $this->storage->getTransactionId();
 
         // Set new ids for handling this event
-        $this->storage->setTransactionId($this->generator->generate());
-        if ($stamp instanceof TraceIdStamp) {
-            $this->storage->setTraceId($stamp->traceId);
+        $this->storage->setTransactionId($this->generator->generateTransactionId());
+        if ($stamp instanceof TraceStamp) {
+            $this->storage->setTraceId($stamp->trace->getTraceId());
         } else {
-            $this->storage->setTraceId($this->generator->generate());
+            $this->storage->setTraceId($this->generator->generateTraceId());
         }
     }
 

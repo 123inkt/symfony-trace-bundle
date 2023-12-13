@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace DR\SymfonyTraceBundle\DependencyInjection\Compiler;
 
 use DR\SymfonyTraceBundle\DependencyInjection\SymfonyTraceExtension;
-use DR\SymfonyTraceBundle\Http\TraceIdAwareHttpClient;
-use DR\SymfonyTraceBundle\IdStorageInterface;
+use DR\SymfonyTraceBundle\Http\TraceAwareHttpClient;
+use DR\SymfonyTraceBundle\Service\TraceServiceInterface;
+use DR\SymfonyTraceBundle\TraceStorageInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Parameter;
 use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * @codeCoverageIgnore - This is a config class
  */
-class HttpClientTraceIdPass implements CompilerPassInterface
+class HttpClientTracePass implements CompilerPassInterface
 {
     /**
      * @SuppressWarnings(PHPMD.UnusedLocalVariable)
@@ -36,13 +36,12 @@ class HttpClientTraceIdPass implements CompilerPassInterface
         }
 
         $taggedServices = $container->findTaggedServiceIds('http_client.trace_id');
-
         foreach ($taggedServices as $id => $tag) {
-            $container->register($id . '.trace_id', TraceIdAwareHttpClient::class)
+            $container->register($id . '.trace_id', TraceAwareHttpClient::class)
                 ->setArguments([
                     new Reference($id . '.trace_id' . '.inner'),
-                    new Reference(IdStorageInterface::class),
-                    new Parameter(SymfonyTraceExtension::PARAMETER_KEY . '.http_client.header')
+                    new Reference(TraceStorageInterface::class),
+                    new Reference(TraceServiceInterface::class),
                 ])
                 ->setDecoratedService($id, null, 1);
         }

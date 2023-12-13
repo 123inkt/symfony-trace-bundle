@@ -1,39 +1,74 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Cannot call method booleanNode\\(\\) on Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeParentInterface\\|null\\.$#"
-			count: 1
-			path: src/DependencyInjection/Configuration.php
-
-		-
-			message: "#^Parameter \\#1 \\$mergedConfig \\(array\\{request_header\\: string, trust_request_header\\: bool, response_header\\: string, storage_service\\: string\\|null, generator_service\\: string\\|null, enable_monolog\\: bool, enable_console\\: bool, enable_messenger\\: bool, \\.\\.\\.\\}\\) of method DR\\\\SymfonyTraceBundle\\\\DependencyInjection\\\\SymfonyTraceExtension\\:\\:loadInternal\\(\\) should be contravariant with parameter \\$mergedConfig \\(array\\) of method Symfony\\\\Component\\\\HttpKernel\\\\DependencyInjection\\\\ConfigurableExtension\\:\\:loadInternal\\(\\)$#"
+			message: "#^Parameter \\#1 \\$mergedConfig \\(array\\{traceMode\\: 'tracecontext'\\|'traceid', traceid\\: array\\{request_header\\: string, response_header\\: string, generator_service\\: string\\|null\\}, trust_request_header\\: bool, storage_service\\: string\\|null, enable_monolog\\: bool, enable_console\\: bool, enable_messenger\\: bool, enable_twig\\: bool, \\.\\.\\.\\}\\) of method DR\\\\SymfonyTraceBundle\\\\DependencyInjection\\\\SymfonyTraceExtension\\:\\:loadInternal\\(\\) should be contravariant with parameter \\$mergedConfig \\(array\\) of method Symfony\\\\Component\\\\HttpKernel\\\\DependencyInjection\\\\ConfigurableExtension\\:\\:loadInternal\\(\\)$#"
 			count: 1
 			path: src/DependencyInjection/SymfonyTraceExtension.php
 
 		-
-			message: "#^Method DR\\\\SymfonyTraceBundle\\\\Http\\\\TraceIdAwareHttpClient\\:\\:request\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#"
+			message: "#^Method DR\\\\SymfonyTraceBundle\\\\Http\\\\TraceAwareHttpClient\\:\\:request\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#"
 			count: 1
-			path: src/Http/TraceIdAwareHttpClient.php
+			path: src/Http/TraceAwareHttpClient.php
 
 		-
-			message: "#^Method DR\\\\SymfonyTraceBundle\\\\Http\\\\TraceIdAwareHttpClient\\:\\:withOptions\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#"
+			message: "#^Method DR\\\\SymfonyTraceBundle\\\\Http\\\\TraceAwareHttpClient\\:\\:withOptions\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#"
 			count: 1
-			path: src/Http/TraceIdAwareHttpClient.php
+			path: src/Http/TraceAwareHttpClient.php
 
 		-
-			message: "#^Method DR\\\\SymfonyTraceBundle\\\\Monolog\\\\TraceIdProcessor\\:\\:__invoke\\(\\) has parameter \\$record with no value type specified in iterable type array\\.$#"
+			message: "#^Method DR\\\\SymfonyTraceBundle\\\\Monolog\\\\TraceProcessor\\:\\:__invoke\\(\\) has parameter \\$record with no value type specified in iterable type array\\.$#"
 			count: 1
-			path: src/Monolog/TraceIdProcessor.php
+			path: src/Monolog/TraceProcessor.php
 
 		-
-			message: "#^Method DR\\\\SymfonyTraceBundle\\\\Monolog\\\\TraceIdProcessor\\:\\:__invoke\\(\\) return type has no value type specified in iterable type array\\.$#"
+			message: "#^Method DR\\\\SymfonyTraceBundle\\\\Monolog\\\\TraceProcessor\\:\\:__invoke\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
-			path: src/Monolog/TraceIdProcessor.php
+			path: src/Monolog/TraceProcessor.php
 
 		-
-			message: "#^Return type \\(array\\|Monolog\\\\LogRecord\\) of method DR\\\\SymfonyTraceBundle\\\\Monolog\\\\TraceIdProcessor\\:\\:__invoke\\(\\) should be covariant with return type \\(Monolog\\\\LogRecord\\) of method Monolog\\\\Processor\\\\ProcessorInterface\\:\\:__invoke\\(\\)$#"
+			message: "#^Return type \\(array\\|Monolog\\\\LogRecord\\) of method DR\\\\SymfonyTraceBundle\\\\Monolog\\\\TraceProcessor\\:\\:__invoke\\(\\) should be covariant with return type \\(Monolog\\\\LogRecord\\) of method Monolog\\\\Processor\\\\ProcessorInterface\\:\\:__invoke\\(\\)$#"
 			count: 1
-			path: src/Monolog/TraceIdProcessor.php
+			path: src/Monolog/TraceProcessor.php
+
+		-
+			message: "#^Method DR\\\\SymfonyTraceBundle\\\\Service\\\\TraceContext\\\\TraceContextService\\:\\:handleClientRequest\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Service/TraceContext/TraceContextService.php
+
+		-
+			message: "#^Method DR\\\\SymfonyTraceBundle\\\\Service\\\\TraceContext\\\\TraceContextService\\:\\:handleClientRequest\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Service/TraceContext/TraceContextService.php
+
+		-
+			message: "#^Method DR\\\\SymfonyTraceBundle\\\\Service\\\\TraceId\\\\TraceIdService\\:\\:handleClientRequest\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Service/TraceId/TraceIdService.php
+
+		-
+			message: "#^Method DR\\\\SymfonyTraceBundle\\\\Service\\\\TraceId\\\\TraceIdService\\:\\:handleClientRequest\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Service/TraceId/TraceIdService.php
+
+		-
+			message: "#^Method DR\\\\SymfonyTraceBundle\\\\Service\\\\TraceServiceInterface\\:\\:handleClientRequest\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Service/TraceServiceInterface.php
+
+		-
+			message: "#^Method DR\\\\SymfonyTraceBundle\\\\Service\\\\TraceServiceInterface\\:\\:handleClientRequest\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Service/TraceServiceInterface.php
+
+		-
+			message: "#^Parameter \\#1 \\$options \\(array\\{environment\\?\\: string, debug\\?\\: bool, tracemode\\?\\: string\\}\\) of method DR\\\\SymfonyTraceBundle\\\\Tests\\\\Functional\\\\AbstractKernelTestCase\\:\\:createKernel\\(\\) should be contravariant with parameter \\$options \\(array\\) of method Symfony\\\\Bundle\\\\FrameworkBundle\\\\Test\\\\KernelTestCase\\:\\:createKernel\\(\\)$#"
+			count: 1
+			path: tests/Functional/AbstractKernelTestCase.php
+
+		-
+			message: "#^Parameter \\#1 \\$options \\(array\\{environment\\?\\: string, debug\\?\\: bool, tracemode\\?\\: string\\}\\) of method DR\\\\SymfonyTraceBundle\\\\Tests\\\\Functional\\\\AbstractWebTestCase\\:\\:createKernel\\(\\) should be contravariant with parameter \\$options \\(array\\) of method Symfony\\\\Bundle\\\\FrameworkBundle\\\\Test\\\\KernelTestCase\\:\\:createKernel\\(\\)$#"
+			count: 1
+			path: tests/Functional/AbstractWebTestCase.php
 
 		-
 			message: "#^Method DR\\\\SymfonyTraceBundle\\\\Tests\\\\Functional\\\\App\\\\Monolog\\\\MemoryHandler\\:\\:write\\(\\) has parameter \\$record with no value type specified in iterable type array\\.$#"

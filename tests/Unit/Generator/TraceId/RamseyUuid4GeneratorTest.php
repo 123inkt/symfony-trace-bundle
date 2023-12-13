@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyTraceBundle\Tests\Unit\Generator;
+namespace DR\SymfonyTraceBundle\Tests\Unit\Generator\TraceId;
 
-use DR\SymfonyTraceBundle\Generator\RamseyUuid4Generator;
+use DR\SymfonyTraceBundle\Generator\TraceId\RamseyUuid4Generator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
@@ -23,6 +23,7 @@ class RamseyUuid4GeneratorTest extends TestCase
         // correctly than worry about mocking method calls.
         $generator = new RamseyUuid4Generator();
 
-        static::assertNotEmpty($generator->generate());
+        static::assertNotEmpty($generator->generateTraceId());
+        static::assertNotEmpty($generator->generateTransactionId());
     }
 }

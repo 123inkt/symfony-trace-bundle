@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DR\SymfonyTraceBundle\Twig;
 
-use DR\SymfonyTraceBundle\IdStorageInterface;
+use DR\SymfonyTraceBundle\TraceStorageInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -12,9 +12,9 @@ use Twig\TwigFunction;
  * Add trace_id() and transaction_id() to twig as a function.
  * @internal
  */
-final class TraceIdExtension extends AbstractExtension
+final class TraceExtension extends AbstractExtension
 {
-    public function __construct(private readonly IdStorageInterface $storage)
+    public function __construct(private readonly TraceStorageInterface $storage)
     {
     }
 

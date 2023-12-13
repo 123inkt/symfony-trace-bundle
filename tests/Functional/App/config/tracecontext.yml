@@ -1,0 +1,11 @@
+symfony_trace:
+  traceMode: 'tracecontext'
+  traceid:
+    request_header: Trace-Id
+    response_header: Trace-Id
+  trust_request_header: true
+  storage_service: request.id.storage
+  enable_messenger: true
+  http_client:
+    enabled: true
+    header: Trace-Id

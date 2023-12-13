@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DR\SymfonyTraceBundle\Monolog;
 
-use DR\SymfonyTraceBundle\IdStorageInterface;
+use DR\SymfonyTraceBundle\TraceStorageInterface;
 use Monolog\LogRecord;
 use Monolog\Processor\ProcessorInterface;
 
@@ -12,9 +12,9 @@ use Monolog\Processor\ProcessorInterface;
  * Adds the trace + transaction IDs to the Monolog record's `extra` key, so it can be used in formatters, etc.
  * @internal
  */
-final class TraceIdProcessor implements ProcessorInterface
+final class TraceProcessor implements ProcessorInterface
 {
-    public function __construct(private readonly IdStorageInterface $storage)
+    public function __construct(private readonly TraceStorageInterface $storage)
     {
     }
 

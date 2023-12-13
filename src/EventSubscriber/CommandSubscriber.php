@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace DR\SymfonyTraceBundle\EventSubscriber;
 
-use DR\SymfonyTraceBundle\IdGeneratorInterface;
-use DR\SymfonyTraceBundle\IdStorageInterface;
+use DR\SymfonyTraceBundle\Service\TraceServiceInterface;
+use DR\SymfonyTraceBundle\TraceStorageInterface;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -14,7 +14,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 final class CommandSubscriber implements EventSubscriberInterface
 {
-    public function __construct(private readonly IdStorageInterface $idStorage, private readonly IdGeneratorInterface $generator)
+    public function __construct(private readonly TraceStorageInterface $storage, private readonly TraceServiceInterface $service)
     {
     }
 
@@ -28,7 +28,6 @@ final class CommandSubscriber implements EventSubscriberInterface
 
     public function onCommand(): void
     {
-        $this->idStorage->setTraceId($this->generator->generate());
-        $this->idStorage->setTransactionId($this->generator->generate());
+        $this->storage->setTrace($this->service->createNewTrace());
     }
 }

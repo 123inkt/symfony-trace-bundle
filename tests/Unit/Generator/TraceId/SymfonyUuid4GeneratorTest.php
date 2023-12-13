@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyTraceBundle\Tests\Unit\Generator;
+namespace DR\SymfonyTraceBundle\Tests\Unit\Generator\TraceId;
 
-use DR\SymfonyTraceBundle\Generator\SymfonyUuid4Generator;
+use DR\SymfonyTraceBundle\Generator\TraceId\SymfonyUuid4Generator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
@@ -23,6 +23,7 @@ class SymfonyUuid4GeneratorTest extends TestCase
         // correctly than worry about mocking method calls.
         $generator = new SymfonyUuid4Generator();
 
-        static::assertNotEmpty($generator->generate());
+        static::assertNotEmpty($generator->generateTraceId());
+        static::assertNotEmpty($generator->generateTransactionId());
     }
 }

@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace DR\SymfonyTraceBundle\Http;
 
-use DR\SymfonyTraceBundle\IdStorageInterface;
+use DR\SymfonyTraceBundle\Service\TraceServiceInterface;
+use DR\SymfonyTraceBundle\TraceStorageInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -12,18 +13,18 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 use Symfony\Contracts\HttpClient\ResponseStreamInterface;
 use Symfony\Contracts\Service\ResetInterface;
 
-class TraceIdAwareHttpClient implements HttpClientInterface, ResetInterface, LoggerAwareInterface
+class TraceAwareHttpClient implements HttpClientInterface, ResetInterface, LoggerAwareInterface
 {
     public function __construct(
-        private HttpClientInterface         $client,
-        private readonly IdStorageInterface $storage,
-        private readonly string             $traceIdHeader
+        private HttpClientInterface            $client,
+        private readonly TraceStorageInterface $storage,
+        private readonly TraceServiceInterface $service,
     ) {
     }
 
     public function request(string $method, string $url, array $options = []): ResponseInterface
     {
-        $options['headers'][$this->traceIdHeader] = $this->storage->getTraceId();
+        $options = $this->service->handleClientRequest($this->storage->getTrace(), $method, $url, $options);
 
         return $this->client->request($method, $url, $options);
     }

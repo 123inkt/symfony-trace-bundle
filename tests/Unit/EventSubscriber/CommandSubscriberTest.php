@@ -4,8 +4,9 @@ declare(strict_types=1);
 namespace DR\SymfonyTraceBundle\Tests\Unit\EventSubscriber;
 
 use DR\SymfonyTraceBundle\EventSubscriber\CommandSubscriber;
-use DR\SymfonyTraceBundle\IdGeneratorInterface;
-use DR\SymfonyTraceBundle\IdStorageInterface;
+use DR\SymfonyTraceBundle\Service\TraceServiceInterface;
+use DR\SymfonyTraceBundle\TraceContext;
+use DR\SymfonyTraceBundle\TraceStorageInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -14,24 +15,26 @@ use Symfony\Component\Console\ConsoleEvents;
 #[CoversClass(CommandSubscriber::class)]
 class CommandSubscriberTest extends TestCase
 {
-    private IdStorageInterface&MockObject $idStorage;
-    private IdGeneratorInterface&MockObject $generator;
-    private CommandSubscriber $subscriber;
+    private TraceStorageInterface&MockObject $storage;
+    private TraceServiceInterface&MockObject $service;
 
     protected function setUp(): void
     {
-        $this->idStorage = $this->createMock(IdStorageInterface::class);
-        $this->generator = $this->createMock(IdGeneratorInterface::class);
-        $this->subscriber = new CommandSubscriber($this->idStorage, $this->generator);
+        $this->storage = $this->createMock(TraceStorageInterface::class);
+        $this->service = $this->createMock(TraceServiceInterface::class);
     }
 
-    public function testOnCommand(): void
+    public function testOnCommandTrace(): void
     {
-        $this->generator->expects(self::exactly(2))->method('generate')->willReturn('trace-id', 'transaction-id');
-        $this->idStorage->expects(self::once())->method('setTraceId')->with('trace-id');
-        $this->idStorage->expects(self::once())->method('setTransactionId')->with('transaction-id');
+        $subscriber = new CommandSubscriber($this->storage, $this->service);
 
-        $this->subscriber->onCommand();
+        $trace = new TraceContext();
+        $trace->setTraceId('trace-id');
+        $trace->setTransactionId('transaction-id');
+        $this->service->expects(static::once())->method('createNewTrace')->willReturn($trace);
+        $this->storage->expects(static::once())->method('setTrace')->with($trace);
+
+        $subscriber->onCommand();
     }
 
     public function testGetSubscribedEvents(): void

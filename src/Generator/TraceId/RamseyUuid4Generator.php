@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace DR\SymfonyTraceBundle\Generator;
+namespace DR\SymfonyTraceBundle\Generator\TraceId;
 
-use DR\SymfonyTraceBundle\IdGeneratorInterface;
+use DR\SymfonyTraceBundle\Generator\TraceIdGeneratorInterface;
 use Ramsey\Uuid\UuidFactory;
 use Ramsey\Uuid\UuidFactoryInterface;
 
 /**
  * Uses `ramsey/uuid` to generator v4 UUIDs for request ids.
  */
-final class RamseyUuid4Generator implements IdGeneratorInterface
+final class RamseyUuid4Generator implements TraceIdGeneratorInterface
 {
     public function __construct(private readonly UuidFactoryInterface $factory = new UuidFactory())
     {
@@ -22,7 +22,12 @@ final class RamseyUuid4Generator implements IdGeneratorInterface
         return class_exists(UuidFactory::class);
     }
 
-    public function generate(): string
+    public function generateTransactionId(): string
+    {
+        return (string)$this->factory->uuid4();
+    }
+
+    public function generateTraceId(): string
     {
         return (string)$this->factory->uuid4();
     }
