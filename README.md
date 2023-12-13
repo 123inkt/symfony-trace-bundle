@@ -83,9 +83,9 @@ $monolog->handler('main')
 
 ## Messenger Integration
 
-When enabled, the `trace_id` of the dispatcher process, will be added to the `Envelope` of the message. On the consumer
-side the `trace_id` will be applied to the running consumer process. Once the `Envelope` has been handled, the `trace_id` 
-will be reset to the original `trace_id` of the consumer process (if any).
+When enabled, the full trace data of the dispatcher process, will be added to the `Envelope` of the message. On the consumer
+side the trace data will be applied to the running consumer process. Once the `Envelope` has been handled, the values 
+will be reset to the original values of the consumer process (if any).
 
 ## Twig Integration
 
