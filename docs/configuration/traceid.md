@@ -29,6 +29,9 @@ return static function (SymfonyTraceConfig $config): void {
     // those values are ignored.
     $config->trustRequestHeader(true);
 
+    // Whether to send the trace details in the response headers. This is turned on by default.
+    $config->sendResponseHeader(true);
+
     $config->traceid()
         // The header which the bundle inspects for the incoming trace ID
         // if this is not set an ID will be generated and set at this header

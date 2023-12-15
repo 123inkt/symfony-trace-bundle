@@ -20,7 +20,7 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 #[CoversClass(TraceSubscriber::class)]
-class TraceIdSubscriberTest extends TestCase
+class TraceSubscriberTest extends TestCase
 {
     private TraceServiceInterface&MockObject $service;
     private TraceStorageInterface&MockOBject $storage;
@@ -34,7 +34,7 @@ class TraceIdSubscriberTest extends TestCase
     {
         $this->service   = $this->createMock(TraceServiceInterface::class);
         $this->storage   = $this->createMock(TraceStorageInterface::class);
-        $this->listener  = new TraceSubscriber(true, $this->service, $this->storage);
+        $this->listener  = new TraceSubscriber(true, true, $this->service, $this->storage);
 
         $this->dispatcher = new EventDispatcher();
         $this->dispatcher->addSubscriber($this->listener);
@@ -74,7 +74,7 @@ class TraceIdSubscriberTest extends TestCase
     public function testListenerIgnoresIncomingRequestHeadersWhenTrustRequestIsFalse(): void
     {
         $this->dispatcher->removeSubscriber($this->listener);
-        $this->dispatcher->addSubscriber(new TraceSubscriber(false, $this->service, $this->storage));
+        $this->dispatcher->addSubscriber(new TraceSubscriber(false, true, $this->service, $this->storage));
 
         $trace = new TraceContext();
         $this->service->expects(static::never())->method('supports');
@@ -118,6 +118,20 @@ class TraceIdSubscriberTest extends TestCase
         $trace = new TraceContext();
         $this->storage->expects(static::once())->method('getTrace')->willReturn($trace);
         $this->service->expects(static::once())->method('handleResponse')->with($this->response, $trace);
+
+        $this->dispatcher->dispatch(
+            new ResponseEvent($this->kernel, $this->request, HttpKernelInterface::MAIN_REQUEST, $this->response),
+            KernelEvents::RESPONSE
+        );
+    }
+
+    public function testListenerDoesNothingToResponseWithoutMasterRequestWhenSendResponseHeaderIsFalse(): void
+    {
+        $this->dispatcher->removeSubscriber($this->listener);
+        $this->dispatcher->addSubscriber(new TraceSubscriber(false, false, $this->service, $this->storage));
+
+        $this->storage->expects(static::never())->method('getTrace');
+        $this->service->expects(static::never())->method('handleResponse');
 
         $this->dispatcher->dispatch(
             new ResponseEvent($this->kernel, $this->request, HttpKernelInterface::MAIN_REQUEST, $this->response),

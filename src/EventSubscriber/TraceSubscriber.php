@@ -23,6 +23,7 @@ final class TraceSubscriber implements EventSubscriberInterface
      */
     public function __construct(
         private readonly bool                  $trustRequest,
+        private readonly bool                  $sendResponseHeader,
         private readonly TraceServiceInterface $traceService,
         private readonly TraceStorageInterface $traceStorage,
     ) {
@@ -63,6 +64,8 @@ final class TraceSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->traceService->handleResponse($event->getResponse(), $this->traceStorage->getTrace());
+        if ($this->sendResponseHeader) {
+            $this->traceService->handleResponse($event->getResponse(), $this->traceStorage->getTrace());
+        }
     }
 }

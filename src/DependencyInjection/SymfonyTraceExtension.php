@@ -111,6 +111,7 @@ final class SymfonyTraceExtension extends ConfigurableExtension
             ->setArguments(
                 [
                     $mergedConfig['trust_request_header'],
+                    $mergedConfig['send_response_header'],
                     new Reference($serviceId),
                     new Reference($storeId)
                 ]
