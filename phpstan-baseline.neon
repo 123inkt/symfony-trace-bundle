@@ -1,7 +1,7 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Parameter \\#1 \\$mergedConfig \\(array\\{traceMode\\: 'tracecontext'\\|'traceid', traceid\\: array\\{request_header\\: string, response_header\\: string, generator_service\\: string\\|null\\}, trust_request_header\\: bool, storage_service\\: string\\|null, enable_monolog\\: bool, enable_console\\: bool, enable_messenger\\: bool, enable_twig\\: bool, \\.\\.\\.\\}\\) of method DR\\\\SymfonyTraceBundle\\\\DependencyInjection\\\\SymfonyTraceExtension\\:\\:loadInternal\\(\\) should be contravariant with parameter \\$mergedConfig \\(array\\) of method Symfony\\\\Component\\\\HttpKernel\\\\DependencyInjection\\\\ConfigurableExtension\\:\\:loadInternal\\(\\)$#"
+			message: "#^Parameter \\#1 \\$mergedConfig \\(array\\{traceMode\\: 'tracecontext'\\|'traceid', traceid\\: array\\{request_header\\: string, response_header\\: string, generator_service\\: string\\|null\\}, trust_request_header\\: bool, send_response_header\\: bool, storage_service\\: string\\|null, enable_monolog\\: bool, enable_console\\: bool, enable_messenger\\: bool, enable_twig\\: bool, \\.\\.\\.\\}\\) of method DR\\\\SymfonyTraceBundle\\\\DependencyInjection\\\\SymfonyTraceExtension\\:\\:loadInternal\\(\\) should be contravariant with parameter \\$mergedConfig \\(array\\) of method Symfony\\\\Component\\\\HttpKernel\\\\DependencyInjection\\\\ConfigurableExtension\\:\\:loadInternal\\(\\)$#"
 			count: 1
 			path: src/DependencyInjection/SymfonyTraceExtension.php
 
