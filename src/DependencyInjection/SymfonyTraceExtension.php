@@ -45,6 +45,7 @@ final class SymfonyTraceExtension extends ConfigurableExtension
      *         generator_service: ?string,
      *     },
      *     trust_request_header: bool,
+     *     send_response_header: bool,
      *     storage_service: ?string,
      *     enable_monolog: bool,
      *     enable_console: bool,
