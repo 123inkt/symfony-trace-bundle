@@ -79,6 +79,7 @@ class Configuration implements ConfigurationInterface
                 ->defaultTrue()
             ->end()
             ->arrayNode('http_client')
+                ->addDefaultsIfNotSet()
                 ->children()
                     ->booleanNode('enabled')
                         ->info('Whether or not to enable the trace id aware http client')
