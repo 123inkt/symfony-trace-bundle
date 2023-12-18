@@ -20,6 +20,9 @@ return static function (SymfonyTraceConfig $config): void {
     // those values are ignored and new trace ID's are generated.
     $config->trustRequestHeader(true);
 
+    // Whether to send the trace details in the response headers. This is turned on by default.
+    $config->sendResponseHeader(true);
+
     // The service key of an object that implements
     // DR\SymfonyTraceBundle\TraceStorageInterface
     // Defaults to TraceStorage::class
