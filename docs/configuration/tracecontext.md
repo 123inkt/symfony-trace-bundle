@@ -9,7 +9,6 @@ Incoming request data will be taken from the traceparent/tracestate headers, thi
 <?php
 declare(strict_types=1);
 
-use DR\SymfonyTraceBundle\Generator\TraceId\RamseyUuid4Generator;
 use DR\SymfonyTraceBundle\TraceStorage;
 use Symfony\Config\SymfonyTraceConfig;
 
