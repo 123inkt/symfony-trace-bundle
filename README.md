@@ -35,9 +35,11 @@ return [
 
 ## Configuration
 
-By default, the bundle will use the [W3C TraceContext](https://www.w3.org/TR/trace-context/) standard to receive and pass on the traceId.  
+By default, the bundle will use the [W3C TraceContext](https://www.w3.org/TR/trace-context/) standard to receive and pass on the traceId.<br> 
+For configuration details see: [TraceContext configuration](docs/configuration/tracecontext.md)
+
 It's also possible to configure the bundle to setup custom request/response headers and custom ID generators.  
-Read more about all available configuration options on [TraceId configuration](docs/configuration/traceid.md) and [TraceContext configuration](docs/configuration/tracecontext.md) in the /docs pages.
+Read more about the available configuration options on [TraceId configuration](docs/configuration/traceid.md) in the /docs pages.
 
 ## How it Works
 

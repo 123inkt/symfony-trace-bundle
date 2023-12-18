@@ -34,6 +34,7 @@ class Configuration implements ConfigurationInterface
                 ->info('The trace mode to use. Either `' . self::TRACEMODE_TRACECONTEXT . '` or `' . self::TRACEMODE_TRACEID . '`')
             ->end()
             ->arrayNode('traceid')
+                ->addDefaultsIfNotSet()
                 ->children()
                     ->scalarNode('request_header')
                         ->cannotBeEmpty()

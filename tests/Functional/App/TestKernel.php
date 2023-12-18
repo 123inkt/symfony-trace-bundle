@@ -41,7 +41,7 @@ final class TestKernel extends Kernel
         $loader->load($this->getProjectDir() . "/config/config.yml");
         if ($this->traceMode === Configuration::TRACEMODE_TRACEID) {
             $loader->load($this->getProjectDir() . "/config/traceid.yml");
-        } else {
+        } elseif ($this->traceMode === Configuration::TRACEMODE_TRACECONTEXT) {
             $loader->load($this->getProjectDir() . "/config/tracecontext.yml");
         }
     }
