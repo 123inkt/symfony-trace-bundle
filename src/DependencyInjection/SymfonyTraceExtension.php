@@ -66,45 +66,39 @@ final class SymfonyTraceExtension extends ConfigurableExtension
         // configure generator service
         if ($mergedConfig['traceMode'] === Configuration::TRACEMODE_TRACECONTEXT) {
             $generatorId = TraceContextIdGenerator::class;
+            $container->register(TraceContextIdGenerator::class)->setPublic(false);
         } elseif (isset($mergedConfig['traceid']['generator_service'])) {
             $generatorId = $mergedConfig['traceid']['generator_service'];
         } elseif (RamseyUuid4Generator::isSupported()) {
             $generatorId = RamseyUuid4Generator::class;
+            $container->register(RamseyUuid4Generator::class)->setPublic(false);
         } elseif (SymfonyUuid4Generator::isSupported()) {
             $generatorId = SymfonyUuid4Generator::class;
+            $container->register(SymfonyUuid4Generator::class)->setPublic(false);
         } else {
             throw new RuntimeException('No generator service found. Please install symfony/uid or ramsey/uuid');
         }
 
-        $container->register(TraceContextIdGenerator::class)->setPublic(false);
-        if ($generatorId === RamseyUuid4Generator::class) {
-            $container->register(RamseyUuid4Generator::class)->setPublic(false);
-        } elseif ($generatorId === SymfonyUuid4Generator::class) {
-            $container->register(SymfonyUuid4Generator::class)->setPublic(false);
-        }
-
         if ($mergedConfig['traceMode'] === Configuration::TRACEMODE_TRACEID) {
             $serviceId = TraceIdService::class;
+            $container->register(TraceIdService::class)
+                ->setArguments(
+                    [
+                        $mergedConfig['traceid']['request_header'],
+                        $mergedConfig['traceid']['response_header'],
+                        $mergedConfig['http_client']['header'] ?? $mergedConfig['traceid']['response_header'],
+                        new Reference($generatorId)
+                    ]
+                )
+                ->setPublic(false);
         } else {
             $serviceId = TraceContextService::class;
+            $container->register(TraceContextService::class)
+                ->setArguments([new Reference(TraceContextIdGenerator::class)])
+                ->setPublic(false);
         }
 
         $container->setAlias(TraceServiceInterface::class, $serviceId)->setPublic(false);
-        $container->register(TraceContextService::class)
-            ->setArguments([new Reference(TraceContextIdGenerator::class)])
-            ->setPublic(false);
-
-        $container->register(TraceIdService::class)
-            ->setArguments(
-                [
-                    $mergedConfig['traceid']['request_header'],
-                    $mergedConfig['traceid']['response_header'],
-                    $mergedConfig['http_client']['header'] ?? $mergedConfig['traceid']['response_header'],
-                    new Reference($generatorId)
-                ]
-            )
-            ->setPublic(false);
-
         $container->setAlias(TraceStorageInterface::class, $storeId)->setPublic(true);
         $container->setAlias(TraceIdGeneratorInterface::class, $generatorId)->setPublic(true);
 
