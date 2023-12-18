@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DR\SymfonyTraceBundle\Tests\Functional;
 
 use DR\SymfonyTraceBundle\DependencyInjection\Configuration;
+use DR\SymfonyTraceBundle\TraceStorage;
 use DR\SymfonyTraceBundle\TraceStorageInterface;
 use Exception;
 use PHPUnit\Framework\Attributes\CoversNothing;
@@ -20,15 +21,16 @@ class ApplicationTest extends AbstractKernelTestCase
     /**
      * @throws Exception
      */
-    #[TestWith([Configuration::TRACEMODE_TRACEID])]
-    #[TestWith([Configuration::TRACEMODE_TRACECONTEXT])]
-    public function testCommandShouldSetTrace(string $traceMode): void
+    #[TestWith(['defaults', TraceStorage::class])]
+    #[TestWith([Configuration::TRACEMODE_TRACEID, 'request.id.storage'])]
+    #[TestWith([Configuration::TRACEMODE_TRACECONTEXT, 'request.id.storage'])]
+    public function testCommandShouldSetTrace(string $traceMode, string $storageServiceId): void
     {
         $application = new Application(
             static::bootKernel(['environment' => 'test', 'debug' => false, 'tracemode' => $traceMode])
         );
 
-        $storage = self::getContainer()->get('request.id.storage');
+        $storage = self::getContainer()->get($storageServiceId);
         static::assertInstanceOf(TraceStorageInterface::class, $storage);
 
         $input  = new ArrayInput(['help']);

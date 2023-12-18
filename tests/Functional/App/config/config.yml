@@ -37,6 +37,7 @@ services:
       - [ setFormatter, [ "@log.formatter" ] ]
   request.id.storage:
     class: DR\SymfonyTraceBundle\Tests\Functional\App\Service\TestTraceStorage
+    public: true
   stop.worker.event-subscriber:
     class: DR\SymfonyTraceBundle\Tests\Functional\App\EventSubscriber\StopWorkerEventSubscriber
     tags:
