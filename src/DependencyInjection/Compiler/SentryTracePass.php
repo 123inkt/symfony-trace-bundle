@@ -5,10 +5,7 @@ declare(strict_types=1);
 namespace DR\SymfonyTraceBundle\DependencyInjection\Compiler;
 
 use DR\SymfonyTraceBundle\DependencyInjection\SymfonyTraceExtension;
-use DR\SymfonyTraceBundle\Http\TraceAwareHttpClient;
 use DR\SymfonyTraceBundle\Sentry\SentryAwareTraceStorage;
-use DR\SymfonyTraceBundle\Service\TraceServiceInterface;
-use DR\SymfonyTraceBundle\TraceStorageInterface;
 use DR\Utils\Assert;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -30,13 +27,16 @@ class SentryTracePass implements CompilerPassInterface
             return;
         }
 
+        $storeId      = Assert::string($container->getParameter(SymfonyTraceExtension::PARAMETER_KEY . '.sentry.store_id'));
         $hubServiceId = Assert::string($container->getParameter(SymfonyTraceExtension::PARAMETER_KEY . '.sentry.service_id'));
 
-        $container->register(TraceStorageInterface::class . '.trace_id', SentryAwareTraceStorage::class)
-            ->setArguments([
-                new Reference(TraceStorageInterface::class . '.trace_id' . '.inner'),
-                new Reference($hubServiceId),
-            ])
-            ->setDecoratedService(TraceStorageInterface::class, null, 1);
+        $container->register($storeId . '.sentry_aware_trace_storage', SentryAwareTraceStorage::class)
+            ->setArguments(
+                [
+                    new Reference($storeId . '.sentry_aware_trace_storage' . '.inner'),
+                    new Reference($hubServiceId),
+                ]
+            )
+            ->setDecoratedService($storeId, null, 1);
     }
 }

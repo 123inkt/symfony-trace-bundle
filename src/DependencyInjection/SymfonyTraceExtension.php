@@ -73,27 +73,27 @@ final class SymfonyTraceExtension extends ConfigurableExtension
         $serviceId   = $this->configureTraceServiceId($mergedConfig, $container, $generatorId);
 
         $container->setAlias(TraceServiceInterface::class, $serviceId)->setPublic(false);
-        $container->setAlias(TraceStorageInterface::class, $storeId)->setPublic(true);
-        $container->setAlias(TraceIdGeneratorInterface::class, $generatorId)->setPublic(true);
+        $container->setAlias(TraceStorageInterface::class, $storeId)->setPublic(false);
+        $container->setAlias(TraceIdGeneratorInterface::class, $generatorId)->setPublic(false);
 
         $container->register(TraceSubscriber::class)
             ->setArguments(
                 [
                     $mergedConfig['trust_request_header'],
                     $mergedConfig['send_response_header'],
-                    new Reference($serviceId),
+                    new Reference(TraceServiceInterface::class),
                     new Reference($storeId)
                 ]
             )
             ->setPublic(false)
             ->addTag('kernel.event_subscriber');
 
-        $this->configureMonolog($mergedConfig, $container, $storeId);
-        $this->configureConsole($mergedConfig, $container, $storeId, $serviceId);
-        $this->configureMessenger($mergedConfig, $container, $storeId, $generatorId);
-        $this->configureTwig($mergedConfig, $container, $storeId);
+        $this->configureMonolog($mergedConfig, $container, TraceStorageInterface::class);
+        $this->configureConsole($mergedConfig, $container, TraceStorageInterface::class, TraceServiceInterface::class);
+        $this->configureMessenger($mergedConfig, $container, TraceStorageInterface::class, TraceIdGeneratorInterface::class);
+        $this->configureTwig($mergedConfig, $container, TraceStorageInterface::class);
         $this->configureHttpClient($mergedConfig, $container);
-        $this->configureSentry($mergedConfig, $container);
+        $this->configureSentry($mergedConfig, $container, TraceStorageInterface::class);
     }
 
     /**
@@ -233,7 +233,7 @@ final class SymfonyTraceExtension extends ConfigurableExtension
     /**
      * @phpstan-param Options $mergedConfig
      */
-    private function configureSentry(array $mergedConfig, ContainerBuilder $container): void
+    private function configureSentry(array $mergedConfig, ContainerBuilder $container, string $storeId): void
     {
         $container->setParameter(self::PARAMETER_KEY . '.sentry.enabled', $mergedConfig['sentry']['enabled']);
         if ($mergedConfig['sentry']['enabled'] === false) {
@@ -244,5 +244,6 @@ final class SymfonyTraceExtension extends ConfigurableExtension
         }
 
         $container->setParameter(self::PARAMETER_KEY . '.sentry.service_id', $mergedConfig['sentry']['service_id']);
+        $container->setParameter(self::PARAMETER_KEY . '.sentry.store_id', $storeId);
     }
 }
