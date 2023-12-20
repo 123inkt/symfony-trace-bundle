@@ -19,6 +19,7 @@ use DR\SymfonyTraceBundle\TraceStorage;
 use DR\SymfonyTraceBundle\TraceStorageInterface;
 use DR\SymfonyTraceBundle\Twig\TraceExtension;
 use RuntimeException;
+use Sentry\State\HubInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\LogicException;
@@ -47,6 +48,10 @@ use Twig\Extension\AbstractExtension;
  *          enabled: bool,
  *          tag_default_client: bool,
  *          header: string
+ *      },
+ *      sentry: array{
+ *          enabled: bool,
+ *          service_id: string
  *      }
  *  }
  * @codeCoverageIgnore - This is a configuration class, tested by the functional test
@@ -88,6 +93,7 @@ final class SymfonyTraceExtension extends ConfigurableExtension
         $this->configureMessenger($mergedConfig, $container, $storeId, $generatorId);
         $this->configureTwig($mergedConfig, $container, $storeId);
         $this->configureHttpClient($mergedConfig, $container);
+        $this->configureSentry($mergedConfig, $container);
     }
 
     /**
@@ -222,5 +228,21 @@ final class SymfonyTraceExtension extends ConfigurableExtension
 
         $container->setParameter(self::PARAMETER_KEY . '.http_client.tag_default_client', $mergedConfig['http_client']['tag_default_client']);
         $container->setParameter(self::PARAMETER_KEY . '.http_client.header', $mergedConfig['http_client']['header']);
+    }
+
+    /**
+     * @phpstan-param Options $mergedConfig
+     */
+    private function configureSentry(array $mergedConfig, ContainerBuilder $container): void
+    {
+        $container->setParameter(self::PARAMETER_KEY . '.sentry.enabled', $mergedConfig['sentry']['enabled']);
+        if ($mergedConfig['sentry']['enabled'] === false) {
+            return;
+        }
+        if (interface_exists(HubInterface::class) === false) {
+            throw new LogicException('Sentry support cannot be enabled as Sentry is not installed. Try running "composer require sentry/sentry".');
+        }
+
+        $container->setParameter(self::PARAMETER_KEY . '.sentry.service_id', $mergedConfig['sentry']['service_id']);
     }
 }

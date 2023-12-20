@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DR\SymfonyTraceBundle;
 
 use DR\SymfonyTraceBundle\DependencyInjection\Compiler\HttpClientTracePass;
+use DR\SymfonyTraceBundle\DependencyInjection\Compiler\SentryTracePass;
 use DR\SymfonyTraceBundle\DependencyInjection\SymfonyTraceExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
@@ -20,6 +21,7 @@ final class SymfonyTraceBundle extends Bundle
         parent::build($container);
 
         $container->addCompilerPass(new HttpClientTracePass());
+        $container->addCompilerPass(new SentryTracePass());
     }
 
     /**
