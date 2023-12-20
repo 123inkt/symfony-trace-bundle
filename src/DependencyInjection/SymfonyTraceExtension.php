@@ -12,6 +12,7 @@ use DR\SymfonyTraceBundle\Generator\TraceId\RamseyUuid4Generator;
 use DR\SymfonyTraceBundle\Generator\TraceId\SymfonyUuid4Generator;
 use DR\SymfonyTraceBundle\Generator\TraceIdGeneratorInterface;
 use DR\SymfonyTraceBundle\Monolog\TraceProcessor;
+use DR\SymfonyTraceBundle\Sentry\SentryAwareTraceStorage;
 use DR\SymfonyTraceBundle\Service\TraceContext\TraceContextService;
 use DR\SymfonyTraceBundle\Service\TraceId\TraceIdService;
 use DR\SymfonyTraceBundle\Service\TraceServiceInterface;
@@ -235,7 +236,6 @@ final class SymfonyTraceExtension extends ConfigurableExtension
      */
     private function configureSentry(array $mergedConfig, ContainerBuilder $container, string $storeId): void
     {
-        $container->setParameter(self::PARAMETER_KEY . '.sentry.enabled', $mergedConfig['sentry']['enabled']);
         if ($mergedConfig['sentry']['enabled'] === false) {
             return;
         }
@@ -243,7 +243,13 @@ final class SymfonyTraceExtension extends ConfigurableExtension
             throw new LogicException('Sentry support cannot be enabled as Sentry is not installed. Try running "composer require sentry/sentry".');
         }
 
-        $container->setParameter(self::PARAMETER_KEY . '.sentry.service_id', $mergedConfig['sentry']['service_id']);
-        $container->setParameter(self::PARAMETER_KEY . '.sentry.store_id', $storeId);
+        $container->register($storeId . '.sentry_aware_trace_storage', SentryAwareTraceStorage::class)
+            ->setArguments(
+                [
+                    new Reference($storeId . '.sentry_aware_trace_storage' . '.inner'),
+                    new Reference($mergedConfig['sentry']['service_id']),
+                ]
+            )
+            ->setDecoratedService($storeId, null, 1);
     }
 }

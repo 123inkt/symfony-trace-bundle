@@ -27,16 +27,16 @@ class SentryTracePass implements CompilerPassInterface
             return;
         }
 
-        $storeId      = Assert::string($container->getParameter(SymfonyTraceExtension::PARAMETER_KEY . '.sentry.store_id'));
-        $hubServiceId = Assert::string($container->getParameter(SymfonyTraceExtension::PARAMETER_KEY . '.sentry.service_id'));
-
-        $container->register($storeId . '.sentry_aware_trace_storage', SentryAwareTraceStorage::class)
-            ->setArguments(
-                [
-                    new Reference($storeId . '.sentry_aware_trace_storage' . '.inner'),
-                    new Reference($hubServiceId),
-                ]
-            )
-            ->setDecoratedService($storeId, null, 1);
+        //$storeId      = Assert::string($container->getParameter(SymfonyTraceExtension::PARAMETER_KEY . '.sentry.store_id'));
+        //$hubServiceId = Assert::string($container->getParameter(SymfonyTraceExtension::PARAMETER_KEY . '.sentry.service_id'));
+        //
+        //$container->register($storeId . '.sentry_aware_trace_storage', SentryAwareTraceStorage::class)
+        //    ->setArguments(
+        //        [
+        //            new Reference($storeId . '.sentry_aware_trace_storage' . '.inner'),
+        //            new Reference($hubServiceId),
+        //        ]
+        //    )
+        //    ->setDecoratedService($storeId, null, 1);
     }
 }
