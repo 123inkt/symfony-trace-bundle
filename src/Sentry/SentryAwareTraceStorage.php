@@ -9,6 +9,9 @@ use DR\SymfonyTraceBundle\TraceStorageInterface;
 use Sentry\State\HubInterface;
 use Sentry\State\Scope;
 
+/**
+ * @internal
+ */
 class SentryAwareTraceStorage implements TraceStorageInterface
 {
     public function __construct(private readonly TraceStorageInterface $storage, private readonly HubInterface $hub)
