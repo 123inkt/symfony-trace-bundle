@@ -51,7 +51,7 @@ class SentryAwareTraceStorage implements TraceStorageInterface
         $this->hub->configureScope(
             static function (Scope $scope) use ($trace) {
                 self::updateTraceId($scope, $trace->getTraceId());
-                self::updateTraceId($scope, $trace->getTransactionId());
+                self::updateTransactionId($scope, $trace->getTransactionId());
             }
         );
     }
