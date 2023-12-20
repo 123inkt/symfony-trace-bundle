@@ -52,7 +52,7 @@ use Twig\Extension\AbstractExtension;
  *      },
  *      sentry: array{
  *          enabled: bool,
- *          service_id: string
+ *          hub_service: string
  *      }
  *  }
  * @codeCoverageIgnore - This is a configuration class, tested by the functional test
@@ -249,7 +249,7 @@ final class SymfonyTraceExtension extends ConfigurableExtension
             ->setArguments(
                 [
                     new Reference($storeId . '.sentry_aware_trace_storage' . '.inner'),
-                    new Reference($mergedConfig['sentry']['service_id']),
+                    new Reference($mergedConfig['sentry']['hub_service']),
                 ]
             )
             ->setDecoratedService($storeId, null, 1);

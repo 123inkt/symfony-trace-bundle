@@ -103,7 +103,7 @@ class Configuration implements ConfigurationInterface
                     ->info('Whether or not to enable passing trace and transaction id to Sentry')
                     ->defaultFalse()
                 ->end()
-                ->booleanNode('service_id')
+                ->booleanNode('hub_service')
                     ->info('The service id of the Sentry Hub. Defaults to Sentry\State\HubInterface')
                     ->defaultValue(HubInterface::class)
                 ->end()
