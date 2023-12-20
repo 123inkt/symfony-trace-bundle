@@ -20,7 +20,6 @@ final class SymfonyTraceBundle extends Bundle
         parent::build($container);
 
         $container->addCompilerPass(new HttpClientTracePass());
-        //$container->addCompilerPass(new SentryTracePass());
     }
 
     /**
