@@ -51,7 +51,7 @@ services:
     tags:
       - { name: 'http_client.trace_id' }
   Sentry\State\HubInterface:
-    class: Sentry\State\Hub
+    class: DR\SymfonyTraceBundle\Tests\Functional\App\Service\MockSentryHub
 
 monolog:
   handlers:
