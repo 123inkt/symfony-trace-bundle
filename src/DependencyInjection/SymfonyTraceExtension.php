@@ -12,6 +12,7 @@ use DR\SymfonyTraceBundle\Generator\TraceId\RamseyUuid4Generator;
 use DR\SymfonyTraceBundle\Generator\TraceId\SymfonyUuid4Generator;
 use DR\SymfonyTraceBundle\Generator\TraceIdGeneratorInterface;
 use DR\SymfonyTraceBundle\Monolog\TraceProcessor;
+use DR\SymfonyTraceBundle\Sentry\SentryAwareTraceStorage;
 use DR\SymfonyTraceBundle\Service\TraceContext\TraceContextService;
 use DR\SymfonyTraceBundle\Service\TraceId\TraceIdService;
 use DR\SymfonyTraceBundle\Service\TraceServiceInterface;
@@ -19,6 +20,7 @@ use DR\SymfonyTraceBundle\TraceStorage;
 use DR\SymfonyTraceBundle\TraceStorageInterface;
 use DR\SymfonyTraceBundle\Twig\TraceExtension;
 use RuntimeException;
+use Sentry\State\HubInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\LogicException;
@@ -47,6 +49,10 @@ use Twig\Extension\AbstractExtension;
  *          enabled: bool,
  *          tag_default_client: bool,
  *          header: string
+ *      },
+ *      sentry: array{
+ *          enabled: bool,
+ *          hub_service: string
  *      }
  *  }
  * @codeCoverageIgnore - This is a configuration class, tested by the functional test
@@ -76,18 +82,19 @@ final class SymfonyTraceExtension extends ConfigurableExtension
                 [
                     $mergedConfig['trust_request_header'],
                     $mergedConfig['send_response_header'],
-                    new Reference($serviceId),
-                    new Reference($storeId)
+                    new Reference(TraceServiceInterface::class),
+                    new Reference(TraceStorageInterface::class)
                 ]
             )
             ->setPublic(false)
             ->addTag('kernel.event_subscriber');
 
-        $this->configureMonolog($mergedConfig, $container, $storeId);
-        $this->configureConsole($mergedConfig, $container, $storeId, $serviceId);
-        $this->configureMessenger($mergedConfig, $container, $storeId, $generatorId);
-        $this->configureTwig($mergedConfig, $container, $storeId);
+        $this->configureMonolog($mergedConfig, $container);
+        $this->configureConsole($mergedConfig, $container);
+        $this->configureMessenger($mergedConfig, $container);
+        $this->configureTwig($mergedConfig, $container);
         $this->configureHttpClient($mergedConfig, $container);
+        $this->configureSentry($mergedConfig, $container);
     }
 
     /**
@@ -144,13 +151,13 @@ final class SymfonyTraceExtension extends ConfigurableExtension
     /**
      * @phpstan-param Options $mergedConfig
      */
-    private function configureMonolog(array $mergedConfig, ContainerBuilder $container, string $storeId): void
+    private function configureMonolog(array $mergedConfig, ContainerBuilder $container): void
     {
         if ($mergedConfig['enable_monolog'] === false) {
             return;
         }
         $container->register(TraceProcessor::class)
-            ->addArgument(new Reference($storeId))
+            ->addArgument(new Reference(TraceStorageInterface::class))
             ->setPublic(false)
             ->addTag('monolog.processor');
     }
@@ -158,13 +165,13 @@ final class SymfonyTraceExtension extends ConfigurableExtension
     /**
      * @phpstan-param Options $mergedConfig
      */
-    private function configureConsole(array $mergedConfig, ContainerBuilder $container, string $storeId, string $serviceId): void
+    private function configureConsole(array $mergedConfig, ContainerBuilder $container): void
     {
         if (class_exists(Application::class) === false || $mergedConfig['enable_console'] === false) {
             return;
         }
         $container->register(CommandSubscriber::class)
-            ->setArguments([new Reference($storeId), new Reference($serviceId)])
+            ->setArguments([new Reference(TraceStorageInterface::class), new Reference(TraceServiceInterface::class)])
             ->setPublic(false)
             ->addTag('kernel.event_subscriber');
     }
@@ -172,7 +179,7 @@ final class SymfonyTraceExtension extends ConfigurableExtension
     /**
      * @phpstan-param Options $mergedConfig
      */
-    private function configureMessenger(array $mergedConfig, ContainerBuilder $container, string $storeId, string $generatorId): void
+    private function configureMessenger(array $mergedConfig, ContainerBuilder $container): void
     {
         if ($mergedConfig['enable_messenger'] === false) {
             return;
@@ -184,7 +191,7 @@ final class SymfonyTraceExtension extends ConfigurableExtension
             );
         }
         $container->register(MessageBusSubscriber::class)
-            ->setArguments([new Reference($storeId), new Reference($generatorId)])
+            ->setArguments([new Reference(TraceStorageInterface::class), new Reference(TraceIdGeneratorInterface::class)])
             ->setPublic(false)
             ->addTag('kernel.event_subscriber');
     }
@@ -192,14 +199,14 @@ final class SymfonyTraceExtension extends ConfigurableExtension
     /**
      * @phpstan-param Options $mergedConfig
      */
-    private function configureTwig(array $mergedConfig, ContainerBuilder $container, string $storeId): void
+    private function configureTwig(array $mergedConfig, ContainerBuilder $container): void
     {
         if (class_exists(AbstractExtension::class) === false || $mergedConfig['enable_twig'] === false) {
             return;
         }
 
         $container->register(TraceExtension::class)
-            ->addArgument(new Reference($storeId))
+            ->addArgument(new Reference(TraceStorageInterface::class))
             ->setPublic(false)
             ->addTag('twig.extension');
     }
@@ -222,5 +229,29 @@ final class SymfonyTraceExtension extends ConfigurableExtension
 
         $container->setParameter(self::PARAMETER_KEY . '.http_client.tag_default_client', $mergedConfig['http_client']['tag_default_client']);
         $container->setParameter(self::PARAMETER_KEY . '.http_client.header', $mergedConfig['http_client']['header']);
+    }
+
+    /**
+     * @phpstan-param Options $mergedConfig
+     */
+    private function configureSentry(array $mergedConfig, ContainerBuilder $container): void
+    {
+        if ($mergedConfig['sentry']['enabled'] === false) {
+            return;
+        }
+        if (interface_exists(HubInterface::class) === false) {
+            throw new LogicException('Sentry support cannot be enabled as Sentry is not installed. Try running "composer require sentry/sentry".');
+        }
+
+        $storeId = TraceStorageInterface::class;
+
+        $container->register($storeId . '.sentry_aware_trace_storage', SentryAwareTraceStorage::class)
+            ->setArguments(
+                [
+                    new Reference($storeId . '.sentry_aware_trace_storage' . '.inner'),
+                    new Reference($mergedConfig['sentry']['hub_service']),
+                ]
+            )
+            ->setDecoratedService($storeId, null, 1);
     }
 }

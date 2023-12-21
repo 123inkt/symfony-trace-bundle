@@ -16,7 +16,7 @@ class AbstractWebTestCase extends WebTestCase
     protected static function createKernel(array $options = []): TestKernel
     {
         $env = $options['environment'] ?? $_ENV['APP_ENV'] ?? $_SERVER['APP_ENV'] ?? 'test';
-        $debug = $options['debug'] ?? $_ENV['APP_DEBUG'] ?? $_SERVER['APP_DEBUG'] ?? true;
+        $debug = $options['debug'] ?? $_ENV['APP_DEBUG'] ?? $_SERVER['APP_DEBUG'] ?? false;
 
         return new TestKernel($env, $debug, $options['tracemode'] ?? Configuration::TRACEMODE_TRACEID);
     }

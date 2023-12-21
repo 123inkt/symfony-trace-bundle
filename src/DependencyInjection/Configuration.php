@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DR\SymfonyTraceBundle\DependencyInjection;
 
+use Sentry\State\HubInterface;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -52,11 +53,11 @@ class Configuration implements ConfigurationInterface
                 ->end()
             ->end()
             ->booleanNode('trust_request_header')
-                ->defaultValue(true)
+                ->defaultTrue()
                 ->info("Whether or not to trust the incoming request's `Trace-Id` header as a real ID")
             ->end()
             ->booleanNode('send_response_header')
-                ->defaultValue(true)
+                ->defaultTrue()
                 ->info("Whether or not to send a response header with the trace ID. Defaults to true")
             ->end()
             ->scalarNode('storage_service')
@@ -94,7 +95,20 @@ class Configuration implements ConfigurationInterface
                         ->defaultValue('X-Trace-Id')
                     ->end()
                 ->end()
-            ->end();
+            ->end()
+            ->arrayNode('sentry')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->booleanNode('enabled')
+                    ->info('Whether or not to enable passing trace and transaction id to Sentry')
+                    ->defaultFalse()
+                ->end()
+                ->booleanNode('hub_service')
+                    ->info('The service id of the Sentry Hub. Defaults to Sentry\State\HubInterface')
+                    ->defaultValue(HubInterface::class)
+                ->end()
+            ->end()
+        ;
 
         return $tree;
     }

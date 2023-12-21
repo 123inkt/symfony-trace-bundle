@@ -13,6 +13,9 @@ be available in:
 - Request -> Response
 - Console command
 - Twig as extension
+- HttpClient requests (by default disabled)
+- Messenger messages (by default disabled)
+- Sentry reports (by default disabled)
 
 ## Installation
 
@@ -116,6 +119,10 @@ By default this bundle will check for services tagged with the `http_client.trac
 When `tagDefaultClient` is enabled the default symfony http client will also be tagged and thus decorated.
 This will add the trace header(s) to all outgoing requests for the tagged clients.
 In traceId mode the header name can be changed with the `header` configuration option.
+
+## Sentry integration
+
+When enabled, the bundle will add `trace_id` and `transaction_id` tags to the Sentry reports.
 
 ## About us
 

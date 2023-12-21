@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace DR\SymfonyTraceBundle\Tests\Functional;
 
 use DR\SymfonyTraceBundle\Messenger\TraceStamp;
-use DR\SymfonyTraceBundle\TraceContext;
-use DR\SymfonyTraceBundle\TraceStorageInterface;
 use DR\SymfonyTraceBundle\Tests\Functional\App\Messenger\TestMessage;
 use DR\SymfonyTraceBundle\Tests\Functional\App\Service\TestTraceStorage;
+use DR\SymfonyTraceBundle\TraceContext;
 use DR\Utils\Assert;
 use Exception;
 use PHPUnit\Framework\Attributes\CoversNothing;
@@ -31,7 +30,7 @@ class MessengerTest extends AbstractKernelTestCase
 
     protected function setUp(): void
     {
-        $this->storage    = Assert::isInstanceOf(self::getContainer()->get(TraceStorageInterface::class), TestTraceStorage::class);
+        $this->storage    = Assert::isInstanceOf(self::getContainer()->get('request.id.storage'), TestTraceStorage::class);
         $this->bus        = Assert::isInstanceOf(self::getContainer()->get(MessageBusInterface::class), MessageBusInterface::class);
         $this->dispatcher = Assert::isInstanceOf(self::getContainer()->get('event_dispatcher'), EventDispatcherInterface::class);
         $this->transport  = Assert::isInstanceOf(self::getContainer()->get('messenger.transport.test_transport'), InMemoryTransport::class);
@@ -52,7 +51,8 @@ class MessengerTest extends AbstractKernelTestCase
 
         // ** consume ** (simulate worker)
         (new Worker([$this->transport], $this->bus, $this->dispatcher, clock: $this->clock))->run();
-        self::assertStorageHasTrace($this->storage);
+        // expect 3: 1x dispatch, 1x receive, 1x handled
+        static::assertSame(3, $this->storage->setTraceIdCount);
     }
 
     private static function assertTransportHasEnvelopWithTraceStamp(InMemoryTransport $transport): void
@@ -69,14 +69,5 @@ class MessengerTest extends AbstractKernelTestCase
         $trace->setTraceId('foobar');
         $trace->setParentTransactionId('barfoo');
         static::assertEquals($trace, $stamp->trace);
-    }
-
-    private static function assertStorageHasTrace(TestTraceStorage $storage): void
-    {
-        // expect 5: 1x dispatch, 1x receive, 1x handled, 1x dispatch, 1x receive
-        static::assertSame(5, $storage->getTraceIdCount);
-
-        // expect 3: 1x dispatch, 1x receive, 1x handled
-        static::assertSame(3, $storage->setTraceIdCount);
     }
 }

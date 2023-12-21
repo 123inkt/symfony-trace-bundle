@@ -43,5 +43,10 @@ return static function (SymfonyTraceConfig $config): void {
     $config->httpClient()
         ->enabled(true)
         ->tagDefaultClient(false);
+        
+    // Whether to enable passing trace and transaction id to Sentry. Defaults to false.        
+    $config->sentry()
+        ->enabled(true)
+        ->hubService(HunbInterface::class);
 };
 ```

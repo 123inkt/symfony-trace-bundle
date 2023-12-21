@@ -9,3 +9,5 @@ symfony_trace:
   http_client:
     enabled: true
     header: Trace-Id
+  sentry:
+    enabled: true
