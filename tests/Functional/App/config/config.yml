@@ -50,7 +50,7 @@ services:
       - '@DR\SymfonyTraceBundle\Tests\Functional\App\Service\MockClientCallbackHelper'
     tags:
       - { name: 'http_client.trace_id' }
-  Sentry\State\HubInterface:
+  test.sentry.hub:
     class: DR\SymfonyTraceBundle\Tests\Functional\App\Service\MockSentryHub
 
 monolog:

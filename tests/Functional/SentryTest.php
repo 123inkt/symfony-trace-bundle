@@ -20,7 +20,7 @@ class SentryTest extends AbstractWebTestCase
     public function testTraceIdIsAddedToSentryHub(): void
     {
         $client = self::createClient();
-        $hub    = self::getContainer()->get(HubInterface::class);
+        $hub    = self::getContainer()->get('test.sentry.hub');
         static::assertInstanceOf(MockSentryHub::class, $hub);
 
         $client->request('GET', '/', [], [], ['HTTP_TRACE_ID' => 'testId']);

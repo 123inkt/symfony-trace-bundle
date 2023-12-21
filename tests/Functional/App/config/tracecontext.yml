@@ -11,3 +11,4 @@ symfony_trace:
     header: Trace-Id
   sentry:
     enabled: true
+    hub_service: test.sentry.hub
