@@ -18,6 +18,7 @@ declare(strict_types=1);
 
 use DR\SymfonyTraceBundle\Generator\TraceId\RamseyUuid4Generator;
 use DR\SymfonyTraceBundle\TraceStorage;
+use Sentry\State\HubInterface;
 use Symfony\Config\SymfonyTraceConfig;
 
 return static function (SymfonyTraceConfig $config): void {
@@ -69,5 +70,5 @@ return static function (SymfonyTraceConfig $config): void {
     // Whether to enable passing trace and transaction id to Sentry. Defaults to false.        
     $config->sentry()
         ->enabled(true)
-        ->hubService(HunbInterface::class);
+        ->hubService(HubInterface::class);
 };
