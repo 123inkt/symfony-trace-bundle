@@ -65,4 +65,9 @@ return static function (SymfonyTraceConfig $config): void {
         ->tagDefaultClient(false)
         // The header which the bundle will set the trace ID to on the outgoing request
         ->header('X-Trace-Id');
+        
+    // Whether to enable passing trace and transaction id to Sentry. Defaults to false.        
+    $config->sentry()
+        ->enabled(true)
+        ->hubService(HunbInterface::class);
 };
