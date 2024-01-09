@@ -13,6 +13,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 #[CoversClass(TraceContextService::class)]
 class TraceContextServiceTest extends TestCase
@@ -67,6 +68,20 @@ class TraceContextServiceTest extends TestCase
         static::assertSame('00f067aa0ba902b7', $trace->getTransactionId());
         static::assertSame('00', $trace->getFlags());
         static::assertSame(['foo' => 'bar', 'bar' => 'baz'], $trace->getTraceState());
+    }
+
+    public function testHandleResponse(): void
+    {
+        $trace = new TraceContext();
+        $trace->setTraceId('0af7651916cd43dd8448eb211c80319c');
+        $trace->setTransactionId('b7ad6b7169203331');
+
+        $response = new Response();
+        $this->service->handleResponse($response, $trace);
+        static::assertSame(
+            '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-00',
+            $response->headers->get(TraceContextService::HEADER_TRACERESPONSE)
+        );
     }
 
     public function testHandleClientRequest(): void

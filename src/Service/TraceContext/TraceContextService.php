@@ -15,8 +15,9 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class TraceContextService implements TraceServiceInterface
 {
-    public const HEADER_TRACEPARENT = 'traceparent';
-    public const HEADER_TRACESTATE  = 'tracestate';
+    public const HEADER_TRACEPARENT   = 'traceparent';
+    public const HEADER_TRACESTATE    = 'tracestate';
+    public const HEADER_TRACERESPONSE = 'traceresponse';
 
     public function __construct(private readonly TraceContextIdGenerator $generator)
     {
@@ -58,7 +59,9 @@ class TraceContextService implements TraceServiceInterface
      */
     public function handleResponse(Response $response, TraceContext $context): void
     {
-        // Do nothing
+        if ($context->getTraceId() !== null) {
+            $response->headers->set(self::HEADER_TRACERESPONSE, $this->renderTraceParent($context));
+        }
     }
 
     public function handleClientRequest(TraceContext $trace, string $method, string $url, array $options = []): array
