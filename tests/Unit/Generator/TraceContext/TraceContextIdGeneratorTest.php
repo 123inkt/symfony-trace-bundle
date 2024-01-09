@@ -14,12 +14,12 @@ class TraceContextIdGeneratorTest extends TestCase
     public function testGenerateTransactionId(): void
     {
         $generator = new TraceContextIdGenerator();
-        static::assertSame(8, strlen($generator->generateTransactionId()));
+        static::assertSame(16, strlen($generator->generateTransactionId()));
     }
 
     public function testGenerateTraceId(): void
     {
         $generator = new TraceContextIdGenerator();
-        static::assertSame(16, strlen($generator->generateTraceId()));
+        static::assertSame(32, strlen($generator->generateTraceId()));
     }
 }

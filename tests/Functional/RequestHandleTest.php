@@ -67,7 +67,16 @@ class RequestHandleTest extends AbstractWebTestCase
         $crawler = $client->request('GET', '/', [], [], ['HTTP_TRACEPARENT' => '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-00']);
         static::assertResponseIsSuccessful();
 
-        static::assertSame('0af7651916cd43dd8448eb211c80319c', self::getService(TraceStorageInterface::class)->getTraceId());
+        $trace = self::getService(TraceStorageInterface::class)->getTrace();
+        static::assertSame('0af7651916cd43dd8448eb211c80319c', $trace->getTraceId());
+        static::assertSame('b7ad6b7169203331', $trace->getParentTransactionId());
+        static::assertNotSame('b7ad6b7169203331', $trace->getTransactionId());
+
+        $response = $client->getResponse();
+        static::assertSame(
+            '00-' . $trace->getTraceId() . '-' . $trace->getTransactionId() . '-00',
+            $response->headers->get('traceresponse')
+        );
         self::assertLogsHaveTraceId('0af7651916cd43dd8448eb211c80319c');
         static::assertGreaterThan(
             0,
@@ -86,12 +95,19 @@ class RequestHandleTest extends AbstractWebTestCase
         $crawler = $client->request('GET', '/');
         static::assertResponseIsSuccessful();
 
-        $id = self::getService(TraceStorageInterface::class)->getTraceId();
-        static::assertNotEmpty($id);
-        self::assertLogsHaveTraceId($id);
+        $traceStorage = self::getService(TraceStorageInterface::class);
+        static::assertNotEmpty($traceStorage->getTraceId());
+        static::assertNotEmpty($traceStorage->getTransactionId());
+
+        $response = $client->getResponse();
+        static::assertSame(
+            '00-' . $traceStorage->getTraceId() . '-' . $traceStorage->getTransactionId() . '-00',
+            $response->headers->get('traceresponse')
+        );
+        self::assertLogsHaveTraceId($traceStorage->getTraceId());
         static::assertGreaterThan(
             0,
-            $crawler->filter(sprintf('h1:contains("%s")', $id))->count(),
+            $crawler->filter(sprintf('h1:contains("%s")', $traceStorage->getTraceId()))->count(),
             'should have the request ID in the response HTML'
         );
     }
