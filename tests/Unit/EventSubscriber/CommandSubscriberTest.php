@@ -37,6 +37,16 @@ class CommandSubscriberTest extends TestCase
         $subscriber->onCommand();
     }
 
+    public function testOnCommandStorageHasTrace(): void
+    {
+        $subscriber = new CommandSubscriber($this->storage, $this->service);
+
+        $this->service->expects(static::never())->method('createNewTrace');
+        $this->storage->expects(static::once())->method('getTraceId')->willReturn("abc123");
+
+        $subscriber->onCommand();
+    }
+
     public function testGetSubscribedEvents(): void
     {
         static::assertSame([ConsoleEvents::COMMAND => ['onCommand', 999]], CommandSubscriber::getSubscribedEvents());

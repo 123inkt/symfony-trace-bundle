@@ -55,6 +55,11 @@ final class TraceSubscriber implements EventSubscriberInterface
             return;
         }
 
+        // If the trace ID is already set by another process, don't overwrite it
+        if ($this->traceStorage->getTraceId() !== null) {
+            return;
+        }
+
         $this->traceStorage->setTrace($this->traceService->createNewTrace());
     }
 
