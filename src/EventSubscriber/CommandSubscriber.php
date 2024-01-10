@@ -28,6 +28,11 @@ final class CommandSubscriber implements EventSubscriberInterface
 
     public function onCommand(): void
     {
+        // If the trace ID is already set by another process, don't overwrite it
+        if ($this->storage->getTraceId() !== null) {
+            return;
+        }
+
         $this->storage->setTrace($this->service->createNewTrace());
     }
 }
