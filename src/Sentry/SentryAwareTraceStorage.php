@@ -56,19 +56,31 @@ class SentryAwareTraceStorage implements TraceStorageInterface
 
     private static function updateTraceId(Scope $scope, ?string $traceId): void
     {
+        $propagationContext = $scope->getPropagationContext();
+        $sentryTraceId      = self::tryCreateTraceId($traceId);
+        if ($sentryTraceId !== null) {
+            $propagationContext->setTraceId($sentryTraceId);
+        } elseif ($traceId !== null) {
+            $scope->setTag('trace_id', $traceId);
+        }
+
         if ($traceId === null) {
             $scope->removeTag('trace_id');
-        } else {
-            $scope->setTag('trace_id', $traceId);
         }
     }
 
     private static function updateTransactionId(Scope $scope, ?string $transactionId): void
     {
+        $propagationContext  = $scope->getPropagationContext();
+        $sentryTransactionId = self::tryCreateSpanId($transactionId);
+        if ($sentryTransactionId !== null) {
+            $propagationContext->setSpanId($sentryTransactionId);
+        } elseif ($transactionId !== null) {
+            $scope->setTag('transaction_id', $transactionId);
+        }
+
         if ($transactionId === null) {
             $scope->removeTag('transaction_id');
-        } else {
-            $scope->setTag('transaction_id', $transactionId);
         }
     }
 
@@ -77,29 +89,21 @@ class SentryAwareTraceStorage implements TraceStorageInterface
         $propagationContext = $scope->getPropagationContext();
 
         // set trace id
-        $traceId = self::tryCreateTraceId($traceContext->getTraceId());
-        if ($traceId !== null) {
-            $propagationContext->setTraceId($traceId);
-        } else {
-            self::updateTraceId($scope, $traceContext->getTraceId());
-        }
+        self::updateTraceId($scope, $traceContext->getTraceId());
 
         // set transaction id
-        $transactionId = self::tryCreateSpanId($traceContext->getTransactionId());
-        if ($transactionId !== null) {
-            $propagationContext->setSpanId($transactionId);
-        } else {
-            self::updateTransactionId($scope, $traceContext->getTransactionId());
-        }
+        self::updateTransactionId($scope, $traceContext->getTransactionId());
 
         // set parent transaction id
         $parentTransactionId = self::tryCreateSpanId($traceContext->getParentTransactionId());
         if ($parentTransactionId !== null) {
             $propagationContext->setParentSpanId($parentTransactionId);
-        } elseif ($traceContext->getParentTransactionId() === null) {
-            $scope->removeTag('parent_transaction_id');
-        } else {
+        } elseif ($traceContext->getParentTransactionId() !== null) {
             $scope->setTag('parent_transaction_id', $traceContext->getParentTransactionId());
+        }
+
+        if ($traceContext->getParentTransactionId() === null) {
+            $scope->removeTag('parent_transaction_id');
         }
     }
 
@@ -112,7 +116,7 @@ class SentryAwareTraceStorage implements TraceStorageInterface
         try {
             return new SpanId($spanId);
         } catch (InvalidArgumentException) {
-            // the current span id is not supported by Sentry
+            // the span id format is not supported by Sentry
             return null;
         }
     }
@@ -126,7 +130,7 @@ class SentryAwareTraceStorage implements TraceStorageInterface
         try {
             return new TraceId($traceId);
         } catch (InvalidArgumentException) {
-            // the current trace id is not supported by Sentry
+            // the trace id format is not supported by Sentry
             return null;
         }
     }
