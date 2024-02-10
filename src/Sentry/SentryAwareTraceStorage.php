@@ -56,10 +56,9 @@ class SentryAwareTraceStorage implements TraceStorageInterface
 
     private static function updateTraceId(Scope $scope, ?string $traceId): void
     {
-        $propagationContext = $scope->getPropagationContext();
-        $sentryTraceId      = self::tryCreateTraceId($traceId);
+        $sentryTraceId = self::tryCreateTraceId($traceId);
         if ($sentryTraceId !== null) {
-            $propagationContext->setTraceId($sentryTraceId);
+            $scope->getPropagationContext()->setTraceId($sentryTraceId);
         } elseif ($traceId !== null) {
             $scope->setTag('trace_id', $traceId);
         }
@@ -71,10 +70,9 @@ class SentryAwareTraceStorage implements TraceStorageInterface
 
     private static function updateTransactionId(Scope $scope, ?string $transactionId): void
     {
-        $propagationContext  = $scope->getPropagationContext();
         $sentryTransactionId = self::tryCreateSpanId($transactionId);
         if ($sentryTransactionId !== null) {
-            $propagationContext->setSpanId($sentryTransactionId);
+            $scope->getPropagationContext()->setSpanId($sentryTransactionId);
         } elseif ($transactionId !== null) {
             $scope->setTag('transaction_id', $transactionId);
         }
@@ -86,8 +84,6 @@ class SentryAwareTraceStorage implements TraceStorageInterface
 
     private static function updatePropagationContext(Scope $scope, TraceContext $traceContext): void
     {
-        $propagationContext = $scope->getPropagationContext();
-
         // set trace id
         self::updateTraceId($scope, $traceContext->getTraceId());
 
@@ -97,7 +93,7 @@ class SentryAwareTraceStorage implements TraceStorageInterface
         // set parent transaction id
         $parentTransactionId = self::tryCreateSpanId($traceContext->getParentTransactionId());
         if ($parentTransactionId !== null) {
-            $propagationContext->setParentSpanId($parentTransactionId);
+            $scope->getPropagationContext()->setParentSpanId($parentTransactionId);
         } elseif ($traceContext->getParentTransactionId() !== null) {
             $scope->setTag('parent_transaction_id', $traceContext->getParentTransactionId());
         }
