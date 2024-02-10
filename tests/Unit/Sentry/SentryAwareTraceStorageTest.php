@@ -12,6 +12,8 @@ use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Sentry\State\HubInterface;
 use Sentry\State\Scope;
+use Sentry\Tracing\SpanId;
+use Sentry\Tracing\TraceId;
 
 #[CoversClass(SentryAwareTraceStorage::class)]
 class SentryAwareTraceStorageTest extends TestCase
@@ -78,6 +80,7 @@ class SentryAwareTraceStorageTest extends TestCase
         $traceContext = new TraceContext();
         $traceContext->setTraceId('trace-id-a');
         $traceContext->setTransactionId('transaction-id-b');
+        $traceContext->setParentTransactionId('parent-transaction-id-c');
 
         $this->traceStorage->expects(self::once())->method('setTrace')->with($traceContext);
         $this->hub->expects(self::once())->method('configureScope')
@@ -86,6 +89,7 @@ class SentryAwareTraceStorageTest extends TestCase
         $this->storage->setTrace($traceContext);
         self::assertScopeHasTag($scope, 'trace_id', 'trace-id-a');
         self::assertScopeHasTag($scope, 'transaction_id', 'transaction-id-b');
+        self::assertScopeHasTag($scope, 'parent_transaction_id', 'parent-transaction-id-c');
     }
 
     public function testSetTraceShouldRemoveValues(): void
@@ -93,9 +97,11 @@ class SentryAwareTraceStorageTest extends TestCase
         $scope = new Scope();
         $scope->setTag('trace_id', 'trace-id-a');
         $scope->setTag('transaction_id', 'transaction-id-b');
+        $scope->setTag('parent_transaction_id', 'parent-transaction-id-c');
         $traceContext = new TraceContext();
         $traceContext->setTraceId(null);
         $traceContext->setTransactionId(null);
+        $traceContext->setParentTransactionId(null);
 
         $this->traceStorage->expects(self::once())->method('setTrace')->with($traceContext);
         $this->hub->expects(self::once())->method('configureScope')
@@ -104,15 +110,33 @@ class SentryAwareTraceStorageTest extends TestCase
         $this->storage->setTrace($traceContext);
         self::assertScopeDoesNotHaveTag($scope, 'trace_id');
         self::assertScopeDoesNotHaveTag($scope, 'transaction_id');
+        self::assertScopeDoesNotHaveTag($scope, 'parent_transaction_id');
+    }
+
+    public function testSetTraceShouldSetSentryPropagationContext(): void
+    {
+        $scope        = new Scope();
+        $traceContext = new TraceContext();
+        $traceContext->setTraceId((string)TraceId::generate());
+        $traceContext->setTransactionId((string)SpanId::generate());
+        $traceContext->setParentTransactionId((string)SpanId::generate());
+
+        $this->traceStorage->expects(self::once())->method('setTrace')->with($traceContext);
+        $this->hub->expects(self::once())->method('configureScope')
+            ->willReturnCallback(static fn(callable $callback) => $callback($scope));
+
+        $this->storage->setTrace($traceContext);
+        static::assertSame($traceContext->getTraceId(), (string)$scope->getPropagationContext()->getTraceId());
+        static::assertSame($traceContext->getTransactionId(), (string)$scope->getPropagationContext()->getSpanId());
+        static::assertSame($traceContext->getParentTransactionId(), (string)$scope->getPropagationContext()->getParentSpanId());
+        self::assertScopeDoesNotHaveTag($scope, 'trace_id');
+        self::assertScopeDoesNotHaveTag($scope, 'transaction_id');
+        self::assertScopeDoesNotHaveTag($scope, 'parent_transaction_id');
     }
 
     private static function assertScopeHasTag(Scope $scope, string $key, string $value): void
     {
-        $class    = new ReflectionClass($scope);
-        $property = $class->getProperty('tags');
-        $property->setAccessible(true);
-
-        $tags = $property->getValue($scope);
+        $tags = (new ReflectionClass($scope))->getProperty('tags')->getValue($scope);
         static::assertIsArray($tags);
         static::assertArrayHasKey($key, $tags);
         static::assertSame($value, $tags[$key]);
@@ -120,11 +144,7 @@ class SentryAwareTraceStorageTest extends TestCase
 
     private static function assertScopeDoesNotHaveTag(Scope $scope, string $key): void
     {
-        $class    = new ReflectionClass($scope);
-        $property = $class->getProperty('tags');
-        $property->setAccessible(true);
-
-        $tags = $property->getValue($scope);
+        $tags = (new ReflectionClass($scope))->getProperty('tags')->getValue($scope);
         static::assertIsArray($tags);
         static::assertArrayNotHasKey($key, $tags);
     }
