@@ -6,8 +6,11 @@ namespace DR\SymfonyTraceBundle\Sentry;
 
 use DR\SymfonyTraceBundle\TraceContext;
 use DR\SymfonyTraceBundle\TraceStorageInterface;
+use InvalidArgumentException;
 use Sentry\State\HubInterface;
 use Sentry\State\Scope;
+use Sentry\Tracing\SpanId;
+use Sentry\Tracing\TraceId;
 
 /**
  * @internal
@@ -48,29 +51,83 @@ class SentryAwareTraceStorage implements TraceStorageInterface
     public function setTrace(TraceContext $trace): void
     {
         $this->storage->setTrace($trace);
-        $this->hub->configureScope(
-            static function (Scope $scope) use ($trace) {
-                self::updateTraceId($scope, $trace->getTraceId());
-                self::updateTransactionId($scope, $trace->getTransactionId());
-            }
-        );
+        $this->hub->configureScope(static fn(Scope $scope) => self::updatePropagationContext($scope, $trace));
     }
 
     private static function updateTraceId(Scope $scope, ?string $traceId): void
     {
+        $sentryTraceId = self::tryCreateTraceId($traceId);
+        if ($sentryTraceId !== null) {
+            $scope->getPropagationContext()->setTraceId($sentryTraceId);
+        } elseif ($traceId !== null) {
+            $scope->setTag('trace_id', $traceId);
+        }
+
         if ($traceId === null) {
             $scope->removeTag('trace_id');
-        } else {
-            $scope->setTag('trace_id', $traceId);
         }
     }
 
     private static function updateTransactionId(Scope $scope, ?string $transactionId): void
     {
+        $sentryTransactionId = self::tryCreateSpanId($transactionId);
+        if ($sentryTransactionId !== null) {
+            $scope->getPropagationContext()->setSpanId($sentryTransactionId);
+        } elseif ($transactionId !== null) {
+            $scope->setTag('transaction_id', $transactionId);
+        }
+
         if ($transactionId === null) {
             $scope->removeTag('transaction_id');
-        } else {
-            $scope->setTag('transaction_id', $transactionId);
+        }
+    }
+
+    private static function updatePropagationContext(Scope $scope, TraceContext $traceContext): void
+    {
+        // set trace id
+        self::updateTraceId($scope, $traceContext->getTraceId());
+
+        // set transaction id
+        self::updateTransactionId($scope, $traceContext->getTransactionId());
+
+        // set parent transaction id
+        $parentTransactionId = self::tryCreateSpanId($traceContext->getParentTransactionId());
+        if ($parentTransactionId !== null) {
+            $scope->getPropagationContext()->setParentSpanId($parentTransactionId);
+        } elseif ($traceContext->getParentTransactionId() !== null) {
+            $scope->setTag('parent_transaction_id', $traceContext->getParentTransactionId());
+        }
+
+        if ($traceContext->getParentTransactionId() === null) {
+            $scope->removeTag('parent_transaction_id');
+        }
+    }
+
+    private static function tryCreateSpanId(?string $spanId): ?SpanId
+    {
+        if ($spanId === null) {
+            return null;
+        }
+
+        try {
+            return new SpanId($spanId);
+        } catch (InvalidArgumentException) {
+            // the span id format is not supported by Sentry
+            return null;
+        }
+    }
+
+    private static function tryCreateTraceId(?string $traceId): ?TraceId
+    {
+        if ($traceId === null) {
+            return null;
+        }
+
+        try {
+            return new TraceId($traceId);
+        } catch (InvalidArgumentException) {
+            // the trace id format is not supported by Sentry
+            return null;
         }
     }
 }
