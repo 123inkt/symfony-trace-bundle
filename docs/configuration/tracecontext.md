@@ -32,7 +32,10 @@ return static function (SymfonyTraceConfig $config): void {
     $config->enableMonolog(true);
     
     // Whether to add the request id to console commands, defaults to true
-    $config->enableConsole(true);
+    $config->console()->enabled(true);
+    
+    // Optional, set console trace id based on env var. defaults to null
+    $config->console()->traceId(env('TRACE_ID'));
     
     // Whether to add the request id to message bus events, defaults to false
     $config->enableMessenger(false);
