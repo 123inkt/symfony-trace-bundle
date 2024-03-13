@@ -50,14 +50,12 @@ class ApplicationTest extends AbstractKernelTestCase
     {
         putenv('TRACE_ID=test-trace-id');
 
-        $kernel      = static::bootKernel(['environment' => 'test', 'debug' => false, 'tracemode' => Configuration::TRACEMODE_TRACEID]);
-        $application = new Application($kernel);
+        $kernel = static::bootKernel(['environment' => 'test', 'debug' => false, 'tracemode' => Configuration::TRACEMODE_TRACEID]);
 
         $storage = self::getContainer()->get('request.id.storage');
         static::assertInstanceOf(TraceStorageInterface::class, $storage);
 
-        $exitCode = $application->doRun(new ArrayInput(['help']), new NullOutput());
-        static::assertSame(Command::SUCCESS, $exitCode);
+        static::assertSame(Command::SUCCESS, (new Application($kernel))->doRun(new ArrayInput(['help']), new NullOutput()));
         static::assertSame('test-trace-id', $storage->getTraceId());
     }
 }
