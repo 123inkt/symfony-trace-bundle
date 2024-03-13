@@ -24,7 +24,7 @@ class TraceContextServiceTest extends TestCase
     protected function setUp(): void
     {
         $this->generator = $this->createMock(TraceContextIdGenerator::class);
-        $this->service = new TraceContextService($this->generator);
+        $this->service   = new TraceContextService($this->generator);
     }
 
     #[DataProvider('provideTraceParent')]
@@ -48,6 +48,23 @@ class TraceContextServiceTest extends TestCase
         $this->generator->expects(static::once())->method('generateTransactionId')->willReturn('b7ad6b7169203331');
 
         $trace = $this->service->createNewTrace();
+        static::assertSame('00', $trace->getVersion());
+        static::assertSame('0af7651916cd43dd8448eb211c80319c', $trace->getTraceId());
+        static::assertSame('b7ad6b7169203331', $trace->getTransactionId());
+        static::assertSame('00', $trace->getFlags());
+    }
+
+    public function testCreateTraceFromInvalidTraceId(): void
+    {
+        static::assertNull($this->service->createTraceFrom('invalid'));
+    }
+
+    public function testCreateTraceFrom(): void
+    {
+        $this->generator->expects(static::once())->method('generateTransactionId')->willReturn('b7ad6b7169203331');
+
+        $trace = $this->service->createTraceFrom('00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-00');
+        static::assertNotNull($trace);
         static::assertSame('00', $trace->getVersion());
         static::assertSame('0af7651916cd43dd8448eb211c80319c', $trace->getTraceId());
         static::assertSame('b7ad6b7169203331', $trace->getTransactionId());
@@ -104,9 +121,11 @@ class TraceContextServiceTest extends TestCase
         $trace->setTraceState(['foo' => 'bar', 'bar' => 'baz']);
 
         static::assertSame(
-            ['headers' => [
-                'traceparent' => '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-00',
-                'tracestate' => 'foo=bar,bar=baz']
+            [
+                'headers' => [
+                    'traceparent' => '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-00',
+                    'tracestate'  => 'foo=bar,bar=baz'
+                ]
             ],
             $this->service->handleClientRequest($trace, 'GET', 'http://localhost')
         );
