@@ -1,6 +1,7 @@
 parameters:
   secret: dev
   locale: en
+  env(TRACE_ID): null
 
 framework:
   test: ~

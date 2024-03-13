@@ -18,6 +18,12 @@ use Symfony\Component\Console\Output\NullOutput;
 #[CoversNothing]
 class ApplicationTest extends AbstractKernelTestCase
 {
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        putenv('TRACE_ID=');
+    }
+
     /**
      * @throws Exception
      */
@@ -26,9 +32,7 @@ class ApplicationTest extends AbstractKernelTestCase
     #[TestWith([Configuration::TRACEMODE_TRACECONTEXT, 'request.id.storage'])]
     public function testCommandShouldSetTrace(string $traceMode, string $storageServiceId): void
     {
-        $application = new Application(
-            static::bootKernel(['environment' => 'test', 'debug' => false, 'tracemode' => $traceMode])
-        );
+        $application = new Application(static::bootKernel(['environment' => 'test', 'debug' => false, 'tracemode' => $traceMode]));
 
         $storage = self::getContainer()->get($storageServiceId);
         static::assertInstanceOf(TraceStorageInterface::class, $storage);
@@ -40,5 +44,20 @@ class ApplicationTest extends AbstractKernelTestCase
         static::assertSame(Command::SUCCESS, $exitCode);
         static::assertNotNull($storage->getTraceId());
         static::assertNotNull($storage->getTransactionId());
+    }
+
+    public function testCommandShouldTakeTraceIdFromEnv(): void
+    {
+        putenv('TRACE_ID=test-trace-id');
+
+        $kernel      = static::bootKernel(['environment' => 'test', 'debug' => false, 'tracemode' => Configuration::TRACEMODE_TRACEID]);
+        $application = new Application($kernel);
+
+        $storage = self::getContainer()->get('request.id.storage');
+        static::assertInstanceOf(TraceStorageInterface::class, $storage);
+
+        $exitCode = $application->doRun(new ArrayInput(['help']), new NullOutput());
+        static::assertSame(Command::SUCCESS, $exitCode);
+        static::assertSame('test-trace-id', $storage->getTraceId());
     }
 }

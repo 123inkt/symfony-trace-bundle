@@ -36,7 +36,7 @@ final class CommandSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if ($this->traceId !== null) {
+        if ($this->traceId !== null && $this->traceId !== '') {
             $this->storage->setTrace($this->service->createTraceFrom($this->traceId));
 
             return;

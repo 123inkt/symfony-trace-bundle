@@ -43,7 +43,10 @@ use Twig\Extension\AbstractExtension;
  *      storage_service: ?string,
  *      enable_monolog: bool,
  *      enable_console: bool,
- *      console: array{enabled: bool, env_var_key: ?string},
+ *      console: array{
+ *          enabled: bool,
+ *          trace_id: ?string
+ *      },
  *      enable_messenger: bool,
  *      enable_twig: bool,
  *      http_client: array{
@@ -173,7 +176,13 @@ final class SymfonyTraceExtension extends ConfigurableExtension
             return;
         }
         $container->register(CommandSubscriber::class)
-            ->setArguments([new Reference(TraceStorageInterface::class), new Reference(TraceServiceInterface::class)])
+            ->setArguments(
+                [
+                    new Reference(TraceStorageInterface::class),
+                    new Reference(TraceServiceInterface::class),
+                    $mergedConfig['console']['trace_id']
+                ]
+            )
             ->setPublic(false)
             ->addTag('kernel.event_subscriber');
     }
