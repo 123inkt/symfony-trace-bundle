@@ -43,6 +43,7 @@ use Twig\Extension\AbstractExtension;
  *      storage_service: ?string,
  *      enable_monolog: bool,
  *      enable_console: bool,
+ *      console: array{enabled: bool, env_var_key: ?string},
  *      enable_messenger: bool,
  *      enable_twig: bool,
  *      http_client: array{
@@ -167,7 +168,8 @@ final class SymfonyTraceExtension extends ConfigurableExtension
      */
     private function configureConsole(array $mergedConfig, ContainerBuilder $container): void
     {
-        if (class_exists(Application::class) === false || $mergedConfig['enable_console'] === false) {
+        $enabled = $mergedConfig['enable_console'] ?? $mergedConfig['console']['enabled'];
+        if (class_exists(Application::class) === false || $enabled === false) {
             return;
         }
         $container->register(CommandSubscriber::class)

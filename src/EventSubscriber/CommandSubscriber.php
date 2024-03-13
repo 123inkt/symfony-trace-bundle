@@ -14,7 +14,11 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 final class CommandSubscriber implements EventSubscriberInterface
 {
-    public function __construct(private readonly TraceStorageInterface $storage, private readonly TraceServiceInterface $service)
+    public function __construct(
+        private readonly TraceStorageInterface $storage,
+        private readonly TraceServiceInterface $service,
+        private readonly string $envTraceId,
+    )
     {
     }
 
