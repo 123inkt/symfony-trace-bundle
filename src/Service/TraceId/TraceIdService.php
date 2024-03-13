@@ -37,6 +37,15 @@ class TraceIdService implements TraceServiceInterface
         return $trace;
     }
 
+    public function createTraceFrom(string $traceId): TraceContext
+    {
+        $trace = new TraceContext();
+        $trace->setTraceId($traceId);
+        $trace->setTransactionId($this->generator->generateTransactionId());
+
+        return $trace;
+    }
+
     public function getRequestTrace(Request $request): TraceContext
     {
         $trace = new TraceContext();
