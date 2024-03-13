@@ -11,12 +11,13 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 /**
  * @codeCoverageIgnore - This is a configuration class, tested by the functional test
+ * @suppressWarnings(PHPMD.ExcessiveMethodLength)
  * @internal
  */
 class Configuration implements ConfigurationInterface
 {
     public const TRACEMODE_TRACECONTEXT = 'tracecontext';
-    public const TRACEMODE_TRACEID = 'traceid';
+    public const TRACEMODE_TRACEID      = 'traceid';
 
     public function getConfigTreeBuilder(): TreeBuilder
     {
