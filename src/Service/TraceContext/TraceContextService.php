@@ -70,19 +70,40 @@ class TraceContextService implements TraceServiceInterface
     public function handleResponse(Response $response, TraceContext $context): void
     {
         if ($context->getTraceId() !== null) {
-            $response->headers->set(self::HEADER_TRACERESPONSE, TraceContextRenderer::renderTraceParent($context));
+            $response->headers->set(self::HEADER_TRACERESPONSE, $this->renderTraceParent($context));
         }
     }
 
     public function handleClientRequest(TraceContext $trace, string $method, string $url, array $options = []): array
     {
-        $options['headers'][self::HEADER_TRACEPARENT] = TraceContextRenderer::renderTraceParent($trace);
+        $options['headers'][self::HEADER_TRACEPARENT] = $this->renderTraceParent($trace);
 
-        $traceState = TraceContextRenderer::renderTraceState($trace);
+        $traceState = $this->renderTraceState($trace);
         if ($traceState !== '') {
             $options['headers'][self::HEADER_TRACESTATE] = $traceState;
         }
 
         return $options;
+    }
+
+    private function renderTraceParent(TraceContext $trace): string
+    {
+        return sprintf(
+            '%s-%s-%s-%s',
+            $trace->getVersion(),
+            $trace->getTraceId(),
+            $trace->getTransactionId(),
+            $trace->getFlags()
+        );
+    }
+
+    private function renderTraceState(TraceContext $traceContext): string
+    {
+        $traceState = [];
+        foreach ($traceContext->getTraceState() as $key => $value) {
+            $traceState[] = sprintf('%s=%s', $key, $value);
+        }
+
+        return implode(',', $traceState);
     }
 }
