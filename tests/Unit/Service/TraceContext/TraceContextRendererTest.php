@@ -11,7 +11,6 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(TraceContextRenderer::class)]
 class TraceContextRendererTest extends TestCase
 {
-
     public function testRenderTraceParent(): void
     {
         $context = new TraceContext('00', 'trace_id', 'parent_transaction_id', '01', []);

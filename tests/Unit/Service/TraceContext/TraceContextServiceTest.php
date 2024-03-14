@@ -68,12 +68,13 @@ class TraceContextServiceTest extends TestCase
 
     public function testCreateTraceFrom(): void
     {
-        $this->generator->expects(static::once())->method('generateTransactionId')->willReturn('b7ad6b7169203331');
+        $this->generator->expects(static::once())->method('generateTransactionId')->willReturn('00f067aa0ba902b7');
 
         $trace = $this->service->createTraceFrom('00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-00');
         static::assertSame('00', $trace->getVersion());
         static::assertSame('0af7651916cd43dd8448eb211c80319c', $trace->getTraceId());
-        static::assertSame('b7ad6b7169203331', $trace->getTransactionId());
+        static::assertSame('00f067aa0ba902b7', $trace->getTransactionId());
+        static::assertSame('b7ad6b7169203331', $trace->getParentTransactionId());
         static::assertSame('00', $trace->getFlags());
     }
 
