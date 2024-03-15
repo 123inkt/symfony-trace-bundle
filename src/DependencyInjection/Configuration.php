@@ -6,6 +6,7 @@ namespace DR\SymfonyTraceBundle\DependencyInjection;
 
 use Sentry\State\HubInterface;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -16,7 +17,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 class Configuration implements ConfigurationInterface
 {
     public const TRACEMODE_TRACECONTEXT = 'tracecontext';
-    public const TRACEMODE_TRACEID = 'traceid';
+    public const TRACEMODE_TRACEID      = 'traceid';
 
     public function getConfigTreeBuilder(): TreeBuilder
     {
@@ -69,7 +70,21 @@ class Configuration implements ConfigurationInterface
             ->end()
             ->booleanNode('enable_console')
                 ->info('Whether to add the trace id to console commands, defaults to true')
-                ->defaultTrue()
+                ->defaultNull()
+                ->setDeprecated('digitalrevolution/symfony-trace-bundle', '0.6.0')
+            ->end()
+            ->arrayNode('console')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->booleanNode('enabled')
+                        ->info('Whether to add the trace id to console commands, defaults to true')
+                        ->defaultTrue()
+                    ->end()
+                    ->scalarNode('trace_id')
+                        ->info('Option to set the `Trace-Id` to use for console commands from env var. Defaults to null.')
+                        ->defaultNull()
+                    ->end()
+                ->end()
             ->end()
             ->booleanNode('enable_messenger')
                 ->info('Whether to add the trace id to message bus events, defaults to false')
@@ -79,27 +94,44 @@ class Configuration implements ConfigurationInterface
                 ->info('Whether or not to enable the twig `trace_id()` and `transaction_id()` functions. Only works if TwigBundle is present.')
                 ->defaultTrue()
             ->end()
-            ->arrayNode('http_client')
-                ->addDefaultsIfNotSet()
-                ->children()
-                    ->booleanNode('enabled')
-                        ->info('Whether or not to enable the trace id aware http client')
-                        ->defaultTrue()
-                    ->end()
-                    ->booleanNode('tag_default_client')
-                        ->info('Whether or not to tag the default http client')
-                        ->defaultFalse()
-                    ->end()
-                    ->scalarNode('header')
-                        ->info('The header the bundle set in the request in the http client')
-                        ->defaultValue('X-Trace-Id')
-                    ->end()
+            ->append($this->createHttpClientConfiguration())
+            ->append($this->createSentryConfiguration())
+        ;
+
+        return $tree;
+    }
+
+    private function createHttpClientConfiguration(): NodeDefinition
+    {
+        $node = (new TreeBuilder('http_client'))->getRootNode();
+        $node
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->booleanNode('enabled')
+                    ->info('Whether or not to enable the trace id aware http client')
+                    ->defaultTrue()
+                ->end()
+                ->booleanNode('tag_default_client')
+                    ->info('Whether or not to tag the default http client')
+                    ->defaultFalse()
+                ->end()
+                ->scalarNode('header')
+                    ->info('The header the bundle set in the request in the http client')
+                    ->defaultValue('X-Trace-Id')
                 ->end()
             ->end()
-            ->arrayNode('sentry')
-                ->addDefaultsIfNotSet()
-                ->children()
-                    ->booleanNode('enabled')
+        ->end();
+
+        return $node;
+    }
+
+    private function createSentryConfiguration(): NodeDefinition
+    {
+        $node = (new TreeBuilder('sentry'))->getRootNode();
+        $node
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->booleanNode('enabled')
                     ->info('Whether or not to enable passing trace and transaction id to Sentry')
                     ->defaultFalse()
                 ->end()
@@ -107,9 +139,8 @@ class Configuration implements ConfigurationInterface
                     ->info('The service id of the Sentry Hub. Defaults to Sentry\State\HubInterface')
                     ->defaultValue(HubInterface::class)
                 ->end()
-            ->end()
-        ;
+            ->end();
 
-        return $tree;
+        return $node;
     }
 }

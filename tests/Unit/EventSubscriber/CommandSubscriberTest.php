@@ -26,7 +26,7 @@ class CommandSubscriberTest extends TestCase
 
     public function testOnCommandTrace(): void
     {
-        $subscriber = new CommandSubscriber($this->storage, $this->service);
+        $subscriber = new CommandSubscriber($this->storage, $this->service, null);
 
         $trace = new TraceContext();
         $trace->setTraceId('trace-id');
@@ -39,10 +39,21 @@ class CommandSubscriberTest extends TestCase
 
     public function testOnCommandStorageHasTrace(): void
     {
-        $subscriber = new CommandSubscriber($this->storage, $this->service);
+        $subscriber = new CommandSubscriber($this->storage, $this->service, null);
 
         $this->service->expects(static::never())->method('createNewTrace');
         $this->storage->expects(static::once())->method('getTraceId')->willReturn("abc123");
+
+        $subscriber->onCommand();
+    }
+
+    public function testOnCommandPresetTraceId(): void
+    {
+        $subscriber = new CommandSubscriber($this->storage, $this->service, 'test-trace-id');
+
+        $this->storage->expects(static::once())->method('getTraceId')->willReturn(null);
+        $this->service->expects(static::once())->method('createTraceFrom')->with('test-trace-id');
+        $this->storage->expects(static::once())->method('setTrace');
 
         $subscriber->onCommand();
     }

@@ -16,9 +16,9 @@ use Symfony\Component\HttpFoundation\Response;
 #[CoversClass(TraceIdService::class)]
 class TraceIdServiceTest extends TestCase
 {
-    private const REQUEST_HEADER = 'X-Trace-Request';
+    private const REQUEST_HEADER  = 'X-Trace-Request';
     private const RESPONSE_HEADER = 'X-Trace-Response';
-    private const CLIENT_HEADER = 'X-Trace-Id';
+    private const CLIENT_HEADER   = 'X-Trace-Id';
 
     private TraceIdGeneratorInterface&MockObject $generator;
     private TraceIdService $service;
@@ -26,7 +26,7 @@ class TraceIdServiceTest extends TestCase
     protected function setUp(): void
     {
         $this->generator = $this->createMock(TraceIdGeneratorInterface::class);
-        $this->service = new TraceIdService(self::REQUEST_HEADER, self::RESPONSE_HEADER, self::CLIENT_HEADER, $this->generator);
+        $this->service   = new TraceIdService(self::REQUEST_HEADER, self::RESPONSE_HEADER, self::CLIENT_HEADER, $this->generator);
     }
 
     public function testSupports(): void
@@ -50,6 +50,16 @@ class TraceIdServiceTest extends TestCase
 
         $trace = $this->service->createNewTrace();
         static::assertSame('abc', $trace->getTraceId());
+        static::assertSame('123', $trace->getTransactionId());
+    }
+
+    public function testCreateNewFrom(): void
+    {
+        $this->generator->expects(static::never())->method('generateTraceId');
+        $this->generator->expects(static::once())->method('generateTransactionId')->willReturn('123');
+
+        $trace = $this->service->createTraceFrom('test-trace-id');
+        static::assertSame('test-trace-id', $trace->getTraceId());
         static::assertSame('123', $trace->getTransactionId());
     }
 

@@ -29,9 +29,7 @@ class TraceContextService implements TraceServiceInterface
             return false;
         }
 
-        $traceParent = $request->headers->get(self::HEADER_TRACEPARENT, '');
-
-        return preg_match('/^[0-9a-f]{2}-[0-9a-f]{32}-[0-9a-f]{16}-[0-9a-f]{2}$/i', $traceParent) === 1;
+        return TraceContextParser::isValid($request->headers->get(self::HEADER_TRACEPARENT, ''));
     }
 
     public function createNewTrace(): TraceContext
@@ -43,10 +41,22 @@ class TraceContextService implements TraceServiceInterface
         return $trace;
     }
 
+    public function createTraceFrom(string $traceParent): TraceContext
+    {
+        if (TraceContextParser::isValid($traceParent) === false) {
+            return $this->createNewTrace();
+        }
+
+        $trace = TraceContextParser::parseTraceContext($traceParent, '');
+        $trace->setTransactionId($this->generator->generateTransactionId());
+
+        return $trace;
+    }
+
     public function getRequestTrace(Request $request): TraceContext
     {
-        $traceParent  = $request->headers->get(self::HEADER_TRACEPARENT, '');
-        $traceState   = $request->headers->get(self::HEADER_TRACESTATE, '');
+        $traceParent = $request->headers->get(self::HEADER_TRACEPARENT, '');
+        $traceState  = $request->headers->get(self::HEADER_TRACESTATE, '');
 
         $trace = TraceContextParser::parseTraceContext($traceParent, $traceState);
         $trace->setTransactionId($this->generator->generateTransactionId());
@@ -66,8 +76,7 @@ class TraceContextService implements TraceServiceInterface
 
     public function handleClientRequest(TraceContext $trace, string $method, string $url, array $options = []): array
     {
-        $traceParent = $this->renderTraceParent($trace);
-        $options['headers'][self::HEADER_TRACEPARENT] = $traceParent;
+        $options['headers'][self::HEADER_TRACEPARENT] = $this->renderTraceParent($trace);
 
         $traceState = $this->renderTraceState($trace);
         if ($traceState !== '') {

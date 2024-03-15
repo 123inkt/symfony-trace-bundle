@@ -14,8 +14,11 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 final class CommandSubscriber implements EventSubscriberInterface
 {
-    public function __construct(private readonly TraceStorageInterface $storage, private readonly TraceServiceInterface $service)
-    {
+    public function __construct(
+        private readonly TraceStorageInterface $storage,
+        private readonly TraceServiceInterface $service,
+        private readonly ?string $traceId,
+    ) {
     }
 
     /**
@@ -30,6 +33,12 @@ final class CommandSubscriber implements EventSubscriberInterface
     {
         // If the trace ID is already set by another process, don't overwrite it
         if ($this->storage->getTraceId() !== null) {
+            return;
+        }
+
+        if ($this->traceId !== null && $this->traceId !== '') {
+            $this->storage->setTrace($this->service->createTraceFrom($this->traceId));
+
             return;
         }
 

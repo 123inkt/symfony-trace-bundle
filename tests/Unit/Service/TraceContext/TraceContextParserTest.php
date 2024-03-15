@@ -11,6 +11,12 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(TraceContextParser::class)]
 class TraceContextParserTest extends TestCase
 {
+    public function testIsValid(): void
+    {
+        static::assertTrue(TraceContextParser::isValid('00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-00'));
+        static::assertFalse(TraceContextParser::isValid('invalid'));
+    }
+
     public function testParseTraceContext(): void
     {
         $traceContext = TraceContextParser::parseTraceContext(

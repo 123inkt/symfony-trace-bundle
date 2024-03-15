@@ -9,6 +9,11 @@ use InvalidArgumentException;
 
 class TraceContextParser
 {
+    public static function isValid(string $traceParent): bool
+    {
+        return preg_match('/^[0-9a-f]{2}-[0-9a-f]{32}-[0-9a-f]{16}-[0-9a-f]{2}$/i', $traceParent) === 1;
+    }
+
     public static function parseTraceContext(string $traceParent, string $traceState): TraceContext
     {
         $traceContext = self::parseTraceParent($traceParent);
