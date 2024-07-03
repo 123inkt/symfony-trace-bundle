@@ -30,12 +30,12 @@ return static function (SymfonyTraceConfig $config): void {
     // those values are ignored.
     $config->request()
         ->trustHeader(true)
-        ->trustedIps(end('TRUSTED_IPS')); // Only trust the header from these IP's
+        ->trustedIps(env('TRUSTED_IPS')); // Only trust the header from these IP's
 
     // Whether to send the trace details in the response headers. This is turned on by default.
     $config->response()
         ->sendHeader(true)
-        ->trustedIps(end('TRUSTED_IPS')); // Only send the header to these IP's
+        ->trustedIps(env('TRUSTED_IPS')); // Only send the header to these IP's
 
     $config->traceid()
         // The header which the bundle inspects for the incoming trace ID
