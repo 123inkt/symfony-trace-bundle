@@ -39,7 +39,7 @@ use Twig\Extension\AbstractExtension;
  *          generator_service: ?string,
  *      },
  *      request: array{
- *          trust_request_header: bool,
+ *          trust_header: bool,
  *          trusted_ips: string[]|string,
  *      },
  *      response: array{

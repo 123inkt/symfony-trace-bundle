@@ -202,7 +202,6 @@ class TraceSubscriberTest extends TestCase
         $dispatcher = new EventDispatcher();
         $dispatcher->addSubscriber($listener);
 
-        $trace = new TraceContext();
         $this->storage->expects(static::never())->method('getTrace');
         $this->service->expects(static::never())->method('handleResponse');
 

@@ -83,6 +83,9 @@ final class TraceSubscriber implements EventSubscriberInterface
         }
     }
 
+    /**
+     * @param string[]|string|null $trustedIps
+     */
     private function isTrustedRequest(Request $request, array|string|null $trustedIps): bool
     {
         if ($trustedIps === null) {
@@ -93,6 +96,6 @@ final class TraceSubscriber implements EventSubscriberInterface
             $trustedIps = array_map('trim', explode(',', $trustedIps));
         }
 
-        return IpUtils::checkIp($request->getClientIp(), $trustedIps);
+        return IpUtils::checkIp((string)$request->getClientIp(), $trustedIps);
     }
 }
