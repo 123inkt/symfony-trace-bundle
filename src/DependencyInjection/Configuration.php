@@ -61,7 +61,10 @@ class Configuration implements ConfigurationInterface
                         ->info("Whether or not to trust the incoming request's headers as a real TraceID")
                     ->end()
                     ->scalarNode('trusted_ips')
-                        ->info("Only trust incoming request's headers if the request comes from one of these IPs. Defaults to null, accepting all request IPs")
+                        ->info(
+                            "Only trust incoming request's headers if the request comes from one of these IPs. " .
+                            "Defaults to null, accepting all request IPs"
+                        )
                         ->defaultNull()
                     ->end()
                 ->end()
