@@ -107,7 +107,7 @@ class Configuration implements ConfigurationInterface
                 ->end()
                 ->scalarNode('trusted_ips')
                     ->info(
-                        "Only trust incoming request's headers if the request comes from one of these IPs. " .
+                        "Only trust incoming request's headers if the request comes from one of these IPs (supports ranges/masks). " .
                         "Accepts a string-array, comma separated string or null. Defaults to null, accepting all request IPs. "
                     )
                     ->defaultNull()
@@ -129,7 +129,7 @@ class Configuration implements ConfigurationInterface
                 ->end()
                 ->scalarNode('trusted_ips')
                     ->info(
-                        "Only send response if the request comes from one of these IPs " .
+                        "Only send response if the request comes from one of these IPs (supports ranges/masks) " .
                         "Accepts a string-array, comma separated string or null. Defaults to null, accepting all request IPs. "
                     )
                     ->defaultNull()
