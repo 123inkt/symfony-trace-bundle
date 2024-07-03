@@ -7,6 +7,8 @@ namespace DR\SymfonyTraceBundle\EventSubscriber;
 use DR\SymfonyTraceBundle\Service\TraceServiceInterface;
 use DR\SymfonyTraceBundle\TraceStorageInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\IpUtils;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -18,12 +20,16 @@ use Symfony\Component\HttpKernel\KernelEvents;
 final class TraceSubscriber implements EventSubscriberInterface
 {
     /**
-     * @param bool                      $trustRequest Trust the value from the request? Or generate?
-     * @param TraceStorageInterface     $traceStorage The trace ID storage, used to store the ID from the request or a newly generated ID.
+     * @param bool $trustRequest                       Trust the value from the request? Or generate?
+     * @param string[]|string|null $trustedIpsRequest  The IPs to trust the request from.
+     * @param string[]|string|null $trustedIpsResponse The IPs to send the response header to.
+     * @param TraceStorageInterface $traceStorage      The trace ID storage, used to store the ID from the request or a newly generated ID.
      */
     public function __construct(
         private readonly bool                  $trustRequest,
+        private readonly array|string|null     $trustedIpsRequest,
         private readonly bool                  $sendResponseHeader,
+        private readonly array|string|null     $trustedIpsResponse,
         private readonly TraceServiceInterface $traceService,
         private readonly TraceStorageInterface $traceStorage,
     ) {
@@ -35,7 +41,7 @@ final class TraceSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            KernelEvents::REQUEST  => ['onRequest', 100],
+            KernelEvents::REQUEST => ['onRequest', 100],
             KernelEvents::RESPONSE => ['onResponse', -99],
         ];
     }
@@ -46,10 +52,11 @@ final class TraceSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $request = $event->getRequest();
+        $request      = $event->getRequest();
+        $trustRequest = $this->trustRequest && $this->isTrustedRequest($request, $this->trustedIpsRequest);
 
         // If we trust the request, check if the traceService supports it and use the request data
-        if ($this->trustRequest && $this->traceService->supports($request)) {
+        if ($trustRequest && $this->traceService->supports($request)) {
             $this->traceStorage->setTrace($this->traceService->getRequestTrace($request));
 
             return;
@@ -69,8 +76,23 @@ final class TraceSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if ($this->sendResponseHeader) {
+        $request   = $event->getRequest();
+        $sendHeader = $this->sendResponseHeader && $this->isTrustedRequest($request, $this->trustedIpsResponse);
+        if ($sendHeader) {
             $this->traceService->handleResponse($event->getResponse(), $this->traceStorage->getTrace());
         }
+    }
+
+    private function isTrustedRequest(Request $request, array|string|null $trustedIps): bool
+    {
+        if ($trustedIps === null) {
+            return true;
+        }
+
+        if (is_string($trustedIps)) {
+            $trustedIps = array_map('trim', explode(',', $trustedIps));
+        }
+
+        return IpUtils::checkIp($request->getClientIp(), $trustedIps);
     }
 }

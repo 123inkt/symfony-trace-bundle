@@ -38,8 +38,14 @@ use Twig\Extension\AbstractExtension;
  *          response_header: string,
  *          generator_service: ?string,
  *      },
- *      trust_request_header: bool,
- *      send_response_header: bool,
+ *      request: array{
+ *          trust_request_header: bool,
+ *          trusted_ips: string[]|string,
+ *      },
+ *      response: array{
+ *          send_header: bool,
+ *          trusted_ips: string[]|string,
+ *      },
  *      storage_service: ?string,
  *      enable_monolog: bool,
  *      enable_console: bool,
@@ -84,8 +90,10 @@ final class SymfonyTraceExtension extends ConfigurableExtension
         $container->register(TraceSubscriber::class)
             ->setArguments(
                 [
-                    $mergedConfig['trust_request_header'],
-                    $mergedConfig['send_response_header'],
+                    $mergedConfig['request']['trust_header'],
+                    $mergedConfig['request']['trusted_ips'],
+                    $mergedConfig['response']['send_header'],
+                    $mergedConfig['response']['trusted_ips'],
                     new Reference(TraceServiceInterface::class),
                     new Reference(TraceStorageInterface::class)
                 ]
