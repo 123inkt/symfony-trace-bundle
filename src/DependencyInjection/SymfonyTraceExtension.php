@@ -40,11 +40,11 @@ use Twig\Extension\AbstractExtension;
  *      },
  *      request: array{
  *          trust_header: bool,
- *          trusted_ips: string[]|string,
+ *          trusted_ips: string[]|string|null,
  *      },
  *      response: array{
  *          send_header: bool,
- *          trusted_ips: string[]|string,
+ *          trusted_ips: string[]|string|null,
  *      },
  *      storage_service: ?string,
  *      enable_monolog: bool,

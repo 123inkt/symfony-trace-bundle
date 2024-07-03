@@ -108,7 +108,7 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('trusted_ips')
                     ->info(
                         "Only trust incoming request's headers if the request comes from one of these IPs. " .
-                        "Defaults to null, accepting all request IPs"
+                        "Accepts a string-array, comma separated string or null. Defaults to null, accepting all request IPs. "
                     )
                     ->defaultNull()
                 ->end()
@@ -128,7 +128,10 @@ class Configuration implements ConfigurationInterface
                     ->info("Whether or not to send a response header with the trace ID. Defaults to true")
                 ->end()
                 ->scalarNode('trusted_ips')
-                    ->info("Only send response if the request comes from one of these IPs. Defaults to null, accepting all request IPs")
+                    ->info(
+                        "Only send response if the request comes from one of these IPs " .
+                        "Accepts a string-array, comma separated string or null. Defaults to null, accepting all request IPs. "
+                    )
                     ->defaultNull()
                 ->end()
             ->end();
