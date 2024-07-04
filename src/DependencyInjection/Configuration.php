@@ -53,14 +53,8 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
             ->end()
-            ->booleanNode('trust_request_header')
-                ->defaultTrue()
-                ->info("Whether or not to trust the incoming request's `Trace-Id` header as a real ID")
-            ->end()
-            ->booleanNode('send_response_header')
-                ->defaultTrue()
-                ->info("Whether or not to send a response header with the trace ID. Defaults to true")
-            ->end()
+            ->append($this->createRequestConfiguration())
+            ->append($this->createResponseConfiguration())
             ->scalarNode('storage_service')
                 ->info('The service name for trace ID storage. Defaults to `TraceStorage`')
             ->end()
@@ -99,6 +93,50 @@ class Configuration implements ConfigurationInterface
         ;
 
         return $tree;
+    }
+
+    private function createRequestConfiguration(): NodeDefinition
+    {
+        $node = (new TreeBuilder('request'))->getRootNode();
+        $node
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->booleanNode('trust_header')
+                    ->defaultTrue()
+                    ->info("Whether or not to trust the incoming request's headers as a real TraceID")
+                ->end()
+                ->scalarNode('trusted_ips')
+                    ->info(
+                        "Only trust incoming request's headers if the request comes from one of these IPs (supports ranges/masks). " .
+                        "Accepts a string-array, comma separated string or null. Defaults to null, accepting all request IPs. "
+                    )
+                    ->defaultNull()
+                ->end()
+            ->end();
+
+        return $node;
+    }
+
+    private function createResponseConfiguration(): NodeDefinition
+    {
+        $node = (new TreeBuilder('response'))->getRootNode();
+        $node
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->booleanNode('send_header')
+                    ->defaultTrue()
+                    ->info("Whether or not to send a response header with the trace ID. Defaults to true")
+                ->end()
+                ->scalarNode('trusted_ips')
+                    ->info(
+                        "Only send response if the request comes from one of these IPs (supports ranges/masks) " .
+                        "Accepts a string-array, comma separated string or null. Defaults to null, accepting all request IPs. "
+                    )
+                    ->defaultNull()
+                ->end()
+            ->end();
+
+        return $node;
     }
 
     private function createHttpClientConfiguration(): NodeDefinition

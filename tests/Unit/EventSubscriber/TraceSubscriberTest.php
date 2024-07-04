@@ -34,7 +34,7 @@ class TraceSubscriberTest extends TestCase
     {
         $this->service   = $this->createMock(TraceServiceInterface::class);
         $this->storage   = $this->createMock(TraceStorageInterface::class);
-        $this->listener  = new TraceSubscriber(true, true, $this->service, $this->storage);
+        $this->listener  = new TraceSubscriber(true, null, true, null, $this->service, $this->storage);
 
         $this->dispatcher = new EventDispatcher();
         $this->dispatcher->addSubscriber($this->listener);
@@ -74,7 +74,7 @@ class TraceSubscriberTest extends TestCase
     public function testListenerIgnoresIncomingRequestHeadersWhenTrustRequestIsFalse(): void
     {
         $this->dispatcher->removeSubscriber($this->listener);
-        $this->dispatcher->addSubscriber(new TraceSubscriber(false, true, $this->service, $this->storage));
+        $this->dispatcher->addSubscriber(new TraceSubscriber(false, null, true, null, $this->service, $this->storage));
 
         $trace = new TraceContext();
         $this->service->expects(static::never())->method('supports');
@@ -138,12 +138,74 @@ class TraceSubscriberTest extends TestCase
     public function testListenerDoesNothingToResponseWithoutMasterRequestWhenSendResponseHeaderIsFalse(): void
     {
         $this->dispatcher->removeSubscriber($this->listener);
-        $this->dispatcher->addSubscriber(new TraceSubscriber(false, false, $this->service, $this->storage));
+        $this->dispatcher->addSubscriber(new TraceSubscriber(false, null, false, null, $this->service, $this->storage));
 
         $this->storage->expects(static::never())->method('getTrace');
         $this->service->expects(static::never())->method('handleResponse');
 
         $this->dispatcher->dispatch(
+            new ResponseEvent($this->kernel, $this->request, HttpKernelInterface::MAIN_REQUEST, $this->response),
+            KernelEvents::RESPONSE
+        );
+    }
+
+    public function testListenerSetsTheTraceToStorageWhenFoundInTrustedRequestHeaders(): void
+    {
+        $listener   = new TraceSubscriber(true, '127.0.0.1', true, '127.0.0.1', $this->service, $this->storage);
+        $dispatcher = new EventDispatcher();
+        $dispatcher->addSubscriber($listener);
+
+        $this->service->expects(static::once())->method('getRequestTrace')->with($this->request);
+        $this->service->expects(static::once())->method('supports')->with($this->request)->willReturn(true);
+        $this->storage->expects(static::once())->method('setTrace');
+
+        $dispatcher->dispatch(
+            new RequestEvent($this->kernel, $this->request, HttpKernelInterface::MAIN_REQUEST),
+            KernelEvents::REQUEST
+        );
+    }
+
+    public function testListenerIgnoresRequestHeadersOnNonTrustedRequest(): void
+    {
+        $listener   = new TraceSubscriber(true, '127.0.0.2', true, '127.0.0.2', $this->service, $this->storage);
+        $dispatcher = new EventDispatcher();
+        $dispatcher->addSubscriber($listener);
+
+        $this->service->expects(static::never())->method('supports');
+        $this->service->expects(static::never())->method('getRequestTrace');
+
+        $dispatcher->dispatch(
+            new RequestEvent($this->kernel, $this->request, HttpKernelInterface::MAIN_REQUEST),
+            KernelEvents::REQUEST
+        );
+    }
+
+    public function testRequestSetsIdOnResponseOnTrustedIp(): void
+    {
+        $listener   = new TraceSubscriber(true, '127.0.0.1', true, '127.0.0.1', $this->service, $this->storage);
+        $dispatcher = new EventDispatcher();
+        $dispatcher->addSubscriber($listener);
+
+        $trace = new TraceContext();
+        $this->storage->expects(static::once())->method('getTrace')->willReturn($trace);
+        $this->service->expects(static::once())->method('handleResponse')->with($this->response, $trace);
+
+        $dispatcher->dispatch(
+            new ResponseEvent($this->kernel, $this->request, HttpKernelInterface::MAIN_REQUEST, $this->response),
+            KernelEvents::RESPONSE
+        );
+    }
+
+    public function testRequestDoesNotSetIdOnResponseOnNonTrustedIp(): void
+    {
+        $listener   = new TraceSubscriber(true, '127.0.0.2', true, '127.0.0.2', $this->service, $this->storage);
+        $dispatcher = new EventDispatcher();
+        $dispatcher->addSubscriber($listener);
+
+        $this->storage->expects(static::never())->method('getTrace');
+        $this->service->expects(static::never())->method('handleResponse');
+
+        $dispatcher->dispatch(
             new ResponseEvent($this->kernel, $this->request, HttpKernelInterface::MAIN_REQUEST, $this->response),
             KernelEvents::RESPONSE
         );

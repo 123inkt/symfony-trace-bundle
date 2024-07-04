@@ -18,10 +18,14 @@ return static function (SymfonyTraceConfig $config): void {
     // If true a value in the `traceparent` header in the request
     // will be used and parsed to get the trace ID for the rest of the request. If false
     // those values are ignored and new trace ID's are generated.
-    $config->trustRequestHeader(true);
+    $config->request()
+        ->trustHeader(true)
+        ->trustedIps(env('TRUSTED_IPS')); // Only trust the header from these IP's
 
     // Whether to send the trace details in the response headers. This is turned on by default.
-    $config->sendResponseHeader(true);
+    $config->response()
+        ->sendHeader(true)
+        ->trustedIps(env('TRUSTED_IPS')); // Only send the header to these IP's
 
     // The service key of an object that implements
     // DR\SymfonyTraceBundle\TraceStorageInterface
