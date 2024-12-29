@@ -93,6 +93,15 @@ class TraceIdServiceTest extends TestCase
         $trace->setTransactionId('123');
 
         $options = $this->service->handleClientRequest($trace, 'GET', 'http://example.com');
+        static::assertArrayHasKey('headers', $options);
+        static::assertArrayHasKey(self::CLIENT_HEADER, $options['headers']);
         static::assertSame('abc', $options['headers'][self::CLIENT_HEADER]);
+    }
+
+    public function testHandleClientRequestNullTraceId(): void
+    {
+        $options = $this->service->handleClientRequest(new TraceContext(), 'GET', 'http://example.com', ['headers' => []]);
+        static::assertArrayHasKey('headers', $options);
+        static::assertArrayNotHasKey(self::CLIENT_HEADER, $options['headers']);
     }
 }

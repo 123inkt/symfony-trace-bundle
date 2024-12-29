@@ -61,7 +61,7 @@ class TraceIdProcessorTest extends TestCase
         $this->idStorage->expects(static::once())->method('getTraceId')->willReturn('abc123');
 
         $record = ($this->processor)([]);
-        static::assertIsArray($record);
+        static::assertIsArray($record['extra']);
         static::assertArrayHasKey('trace_id', $record['extra']);
         static::assertSame('abc123', $record['extra']['trace_id']);
     }

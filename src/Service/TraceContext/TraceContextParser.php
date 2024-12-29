@@ -39,7 +39,7 @@ class TraceContextParser
     {
         $vendorStates = explode(',', $traceState);
         $vendorStates = array_map('trim', $vendorStates);
-        $vendorStates = array_filter($vendorStates);
+        $vendorStates = array_filter($vendorStates, static fn(string $value) => $value !== '');
 
         $result = [];
         foreach ($vendorStates as $item) {

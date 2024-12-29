@@ -64,7 +64,10 @@ class TraceIdService implements TraceServiceInterface
 
     public function handleClientRequest(TraceContext $trace, string $method, string $url, array $options = []): array
     {
-        $options['headers'][$this->clientHeader] ??= $trace->getTraceId();
+        $traceId = $trace->getTraceId();
+        if ($traceId !== null) {
+            $options['headers'][$this->clientHeader] ??= $traceId;
+        }
 
         return $options;
     }

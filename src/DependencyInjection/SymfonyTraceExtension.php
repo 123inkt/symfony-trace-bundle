@@ -48,7 +48,7 @@ use Twig\Extension\AbstractExtension;
  *      },
  *      storage_service: ?string,
  *      enable_monolog: bool,
- *      enable_console: bool,
+ *      enable_console: bool|null,
  *      console: array{
  *          enabled: bool,
  *          trace_id: ?string

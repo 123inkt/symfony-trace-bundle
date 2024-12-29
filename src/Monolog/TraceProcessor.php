@@ -19,6 +19,7 @@ final class TraceProcessor implements ProcessorInterface
     }
 
     /**
+     * @param array<string, mixed[]>|LogRecord $record
      * @inheritDoc
      */
     public function __invoke(array|LogRecord $record): array|LogRecord

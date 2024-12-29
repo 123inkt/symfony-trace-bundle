@@ -13,6 +13,39 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 use Symfony\Contracts\HttpClient\ResponseStreamInterface;
 use Symfony\Contracts\Service\ResetInterface;
 
+/**
+ * @phpstan-type HttpClientOptions array{
+ *     auth_basic?: string[]|string,
+ *     auth_bearer?: string,
+ *     query?: string[],
+ *     headers?: string[]|string[][],
+ *     body?: mixed[]|string|resource|\Traversable|\Closure|object,
+ *     json?: mixed,
+ *     user_data?: mixed,
+ *     max_redirects?: int,
+ *     http_version?: string,
+ *     base_uri?: string,
+ *     buffer?: bool|resource|\Closure,
+ *     on_progress?: callable(int $dlNow, int $dlSize, mixed[] $info): void,
+ *     resolve?: string[],
+ *     proxy?: string,
+ *     no_proxy?: string,
+ *     timeout?: int|float,
+ *     max_duration?: int|float,
+ *     bindto?: string,
+ *     verify_peer?: bool,
+ *     verify_host?: bool,
+ *     cafile?: string,
+ *     capath?: string,
+ *     local_cert?: string,
+ *     local_pk?: string,
+ *     passphrase?: string,
+ *     ciphers?: string,
+ *     peer_fingerprint?: string,
+ *     capture_peer_cert_chain?: bool,
+ *     extra?: mixed[]
+ * }
+ */
 class TraceAwareHttpClient implements HttpClientInterface, ResetInterface, LoggerAwareInterface
 {
     public function __construct(
@@ -22,6 +55,9 @@ class TraceAwareHttpClient implements HttpClientInterface, ResetInterface, Logge
     ) {
     }
 
+    /**
+     * @param HttpClientOptions $options
+     */
     public function request(string $method, string $url, array $options = []): ResponseInterface
     {
         $options = $this->service->handleClientRequest($this->storage->getTrace(), $method, $url, $options);
@@ -48,6 +84,9 @@ class TraceAwareHttpClient implements HttpClientInterface, ResetInterface, Logge
         }
     }
 
+    /**
+     * @param HttpClientOptions $options
+     */
     public function withOptions(array $options): static
     {
         $this->client = $this->client->withOptions($options);
