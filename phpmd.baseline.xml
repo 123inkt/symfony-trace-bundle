@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
 <phpmd-baseline>
+  <violation rule="PHPMD\Rule\UnusedLocalVariable" file="src/DependencyInjection/Compiler/HttpClientTracePass.php"/>
   <violation rule="PHPMD\Rule\Design\CouplingBetweenObjects" file="src/DependencyInjection/SymfonyTraceExtension.php"/>
   <violation rule="PHPMD\Rule\Controversial\Superglobals" file="tests/Functional/AbstractKernelTestCase.php" method="createKernel"/>
   <violation rule="PHPMD\Rule\Controversial\Superglobals" file="tests/Functional/AbstractWebTestCase.php" method="createKernel"/>
+  <violation rule="PHPMD\Rule\UnusedFormalParameter" file="tests/Functional/App/Service/MockClientCallbackHelper.php"/>
   <violation rule="PHPMD\Rule\Design\TooManyPublicMethods" file="tests/Functional/App/Service/MockSentryHub.php"/>
 </phpmd-baseline>

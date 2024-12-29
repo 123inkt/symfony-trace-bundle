@@ -17,9 +17,6 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 class HttpClientTracePass implements CompilerPassInterface
 {
-    /**
-     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
-     */
     public function process(ContainerBuilder $container): void
     {
         if ($container->hasParameter(SymfonyTraceExtension::PARAMETER_KEY . '.http_client.enabled') === false ||
