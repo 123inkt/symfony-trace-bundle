@@ -81,12 +81,17 @@ final class MessageBusSubscriber implements EventSubscriberInterface
      */
     public static function getSubscribedEvents(): array
     {
+        /**
+         * Set traceId/transactionId early with higher priority to run before other subscribers
+         * Restore original traceId/transactionId late with low priority to run after other subscribers
+         * Must be higher then SendFailedMessageToFailureTransportListener
+         */
         return [
-            SendMessageToTransportsEvent::class => ['onSend'],
-            WorkerMessageReceivedEvent::class   => ['onReceived'],
-            WorkerMessageHandledEvent::class    => ['onHandled'],
-            WorkerMessageRetriedEvent::class    => ['onHandled'],
-            WorkerMessageFailedEvent::class     => ['onHandled'],
+            SendMessageToTransportsEvent::class => ['onSend', 999],
+            WorkerMessageReceivedEvent::class   => ['onReceived', 999],
+            WorkerMessageHandledEvent::class    => ['onHandled', -999],
+            WorkerMessageRetriedEvent::class    => ['onHandled', -999],
+            WorkerMessageFailedEvent::class     => ['onHandled', -999],
         ];
     }
 }
