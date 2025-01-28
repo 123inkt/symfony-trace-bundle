@@ -105,11 +105,11 @@ class MessageBusSubscriberTest extends TestCase
     public function testGetSubscribedEvents(): void
     {
         $expected = [
-            SendMessageToTransportsEvent::class => ['onSend'],
-            WorkerMessageReceivedEvent::class   => ['onReceived'],
-            WorkerMessageHandledEvent::class    => ['onHandled'],
-            WorkerMessageRetriedEvent::class    => ['onHandled'],
-            WorkerMessageFailedEvent::class     => ['onHandled'],
+            SendMessageToTransportsEvent::class => ['onSend', 999],
+            WorkerMessageReceivedEvent::class   => ['onReceived', 999],
+            WorkerMessageHandledEvent::class    => ['onHandled', -999],
+            WorkerMessageRetriedEvent::class    => ['onHandled', -999],
+            WorkerMessageFailedEvent::class     => ['onHandled', -999],
         ];
         static::assertSame($expected, MessageBusSubscriber::getSubscribedEvents());
     }
