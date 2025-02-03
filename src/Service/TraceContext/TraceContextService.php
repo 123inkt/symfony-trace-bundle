@@ -76,6 +76,10 @@ class TraceContextService implements TraceServiceInterface
 
     public function handleClientRequest(TraceContext $trace, string $method, string $url, array $options = []): array
     {
+        if ($trace->getTraceId() === null) {
+            return $options;
+        }
+
         $options['headers'][self::HEADER_TRACEPARENT] = $this->renderTraceParent($trace);
 
         $traceState = $this->renderTraceState($trace);
