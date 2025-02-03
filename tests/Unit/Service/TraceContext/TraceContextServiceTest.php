@@ -120,6 +120,13 @@ class TraceContextServiceTest extends TestCase
         );
     }
 
+    public function testHandleClientRequestShouldIgnoreEmptyTraceId(): void
+    {
+        $trace = new TraceContext();
+
+        static::assertSame([], $this->service->handleClientRequest($trace, 'GET', 'http://localhost'));
+    }
+
     public function testHandleClientRequestTraceState(): void
     {
         $trace = new TraceContext();
