@@ -60,7 +60,10 @@ class TraceAwareHttpClient implements HttpClientInterface, ResetInterface, Logge
      */
     public function request(string $method, string $url, array $options = []): ResponseInterface
     {
-        $options = $this->service->handleClientRequest($this->storage->getTrace(), $method, $url, $options);
+        $trace = $this->storage->getTrace();
+        if ($trace->getTraceId() !== null && $trace->getTransactionId() !== null) {
+            $options = $this->service->handleClientRequest($this->storage->getTrace(), $method, $url, $options);
+        }
 
         return $this->client->request($method, $url, $options);
     }

@@ -24,8 +24,15 @@ final class TraceProcessor implements ProcessorInterface
      */
     public function __invoke(array|LogRecord $record): array|LogRecord
     {
-        $record = $this->setExtraValue($this->storage->getTraceId(), 'trace_id', $record);
-        $record = $this->setExtraValue($this->storage->getTransactionId(), 'transaction_id', $record);
+        $traceId       = $this->storage->getTraceId();
+        $transactionId = $this->storage->getTransactionId();
+
+        if ($traceId !== null) {
+            $record = $this->setExtraValue($traceId, 'trace_id', $record);
+        }
+        if ($transactionId !== null) {
+            $record = $this->setExtraValue($transactionId, 'transaction_id', $record);
+        }
 
         return $record;
     }
