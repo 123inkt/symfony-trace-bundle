@@ -100,16 +100,20 @@ class TraceSubscriberTest extends TestCase
 
         $event = new RequestEvent($this->kernel, $this->request, HttpKernelInterface::MAIN_REQUEST);
         $this->dispatcher->dispatch($event, KernelEvents::REQUEST);
+
+        static::assertNull($this->request->headers->get('traceparent'));
     }
 
     public function testListenerDoesNothingWhenStorageIdIsFound(): void
     {
         $this->service->expects(static::once())->method('supports')->willReturn(false);
         $this->service->expects(static::never())->method('createNewTrace');
-        $this->storage->expects(static::once())->method('getTraceId')->willReturn("abc123");
+        $this->storage->expects(static::exactly(2))->method('getTraceId')->willReturn("abc123");
 
         $event = new RequestEvent($this->kernel, $this->request, HttpKernelInterface::MAIN_REQUEST);
         $this->dispatcher->dispatch($event, KernelEvents::REQUEST);
+
+        static::assertEquals('abc123', $this->request->headers->get('traceparent'));
     }
 
     public function testListenerDoesNothingToResponseWithoutMasterRequest(): void

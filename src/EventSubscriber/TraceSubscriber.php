@@ -64,10 +64,14 @@ final class TraceSubscriber implements EventSubscriberInterface
 
         // If the trace ID is already set by another process, don't overwrite it
         if ($this->traceStorage->getTraceId() !== null) {
+            #Add `traceparent` header for sentry to continue the trace
+            $request->headers->set('traceparent', $this->traceStorage->getTraceId());
             return;
         }
 
         $this->traceStorage->setTrace($this->traceService->createNewTrace());
+        #Add `traceparent` header for sentry to continue the trace
+        $request->headers->set('traceparent', $this->traceStorage->getTraceId());
     }
 
     public function onResponse(ResponseEvent $event): void
