@@ -170,7 +170,10 @@ class Configuration implements ConfigurationInterface
             ->addDefaultsIfNotSet()
             ->children()
                 ->booleanNode('enabled')
-                    ->info('Whether or not to enable passing trace and transaction id to Sentry')
+                    ->info(
+                        'Whether or not to enable passing trace and transaction id to Sentry. ' .
+                        'Note: ensure to set $sentry->tracing->disabled(false) to disable Sentry\'s own tracing.'
+                    )
                     ->defaultFalse()
                 ->end()
                 ->scalarNode('hub_service')

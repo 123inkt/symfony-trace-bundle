@@ -13,7 +13,7 @@ use DR\SymfonyTraceBundle\TraceStorage;
 use Sentry\State\HubInterface;
 use Symfony\Config\SymfonyTraceConfig;
 
-return static function (SymfonyTraceConfig $config): void {
+return static function (SymfonyTraceConfig $config, ?SentryConfig $sentry): void {
     // Whether to trust the incoming request header. This is turned on by default.
     // If true a value in the `traceparent` header in the request
     // will be used and parsed to get the trace ID for the rest of the request. If false
@@ -56,5 +56,7 @@ return static function (SymfonyTraceConfig $config): void {
     $config->sentry()
         ->enabled(true)
         ->hubService(HubInterface::class);
+    // disable sentry's own tracing
+    $sentry?->tracing()?->enabled(false);        
 };
 ```
