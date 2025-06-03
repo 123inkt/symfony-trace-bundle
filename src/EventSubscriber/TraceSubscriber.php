@@ -76,7 +76,7 @@ final class TraceSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $request   = $event->getRequest();
+        $request    = $event->getRequest();
         $sendHeader = $this->sendResponseHeader && $this->isTrustedRequest($request, $this->trustedIpsResponse);
         if ($sendHeader) {
             $this->traceService->handleResponse($event->getResponse(), $this->traceStorage->getTrace());
@@ -93,6 +93,7 @@ final class TraceSubscriber implements EventSubscriberInterface
         }
 
         if (is_string($trustedIps)) {
+            $trustedIps = str_replace('|', ',', $trustedIps);
             $trustedIps = array_map('trim', explode(',', $trustedIps));
         }
 
