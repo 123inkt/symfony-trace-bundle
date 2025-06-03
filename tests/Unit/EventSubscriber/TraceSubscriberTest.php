@@ -9,6 +9,7 @@ use DR\SymfonyTraceBundle\Service\TraceServiceInterface;
 use DR\SymfonyTraceBundle\TraceContext;
 use DR\SymfonyTraceBundle\TraceStorageInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -180,9 +181,16 @@ class TraceSubscriberTest extends TestCase
         );
     }
 
-    public function testRequestSetsIdOnResponseOnTrustedIp(): void
+    /**
+     * @param string|string[] $trustedIps
+     */
+    #[TestWith(['127.0.0.1'])]
+    #[TestWith([['127.0.0.1', '127.0.0.2']])]
+    #[TestWith(['127.0.0.1,127.0.0.2'])]
+    #[TestWith(['127.0.0.1|127.0.0.2'])]
+    public function testRequestSetsIdOnResponseOnTrustedIp(string|array $trustedIps): void
     {
-        $listener   = new TraceSubscriber(true, '127.0.0.1', true, '127.0.0.1', $this->service, $this->storage);
+        $listener   = new TraceSubscriber(true, '127.0.0.1', true, $trustedIps, $this->service, $this->storage);
         $dispatcher = new EventDispatcher();
         $dispatcher->addSubscriber($listener);
 

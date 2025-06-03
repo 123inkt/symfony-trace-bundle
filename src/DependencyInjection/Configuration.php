@@ -130,7 +130,7 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('trusted_ips')
                     ->info(
                         "Only send response if the request comes from one of these IPs (supports ranges/masks) " .
-                        "Accepts a string-array, comma separated string or null. Defaults to null, accepting all request IPs. "
+                        "Accepts a string-array, comma or pipe separated string or null. Defaults to null, accepting all request IPs. "
                     )
                     ->defaultNull()
                 ->end()

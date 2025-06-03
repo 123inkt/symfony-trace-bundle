@@ -20,12 +20,16 @@ return static function (SymfonyTraceConfig $config): void {
     // those values are ignored and new trace ID's are generated.
     $config->request()
         ->trustHeader(true)
-        ->trustedIps(env('TRUSTED_IPS')); // Only trust the header from these IP's
+        // Only trust the header from these IP's
+        // trustedIps can be a comma or pipe char separated string or an array of IPs
+        ->trustedIps(env('TRUSTED_IPS'));
 
     // Whether to send the trace details in the response headers. This is turned on by default.
     $config->response()
         ->sendHeader(true)
-        ->trustedIps(env('TRUSTED_IPS')); // Only send the header to these IP's
+        // Only send the header to these IP's
+        // trustedIps can be a comma or pipe char separated string or an array of IPs
+        ->trustedIps(env('TRUSTED_IPS'));
 
     // The service key of an object that implements
     // DR\SymfonyTraceBundle\TraceStorageInterface

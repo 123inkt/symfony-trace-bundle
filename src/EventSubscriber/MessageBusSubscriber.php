@@ -76,9 +76,6 @@ final class MessageBusSubscriber implements EventSubscriberInterface
         $this->storage->setTransactionId($this->originalTransactionId);
     }
 
-    /**
-     * @inheritDoc
-     */
     public static function getSubscribedEvents(): array
     {
         /**
