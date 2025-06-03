@@ -64,7 +64,7 @@ Internally a transaction ID is generator as well. This ID is used to identify a 
 ## Monolog Integration
 
 There's a monolog *Processor* that adds the trace ID and transaction ID to `extra` array on the record.
-This can be turned off by setting `monolog->enabled` to `false` in the configuration.
+This can be turned off by setting `monolog.enabled` to `false` in the configuration.
 
 To use the trace ID in your logs, include `%extra.trace_id%` in your formatter.
 To use the transaction ID in your logs, include `%extra.transaction_id%` in your formatter.
@@ -95,7 +95,7 @@ will be reset to the original values of the consumer process (if any).
 ## Twig Integration
 
 By default, this bundle will add a global `trace_id` and `transaction_id` function to your twig
-environment. To disable this set `twig->enabled` to `false` in the bundle
+environment. To disable this set `twig.enabled` to `false` in the bundle
 configuration.
 
 Here's an example of a template.

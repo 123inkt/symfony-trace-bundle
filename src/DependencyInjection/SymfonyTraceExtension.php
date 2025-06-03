@@ -170,7 +170,7 @@ final class SymfonyTraceExtension extends ConfigurableExtension
      */
     private function configureMonolog(array $mergedConfig, ContainerBuilder $container): void
     {
-        if ($mergedConfig['console']['enabled'] === false) {
+        if ($mergedConfig['monolog']['enabled'] === false) {
             return;
         }
 
