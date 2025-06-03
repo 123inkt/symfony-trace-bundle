@@ -35,9 +35,6 @@ final class TraceSubscriber implements EventSubscriberInterface
     ) {
     }
 
-    /**
-     * @inheritDoc
-     */
     public static function getSubscribedEvents(): array
     {
         return [

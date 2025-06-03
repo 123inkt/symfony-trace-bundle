@@ -21,9 +21,6 @@ final class CommandSubscriber implements EventSubscriberInterface
     ) {
     }
 
-    /**
-     * @return array<string, array<int, int|string>>
-     */
     public static function getSubscribedEvents(): array
     {
         return [ConsoleEvents::COMMAND => ['onCommand', 999]];
