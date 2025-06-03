@@ -38,7 +38,7 @@ return static function (SymfonyTraceConfig $config, ?SentryConfig $sentry): void
     $config->storageService(TraceStorage::class);
 
     // Whether to add the monolog process, defaults to true
-    $config->enableMonolog(true);
+    $config->monolog()->enabled(true);
     
     // Whether to add the request id to console commands, defaults to true
     $config->console()->enabled(true);
@@ -46,11 +46,11 @@ return static function (SymfonyTraceConfig $config, ?SentryConfig $sentry): void
     // Optional, set console trace id based on env var. defaults to null
     $config->console()->traceId(env('TRACE_ID'));
     
-    // Whether to add the request id to message bus events, defaults to false
-    $config->enableMessenger(false);
+    // Whether to add the request id to message bus events, defaults to true
+    $config->messenger()->enabled(true);
     
     // Whether to add the twig extension, defaults to true
-    $config->enableTwig(true);
+    $config->twig()->enabled(true);
     
     // Whether to pass traceparent & tracestate to outgoing http requests, defaults to false
     $config->httpClient()

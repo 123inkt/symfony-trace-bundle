@@ -16,7 +16,7 @@ Instead it's also possible to configure a custom ID generator using the `generat
 <?php
 declare(strict_types=1);
 
-use DR\SymfonyTraceBundle\Generator\TraceId\RamseyUuid4Generator;
+use DR\SymfonyTraceBundle\Generator\TraceIdGeneratorInterface;
 use DR\SymfonyTraceBundle\TraceStorage;
 use Sentry\State\HubInterface;
 use Symfony\Config\SentryConfig;
@@ -49,25 +49,25 @@ return static function (SymfonyTraceConfig $config, ?SentryConfig $sentry): void
         // The header which the bundle will set the trace ID to on the response
         ->responseHeader('X-Trace-Id')
         // The service key of an object that implements
-        // DR\SymfonyTraceBundle\Generator\IdGeneratorInterface
+        // DR\SymfonyTraceBundle\Generator\TraceIdGeneratorInterface
         // Optional, will default to Symfony's Uuid or Ramsey's Uuid.
-        ->generatorService(RamseyUuid4Generator::class);
+        ->generatorService(TraceIdGeneratorInterface::class);
 
     // The service key of an object that implements
     // DR\SymfonyTraceBundle\TraceStorageInterface
     $config->storageService(TraceStorage::class);
 
     // Whether to add the monolog process, defaults to true
-    $config->enableMonolog(true);
+    $config->monolog()->enabled(true);
     
     // Whether to add the request id to console commands, defaults to true
-    $config->enableConsole(true);
+    $config->console()->enabled(true);
     
-    // Whether to add the request id to message bus events, defaults to false
-    $config->enableMessenger(false);
+    // Whether to add the request id to message bus events, defaults to true
+    $config->messenger()->enabled(true);
     
     // Whether to add the twig extension, defaults to true
-    $config->enableTwig(true);
+    $config->twig()->enabled(true);
     
     // Whether to pass traceId to outgoing http requests, defaults to false
     $config->httpClient()

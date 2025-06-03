@@ -7,6 +7,9 @@ namespace DR\SymfonyTraceBundle\Service\TraceContext;
 use DR\SymfonyTraceBundle\TraceContext;
 use InvalidArgumentException;
 
+/**
+ * @internal
+ */
 class TraceContextParser
 {
     public static function isValid(string $traceParent): bool

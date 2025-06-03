@@ -7,6 +7,9 @@ namespace DR\SymfonyTraceBundle\Messenger;
 use DR\SymfonyTraceBundle\TraceContext;
 use Symfony\Component\Messenger\Stamp\StampInterface;
 
+/**
+ * @internal
+ */
 final class TraceStamp implements StampInterface
 {
     /**

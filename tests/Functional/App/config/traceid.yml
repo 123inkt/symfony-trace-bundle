@@ -6,7 +6,8 @@ symfony_trace:
   request:
     trust_header: true
   storage_service: request.id.storage
-  enable_messenger: true
+  messenger:
+    enabled: true
   console:
     enabled: true
     trace_id: '%env(TRACE_ID)%'

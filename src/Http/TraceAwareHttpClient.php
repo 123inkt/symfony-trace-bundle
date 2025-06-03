@@ -45,6 +45,7 @@ use Symfony\Contracts\Service\ResetInterface;
  *     capture_peer_cert_chain?: bool,
  *     extra?: mixed[]
  * }
+ * @internal
  */
 class TraceAwareHttpClient implements HttpClientInterface, ResetInterface, LoggerAwareInterface
 {
