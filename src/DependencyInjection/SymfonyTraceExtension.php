@@ -47,14 +47,19 @@ use Twig\Extension\AbstractExtension;
  *          trusted_ips: string[]|string|null,
  *      },
  *      storage_service: ?string,
- *      enable_monolog: bool,
- *      enable_console: bool|null,
+ *      monolog: array{
+ *          enabled: bool|null,
+ *      },
  *      console: array{
  *          enabled: bool,
  *          trace_id: ?string
  *      },
- *      enable_messenger: bool,
- *      enable_twig: bool,
+ *      messenger: array{
+ *          enabled: bool,
+ *      },
+ *      twig: array{
+ *          enabled: bool,
+ *      },
  *      http_client: array{
  *          enabled: bool,
  *          tag_default_client: bool,
@@ -165,9 +170,10 @@ final class SymfonyTraceExtension extends ConfigurableExtension
      */
     private function configureMonolog(array $mergedConfig, ContainerBuilder $container): void
     {
-        if ($mergedConfig['enable_monolog'] === false) {
+        if ($mergedConfig['console']['enabled'] === false) {
             return;
         }
+
         $container->register(TraceProcessor::class)
             ->addArgument(new Reference(TraceStorageInterface::class))
             ->setPublic(false)
@@ -183,6 +189,7 @@ final class SymfonyTraceExtension extends ConfigurableExtension
         if (class_exists(Application::class) === false || $enabled === false) {
             return;
         }
+
         $container->register(CommandSubscriber::class)
             ->setArguments(
                 [
@@ -200,7 +207,7 @@ final class SymfonyTraceExtension extends ConfigurableExtension
      */
     private function configureMessenger(array $mergedConfig, ContainerBuilder $container): void
     {
-        if ($mergedConfig['enable_messenger'] === false) {
+        if ($mergedConfig['messenger']['enabled'] === false) {
             return;
         }
         if (interface_exists(MessageBusInterface::class) === false) {
@@ -220,7 +227,7 @@ final class SymfonyTraceExtension extends ConfigurableExtension
      */
     private function configureTwig(array $mergedConfig, ContainerBuilder $container): void
     {
-        if (class_exists(AbstractExtension::class) === false || $mergedConfig['enable_twig'] === false) {
+        if (class_exists(AbstractExtension::class) === false || $mergedConfig['twig']['enabled'] === false) {
             return;
         }
 

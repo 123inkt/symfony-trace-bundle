@@ -14,6 +14,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * @codeCoverageIgnore - This is a config class
+ * @internal
  */
 class HttpClientTracePass implements CompilerPassInterface
 {

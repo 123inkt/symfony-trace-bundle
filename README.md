@@ -13,8 +13,8 @@ be available in:
 - Request -> Response
 - Console command
 - Twig as extension
-- HttpClient requests (by default disabled)
-- Messenger messages (by default disabled)
+- HttpClient requests (by default only enabled for tagged clients)
+- Messenger messages (by default enabled)
 - Sentry reports (by default disabled)
 
 ## Installation
@@ -64,7 +64,7 @@ Internally a transaction ID is generator as well. This ID is used to identify a 
 ## Monolog Integration
 
 There's a monolog *Processor* that adds the trace ID and transaction ID to `extra` array on the record.
-This can be turned off by setting `enable_monolog` to `false` in the configuration.
+This can be turned off by setting `monolog->enabled` to `false` in the configuration.
 
 To use the trace ID in your logs, include `%extra.trace_id%` in your formatter.
 To use the transaction ID in your logs, include `%extra.transaction_id%` in your formatter.
@@ -88,14 +88,14 @@ $monolog->handler('main')
 
 ## Messenger Integration
 
-When enabled, the full trace data of the dispatcher process, will be added to the `Envelope` of the message. On the consumer
+By default, the full trace data of the dispatcher process, will be added to the `Envelope` of the message. On the consumer
 side the trace data will be applied to the running consumer process. Once the `Envelope` has been handled, the values 
 will be reset to the original values of the consumer process (if any).
 
 ## Twig Integration
 
 By default, this bundle will add a global `trace_id` and `transaction_id` function to your twig
-environment. To disable this set `enable_twig` to `false` in the bundle
+environment. To disable this set `twig->enabled` to `false` in the bundle
 configuration.
 
 Here's an example of a template.

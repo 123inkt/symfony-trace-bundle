@@ -3,7 +3,8 @@ symfony_trace:
   request:
     trust_header: true
   storage_service: request.id.storage
-  enable_messenger: true
+  messenger:
+    enabled: true
   http_client:
     enabled: true
     header: Trace-Id

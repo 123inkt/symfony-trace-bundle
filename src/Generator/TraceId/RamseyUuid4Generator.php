@@ -10,6 +10,7 @@ use Ramsey\Uuid\UuidFactoryInterface;
 
 /**
  * Uses `ramsey/uuid` to generator v4 UUIDs for request ids.
+ * @internal
  */
 final class RamseyUuid4Generator implements TraceIdGeneratorInterface
 {

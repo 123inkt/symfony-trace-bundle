@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace DR\SymfonyTraceBundle;
 
+/**
+ * @internal
+ */
 final class TraceStorage implements TraceStorageInterface
 {
     private TraceContext $trace;

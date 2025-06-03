@@ -10,6 +10,7 @@ use Symfony\Component\Uid\UuidV4;
 
 /**
  * Uses symfony/uid to generate a UUIDv4 request ID.
+ * @internal
  */
 final class SymfonyUuid4Generator implements TraceIdGeneratorInterface
 {
