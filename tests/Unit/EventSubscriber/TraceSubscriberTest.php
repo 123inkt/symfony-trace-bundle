@@ -181,6 +181,9 @@ class TraceSubscriberTest extends TestCase
         );
     }
 
+    /**
+     * @param string|string[] $trustedIps
+     */
     #[TestWith(['127.0.0.1'])]
     #[TestWith([['127.0.0.1', '127.0.0.2']])]
     #[TestWith(['127.0.0.1,127.0.0.2'])]

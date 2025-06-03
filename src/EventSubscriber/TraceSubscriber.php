@@ -93,6 +93,7 @@ final class TraceSubscriber implements EventSubscriberInterface
         }
 
         if (is_string($trustedIps)) {
+            // Support both comma and pipe as separators for trusted IPs
             $trustedIps = str_replace('|', ',', $trustedIps);
             $trustedIps = array_map('trim', explode(',', $trustedIps));
         }
