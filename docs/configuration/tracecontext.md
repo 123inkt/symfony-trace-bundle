@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 use DR\SymfonyTraceBundle\TraceStorage;
 use Sentry\State\HubInterface;
+use Symfony\Config\SentryConfig;
 use Symfony\Config\SymfonyTraceConfig;
 
 return static function (SymfonyTraceConfig $config, ?SentryConfig $sentry): void {
