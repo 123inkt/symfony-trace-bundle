@@ -172,7 +172,7 @@ class Configuration implements ConfigurationInterface
                 ->booleanNode('enabled')
                     ->info(
                         'Whether or not to enable passing trace and transaction id to Sentry. ' .
-                        'Note: ensure to set $sentry->tracing->disabled(false) to disable Sentry\'s own tracing.'
+                        'Note: ensure to set $sentry->tracing->enabled(false) to disable Sentry\'s own tracing.'
                     )
                     ->defaultFalse()
                 ->end()
