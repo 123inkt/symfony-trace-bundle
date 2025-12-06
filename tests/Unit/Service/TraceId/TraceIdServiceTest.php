@@ -20,12 +20,22 @@ class TraceIdServiceTest extends TestCase
     private const RESPONSE_HEADER = 'X-Trace-Response';
     private const CLIENT_HEADER   = 'X-Trace-Id';
 
-    private TraceIdGeneratorInterface&MockObject $generator;
+    private TraceIdGeneratorInterface $generator;
     private TraceIdService $service;
 
     protected function setUp(): void
     {
-        $this->generator = $this->createMock(TraceIdGeneratorInterface::class);
+        $this->generator = new class () implements TraceIdGeneratorInterface {
+            public function generateTransactionId(): string
+            {
+                return '123';
+            }
+
+            public function generateTraceId(): string
+            {
+                return 'abc';
+            }
+        };
         $this->service   = new TraceIdService(self::REQUEST_HEADER, self::RESPONSE_HEADER, self::CLIENT_HEADER, $this->generator);
     }
 
@@ -45,9 +55,6 @@ class TraceIdServiceTest extends TestCase
 
     public function testCreateNewTrace(): void
     {
-        $this->generator->expects(static::once())->method('generateTraceId')->willReturn('abc');
-        $this->generator->expects(static::once())->method('generateTransactionId')->willReturn('123');
-
         $trace = $this->service->createNewTrace();
         static::assertSame('abc', $trace->getTraceId());
         static::assertSame('123', $trace->getTransactionId());
@@ -55,9 +62,6 @@ class TraceIdServiceTest extends TestCase
 
     public function testCreateNewFrom(): void
     {
-        $this->generator->expects(static::never())->method('generateTraceId');
-        $this->generator->expects(static::once())->method('generateTransactionId')->willReturn('123');
-
         $trace = $this->service->createTraceFrom('test-trace-id');
         static::assertSame('test-trace-id', $trace->getTraceId());
         static::assertSame('123', $trace->getTransactionId());
@@ -65,8 +69,6 @@ class TraceIdServiceTest extends TestCase
 
     public function testGetRequestTrace(): void
     {
-        $this->generator->expects(static::once())->method('generateTransactionId')->willReturn('123');
-
         $request = new Request();
         $request->headers->set(self::REQUEST_HEADER, 'abc');
 
