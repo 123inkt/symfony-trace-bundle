@@ -32,6 +32,9 @@ jobs:
       - name: Validate composer.json and composer.lock
         run: composer validate
 
+      - name: Require symfony flex
+        run: composer global require --no-progress --no-scripts --no-plugins symfony/flex
+
       - name: Install dependencies
         run: composer update --prefer-dist --no-progress --no-suggest --prefer-stable ${{ matrix.composer-flags }}
 
