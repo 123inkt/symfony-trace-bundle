@@ -15,11 +15,11 @@
     },
     "require": {
         "php": ">=8.1",
-        "symfony/config": " ^6.4||^7.3",
-        "symfony/dependency-injection": " ^6.4||^7.3",
-        "symfony/http-foundation": " ^6.4||^7.3",
-        "symfony/http-kernel": " ^6.4||^7.3",
-        "symfony/framework-bundle": "^6.4||^7.3"
+        "symfony/config": "^6.4||^7.3||^8.0",
+        "symfony/dependency-injection": "^6.4||^7.3||^8.0",
+        "symfony/http-foundation": "^6.4||^7.3||^8.0",
+        "symfony/http-kernel": "^6.4||^7.3||^8.0",
+        "symfony/framework-bundle": "^6.4||^7.3||^8.0"
     },
     "require-dev": {
         "digitalrevolution/accessorpair-constraint": "^2.1",
@@ -37,7 +37,7 @@
         "ramsey/uuid": "^4.7",
         "roave/security-advisories": "dev-latest",
         "sentry/sentry": "^4.2",
-        "squizlabs/php_codesniffer": "^4.0",
+        "squizlabs/php_codesniffer": "^4",
         "symfony/browser-kit": "^6.4||^7.3",
         "symfony/css-selector": "^6.4||^7.3",
         "symfony/http-client": "^6.4||^7.3",
