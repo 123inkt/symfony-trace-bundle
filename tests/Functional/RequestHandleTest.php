@@ -146,7 +146,7 @@ class RequestHandleTest extends AbstractWebTestCase
      * @return T
      * @throws Exception
      */
-    private static function getService(string $class, string $id = null): object
+    private static function getService(string $class, ?string $id = null): object
     {
         $service = self::getContainer()->get($id ?? $class);
         static::assertInstanceOf($class, $service);

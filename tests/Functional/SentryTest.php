@@ -35,7 +35,6 @@ class SentryTest extends AbstractWebTestCase
     {
         $class    = new ReflectionClass($scope);
         $property = $class->getProperty('tags');
-        $property->setAccessible(true);
 
         $tags = $property->getValue($scope);
         static::assertIsArray($tags);

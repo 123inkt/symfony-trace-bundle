@@ -11,20 +11,25 @@ use DR\SymfonyTraceBundle\TraceStorageInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpClient\ScopingHttpClient;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Contracts\Service\ResetInterface;
 
 #[CoversClass(TraceAwareHttpClient::class)]
 class TraceAwareHttpClientTest extends TestCase
 {
-    private ScopingHttpClient&MockObject $client;
+    private HttpClientInterface&LoggerAwareInterface&ResetInterface&MockObject $client;
     private TraceStorageInterface&MockObject $storage;
     private TraceServiceInterface&MockObject $service;
     private TraceAwareHttpClient $traceClient;
 
     protected function setUp(): void
     {
-        $this->client      = $this->createMock(ScopingHttpClient::class);
+        /** @var HttpClientInterface&LoggerAwareInterface&ResetInterface&MockObject $client */
+        $client = $this->createMockForIntersectionOfInterfaces([HttpClientInterface::class, LoggerAwareInterface::class, ResetInterface::class]);
+
+        $this->client      = $client;
         $this->storage     = $this->createMock(TraceStorageInterface::class);
         $this->service     = $this->createMock(TraceServiceInterface::class);
         $this->traceClient = new TraceAwareHttpClient($this->client, $this->storage, $this->service);
