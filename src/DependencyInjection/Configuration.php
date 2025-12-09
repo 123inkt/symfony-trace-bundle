@@ -19,10 +19,12 @@ class Configuration implements ConfigurationInterface
     public const TRACEMODE_TRACECONTEXT = 'tracecontext';
     public const TRACEMODE_TRACEID      = 'traceid';
 
+    /**
+     * @return TreeBuilder<'array'>
+     */
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $tree = new TreeBuilder('symfony_trace');
-        /** @var ArrayNodeDefinition $node */
         $node = $tree->getRootNode();
         $node
             ->children()
@@ -108,7 +110,10 @@ class Configuration implements ConfigurationInterface
         return $tree;
     }
 
-    private function createRequestConfiguration(): NodeDefinition
+    /**
+     * @return ArrayNodeDefinition<TreeBuilder<'array'>>
+     */
+    private function createRequestConfiguration(): ArrayNodeDefinition
     {
         $node = (new TreeBuilder('request'))->getRootNode();
         $node
@@ -130,7 +135,10 @@ class Configuration implements ConfigurationInterface
         return $node;
     }
 
-    private function createResponseConfiguration(): NodeDefinition
+    /**
+     * @return ArrayNodeDefinition<TreeBuilder<'array'>>
+     */
+    private function createResponseConfiguration(): ArrayNodeDefinition
     {
         $node = (new TreeBuilder('response'))->getRootNode();
         $node
@@ -152,7 +160,10 @@ class Configuration implements ConfigurationInterface
         return $node;
     }
 
-    private function createHttpClientConfiguration(): NodeDefinition
+    /**
+     * @return ArrayNodeDefinition<TreeBuilder<'array'>>
+     */
+    private function createHttpClientConfiguration(): ArrayNodeDefinition
     {
         $node = (new TreeBuilder('http_client'))->getRootNode();
         $node
@@ -176,7 +187,10 @@ class Configuration implements ConfigurationInterface
         return $node;
     }
 
-    private function createSentryConfiguration(): NodeDefinition
+    /**
+     * @return ArrayNodeDefinition<TreeBuilder<'array'>>
+     */
+    private function createSentryConfiguration(): ArrayNodeDefinition
     {
         $node = (new TreeBuilder('sentry'))->getRootNode();
         $node
