@@ -43,7 +43,7 @@
         "symfony/http-client": "^6.4||^7.3",
         "symfony/messenger": "^6.4||^7.3",
         "symfony/monolog-bridge": "^6.4||^7.3",
-        "symfony/monolog-bundle": "^3.10",
+        "symfony/monolog-bundle": "^4.0",
         "symfony/phpunit-bridge": "^6.4||^7.3",
         "symfony/templating": "^6.4||^7.3",
         "symfony/twig-bundle": "^6.4||^7.3",
