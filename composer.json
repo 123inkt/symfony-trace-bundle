@@ -27,7 +27,6 @@
         "digitalrevolution/phpunit-file-coverage-inspection": "^v3.0.0",
         "digitalrevolution/utils": "^1.9",
         "monolog/monolog": "^3.9",
-        "phpmd/phpmd": "^2.14",
         "phpstan/extension-installer": "^1.3",
         "phpstan/phpstan": "^2.0",
         "phpstan/phpstan-phpunit": "^2.0",
