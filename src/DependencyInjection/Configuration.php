@@ -6,7 +6,6 @@ namespace DR\SymfonyTraceBundle\DependencyInjection;
 
 use Sentry\State\HubInterface;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
-use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -19,9 +18,6 @@ class Configuration implements ConfigurationInterface
     public const TRACEMODE_TRACECONTEXT = 'tracecontext';
     public const TRACEMODE_TRACEID      = 'traceid';
 
-    /**
-     * @return TreeBuilder<'array'>
-     */
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $tree = new TreeBuilder('symfony_trace');
@@ -110,9 +106,6 @@ class Configuration implements ConfigurationInterface
         return $tree;
     }
 
-    /**
-     * @return ArrayNodeDefinition<TreeBuilder<'array'>>
-     */
     private function createRequestConfiguration(): ArrayNodeDefinition
     {
         $node = (new TreeBuilder('request'))->getRootNode();
@@ -135,9 +128,6 @@ class Configuration implements ConfigurationInterface
         return $node;
     }
 
-    /**
-     * @return ArrayNodeDefinition<TreeBuilder<'array'>>
-     */
     private function createResponseConfiguration(): ArrayNodeDefinition
     {
         $node = (new TreeBuilder('response'))->getRootNode();
@@ -160,9 +150,6 @@ class Configuration implements ConfigurationInterface
         return $node;
     }
 
-    /**
-     * @return ArrayNodeDefinition<TreeBuilder<'array'>>
-     */
     private function createHttpClientConfiguration(): ArrayNodeDefinition
     {
         $node = (new TreeBuilder('http_client'))->getRootNode();
@@ -187,9 +174,6 @@ class Configuration implements ConfigurationInterface
         return $node;
     }
 
-    /**
-     * @return ArrayNodeDefinition<TreeBuilder<'array'>>
-     */
     private function createSentryConfiguration(): ArrayNodeDefinition
     {
         $node = (new TreeBuilder('sentry'))->getRootNode();
