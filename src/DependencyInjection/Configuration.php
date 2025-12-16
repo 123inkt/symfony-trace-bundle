@@ -6,7 +6,6 @@ namespace DR\SymfonyTraceBundle\DependencyInjection;
 
 use Sentry\State\HubInterface;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
-use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -22,7 +21,6 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $tree = new TreeBuilder('symfony_trace');
-        /** @var ArrayNodeDefinition $node */
         $node = $tree->getRootNode();
         $node
             ->children()
@@ -108,7 +106,7 @@ class Configuration implements ConfigurationInterface
         return $tree;
     }
 
-    private function createRequestConfiguration(): NodeDefinition
+    private function createRequestConfiguration(): ArrayNodeDefinition
     {
         $node = (new TreeBuilder('request'))->getRootNode();
         $node
@@ -130,7 +128,7 @@ class Configuration implements ConfigurationInterface
         return $node;
     }
 
-    private function createResponseConfiguration(): NodeDefinition
+    private function createResponseConfiguration(): ArrayNodeDefinition
     {
         $node = (new TreeBuilder('response'))->getRootNode();
         $node
@@ -152,7 +150,7 @@ class Configuration implements ConfigurationInterface
         return $node;
     }
 
-    private function createHttpClientConfiguration(): NodeDefinition
+    private function createHttpClientConfiguration(): ArrayNodeDefinition
     {
         $node = (new TreeBuilder('http_client'))->getRootNode();
         $node
@@ -176,7 +174,7 @@ class Configuration implements ConfigurationInterface
         return $node;
     }
 
-    private function createSentryConfiguration(): NodeDefinition
+    private function createSentryConfiguration(): ArrayNodeDefinition
     {
         $node = (new TreeBuilder('sentry'))->getRootNode();
         $node

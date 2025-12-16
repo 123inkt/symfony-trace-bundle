@@ -11,27 +11,33 @@ permissions:
 
 jobs:
   test:
-    name: PHP ${{ matrix.php-versions }} - Symfony ${{ matrix.symfony }} - Test ${{ matrix.composer-flags }}
+    name: PHP ${{ matrix.php-version }} - Symfony ${{ matrix.symfony }} - Test ${{ matrix.composer-flags }}
     env:
       SYMFONY_REQUIRE: ${{ matrix.symfony }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-versions: ['8.1', '8.2', '8.3']
-        symfony: ['6.4.*', '7.3.*', '7.4.*']
+        php-version: ['8.1', '8.2', '8.3', '8.4']
+        symfony: ['6.4.*', '7.3.*', '7.4.*', '8.0.*']
         composer-flags: ['', '--prefer-lowest']
         exclude:
-          - php-versions: '8.1'
+          - php-version: '8.1'
             symfony: '7.3.*'
-          - php-versions: '8.1'
+          - php-version: '8.1'
             symfony: '7.4.*'
+          - php-version: '8.1'
+            symfony: '8.0.*'
+          - php-version: '8.2'
+            symfony: '8.0.*'
+          - php-version: '8.3'
+            symfony: '8.0.*'
     steps:
       - uses: actions/checkout@v6
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-versions: ${{ matrix.php-versions }}
+          php-version: ${{ matrix.php-version }}
           coverage: none
           tools: flex
 
@@ -52,7 +58,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.3
+          php-version: 8.4
           coverage: pcov
 
       - name: Install dependencies
@@ -75,6 +81,7 @@ jobs:
         with:
           php-version: 8.1
           coverage: none
+          tools: phpmd
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
